@@ -15,4 +15,9 @@
       <Folder Include="Controllers\" />
     </ItemGroup>
 
+    <ItemGroup>
+        <ProjectReference Include="..\Backend.Contracts\Backend.Contracts.csproj"/>
+        <ProjectReference Include="..\Backend.Extensions\Backend.Extensions.csproj"/>
+    </ItemGroup>
+
 </Project>
