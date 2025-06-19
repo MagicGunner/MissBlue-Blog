@@ -34,13 +34,10 @@ public class BaseDBConfig {
 
 
     public static (List<MutiDBOperate>, List<MutiDBOperate>) MutiInitConn() {
-        List<MutiDBOperate> listdatabase = AppSettings.app<MutiDBOperate>("DBS")
+        List<MutiDBOperate> listdatabase = AppSettings.App<MutiDBOperate>("DBS")
                                                       .Where(i => i.Enabled)
                                                       .ToList();
-        var mainDbId = AppSettings.app(new string[] {
-                                                        "MainDB"
-                                                    })
-                                  .ToString();
+        var mainDbId = AppSettings.App("MainDB");
         var mainDbModel = listdatabase.Single(d => d.ConnId == mainDbId);
         listdatabase.Remove(mainDbModel);
         listdatabase.Insert(0, mainDbModel);

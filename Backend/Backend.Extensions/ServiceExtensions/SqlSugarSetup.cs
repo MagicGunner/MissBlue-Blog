@@ -13,8 +13,8 @@ public static class SqlSugarSetup {
         if (services == null) throw new ArgumentNullException(nameof(services));
 
         // 默认添加主数据库连接
-        if (!string.IsNullOrEmpty(AppSettings.app("MainDB"))) {
-            MainDb.CurrentDbConnId = AppSettings.app("MainDB");
+        if (!string.IsNullOrEmpty(AppSettings.App("MainDB"))) {
+            MainDb.CurrentDbConnId = AppSettings.App("MainDB");
         }
 
         BaseDBConfig.MutiConnectionString.allDbs.ForEach(m => {
@@ -52,9 +52,6 @@ public static class SqlSugarSetup {
                                                    return new SqlSugarScope(BaseDBConfig.AllConfigs, db => {
                                                                                                          BaseDBConfig.ValidConfig.ForEach(config => {
                                                                                                              var dbProvider = db.GetConnectionScope((string)config.ConfigId);
-                                                                                                             // 配置实体数据权限（多租户）
-                                                                                                             RepositorySetting.SetTenantEntityFilter(dbProvider);
-
                                                                                                              // 打印SQL语句
                                                                                                              dbProvider.Aop.OnLogExecuting = (s, parameters) => {
                                                                                                                  SqlSugarAop.OnLogExecuting(dbProvider, App.User?.Name.ObjToString(),

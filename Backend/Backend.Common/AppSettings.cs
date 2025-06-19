@@ -32,7 +32,7 @@ public class AppSettings {
     /// </summary>
     /// <param name="sections">节点配置</param>
     /// <returns></returns>
-    public static string app(params string[] sections) {
+    public static string App(params string[] sections) {
         try {
             if (sections.Any()) {
                 return Configuration[string.Join(":", sections)];
@@ -49,8 +49,8 @@ public class AppSettings {
     /// <typeparam name="T"></typeparam>
     /// <param name="sections"></param>
     /// <returns></returns>
-    public static List<T> app<T>(params string[] sections) {
-        List<T> list = new List<T>();
+    public static List<T> App<T>(params string[] sections) {
+        var list = new List<T>();
         // 引用 Microsoft.Extensions.Configuration.Binder 包
         Configuration.Bind(string.Join(":", sections), list);
         return list;

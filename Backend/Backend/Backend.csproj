@@ -12,11 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers\" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\Backend.Contracts\Backend.Contracts.csproj"/>
+        <ProjectReference Include="..\Backend.Module.Blog.Contracts\Backend.Module.Blog.Contracts.csproj"/>
         <ProjectReference Include="..\Backend.Extensions\Backend.Extensions.csproj"/>
     </ItemGroup>
 
