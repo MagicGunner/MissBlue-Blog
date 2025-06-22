@@ -3,11 +3,7 @@
 namespace Backend.Domain.Entities;
 
 [SugarTable("t_banners")]
-public class Banners {
-    // 主键ID，自增
-    [SugarColumn(IsPrimaryKey = true, IsIdentity = true)]
-    public long Id { get; set; }
-
+public class Banners : RootEntity<long> {
     // 图片路径
     public string Path { get; set; }
 

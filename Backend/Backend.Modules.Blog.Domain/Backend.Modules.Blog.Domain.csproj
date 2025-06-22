@@ -17,7 +17,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="IRepository\" />
+        <Folder Include="IManager\"/>
+        <Folder Include="Service\"/>
     </ItemGroup>
 
 </Project>

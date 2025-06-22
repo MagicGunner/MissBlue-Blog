@@ -3,13 +3,7 @@
 namespace Backend.Domain.Entities;
 
 [SugarTable("sys_user")]
-public class User {
-    /// <summary>
-    /// 用户ID（主键，自增）
-    /// </summary>
-    [SugarColumn(IsPrimaryKey = true, IsIdentity = true)]
-    public long Id { get; set; }
-
+public class User : RootEntity<long> {
     /// <summary>
     /// 用户昵称
     /// </summary>

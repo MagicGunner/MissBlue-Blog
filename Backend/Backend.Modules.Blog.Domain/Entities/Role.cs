@@ -3,13 +3,7 @@
 namespace Backend.Domain.Entities;
 
 [SugarTable("sys_role")]
-public class Role {
-    /// <summary>
-    /// 角色ID（主键，自增）
-    /// </summary>
-    [SugarColumn(IsPrimaryKey = true, IsIdentity = true)]
-    public long Id { get; set; }
-
+public class Role : RootEntity<long> {
     /// <summary>
     /// 角色名称（如“管理员”、“编辑”）
     /// </summary>

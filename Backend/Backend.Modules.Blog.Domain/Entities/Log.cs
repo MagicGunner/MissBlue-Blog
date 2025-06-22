@@ -3,13 +3,7 @@
 namespace Backend.Domain.Entities;
 
 [SugarTable("sys_log")]
-public class Log {
-    /// <summary>
-    /// 日志编号（主键，自增）
-    /// </summary>
-    [SugarColumn(IsPrimaryKey = true, IsIdentity = true)]
-    public long Id { get; set; }
-
+public class Log : RootEntity<long> {
     /// <summary>
     /// 模块名称
     /// </summary>

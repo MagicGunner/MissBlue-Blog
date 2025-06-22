@@ -34,10 +34,11 @@ public class AppSettings {
     /// <returns></returns>
     public static string App(params string[] sections) {
         try {
-            if (sections.Any()) {
+            if (sections.Length != 0) {
                 return Configuration[string.Join(":", sections)];
             }
         } catch (Exception) {
+            // ignored
         }
 
         return "";

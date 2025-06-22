@@ -3,11 +3,7 @@
 namespace Backend.Domain.Entities;
 
 [SugarTable("t_category")]
-public class Category {
-    // 分类ID
-    [SugarColumn(IsPrimaryKey = true, IsIdentity = true)]
-    public long Id { get; set; }
-
+public class Category : RootEntity<long> {
     // 分类名
     public string CategoryName { get; set; }
 

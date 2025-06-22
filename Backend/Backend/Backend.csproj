@@ -12,8 +12,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Backend.Module.Blog.Contracts\Backend.Module.Blog.Contracts.csproj"/>
         <ProjectReference Include="..\Backend.Extensions\Backend.Extensions.csproj"/>
+        <ProjectReference Include="..\Backend.Modules.Blog.Application\Backend.Modules.Blog.Application.csproj"/>
     </ItemGroup>
 
 </Project>

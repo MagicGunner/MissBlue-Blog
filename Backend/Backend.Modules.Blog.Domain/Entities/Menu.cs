@@ -3,13 +3,7 @@
 namespace Backend.Domain.Entities;
 
 [SugarTable("sys_menu")]
-public class Menu {
-    /// <summary>
-    /// 唯一ID（主键，自增）
-    /// </summary>
-    [SugarColumn(IsPrimaryKey = true, IsIdentity = true)]
-    public long Id { get; set; }
-
+public class Menu : RootEntity<long> {
     /// <summary>
     /// 菜单标题
     /// </summary>

@@ -3,13 +3,7 @@
 namespace Backend.Domain.Entities;
 
 [SugarTable("t_chat_gpt")]
-public class ChatGpt {
-    /// <summary>
-    /// 主键 ID，自增
-    /// </summary>
-    [SugarColumn(IsPrimaryKey = true, IsIdentity = true)]
-    public long Id { get; set; }
-
+public class ChatGpt : RootEntity<long> {
     /// <summary>
     /// 所属用户 ID
     /// </summary>

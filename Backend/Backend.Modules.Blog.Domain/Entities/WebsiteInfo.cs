@@ -3,13 +3,7 @@
 namespace Backend.Domain.Entities;
 
 [SugarTable("sys_website_info")]
-public class WebsiteInfo {
-    /// <summary>
-    /// 主键 ID（自增）
-    /// </summary>
-    [SugarColumn(IsPrimaryKey = true, IsIdentity = true)]
-    public long Id { get; set; }
-
+public class WebsiteInfo : RootEntity<long> {
     /// <summary>
     /// 站长头像
     /// </summary>

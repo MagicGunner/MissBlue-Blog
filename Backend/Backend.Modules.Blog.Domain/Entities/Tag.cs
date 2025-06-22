@@ -3,13 +3,7 @@
 namespace Backend.Domain.Entities;
 
 [SugarTable("t_tag")]
-public class Tag {
-    /// <summary>
-    /// 标签ID（主键，自增）
-    /// </summary>
-    [SugarColumn(IsPrimaryKey = true, IsIdentity = true)]
-    public long Id { get; set; }
-
+public class Tag : RootEntity<long> {
     /// <summary>
     /// 标签名称
     /// </summary>

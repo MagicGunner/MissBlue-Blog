@@ -3,13 +3,7 @@
 namespace Backend.Domain.Entities;
 
 [SugarTable("sys_role_menu")]
-public class RoleMenu {
-    /// <summary>
-    /// 主键ID（自增）
-    /// </summary>
-    [SugarColumn(IsPrimaryKey = true, IsIdentity = true)]
-    public int Id { get; set; }
-
+public class RoleMenu : RootEntity<long> {
     /// <summary>
     /// 角色ID
     /// </summary>

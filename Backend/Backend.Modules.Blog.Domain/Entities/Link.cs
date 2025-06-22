@@ -3,13 +3,7 @@
 namespace Backend.Domain.Entities;
 
 [SugarTable("t_link")]
-public class Link {
-    /// <summary>
-    /// 友链ID（主键，自增）
-    /// </summary>
-    [SugarColumn(IsPrimaryKey = true, IsIdentity = true)]
-    public long Id { get; set; }
-
+public class Link : RootEntity<long> {
     /// <summary>
     /// 用户ID（关联谁添加的友链）
     /// </summary>

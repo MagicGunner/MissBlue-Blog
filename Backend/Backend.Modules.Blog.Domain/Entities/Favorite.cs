@@ -3,13 +3,7 @@
 namespace Backend.Domain.Entities;
 
 [SugarTable("t_favorite")]
-public class Favorite {
-    /// <summary>
-    /// 收藏ID（主键，自增）
-    /// </summary>
-    [SugarColumn(IsPrimaryKey = true, IsIdentity = true)]
-    public long Id { get; set; }
-
+public class Favorite : RootEntity<long> {
     /// <summary>
     /// 收藏的用户ID
     /// </summary>

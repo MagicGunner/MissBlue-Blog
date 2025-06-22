@@ -3,13 +3,7 @@
 namespace Backend.Domain.Entities;
 
 [SugarTable("t_like")]
-public class Like {
-    /// <summary>
-    /// 点赞ID（主键，自增）
-    /// </summary>
-    [SugarColumn(IsPrimaryKey = true, IsIdentity = true)]
-    public long Id { get; set; }
-
+public class Like : RootEntity<long> {
     /// <summary>
     /// 点赞用户ID
     /// </summary>

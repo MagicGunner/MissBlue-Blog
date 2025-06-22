@@ -3,13 +3,7 @@
 namespace Backend.Domain.Entities;
 
 [SugarTable("t_comment")]
-public class Comment {
-    /// <summary>
-    /// 评论ID（主键，自增）
-    /// </summary>
-    [SugarColumn(IsPrimaryKey = true, IsIdentity = true)]
-    public long Id { get; set; }
-
+public class Comment : RootEntity<long> {
     /// <summary>
     /// 评论类型（1：文章，2：留言板）
     /// </summary>

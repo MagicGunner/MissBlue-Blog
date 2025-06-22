@@ -3,13 +3,7 @@
 namespace Backend.Domain.Entities;
 
 [SugarTable("sys_permission")]
-public class Permission {
-    /// <summary>
-    /// 权限ID（主键，自增）
-    /// </summary>
-    [SugarColumn(IsPrimaryKey = true, IsIdentity = true)]
-    public int Id { get; set; }
-
+public class Permission : RootEntity<long> {
     /// <summary>
     /// 权限描述（例如“新增用户”）
     /// </summary>

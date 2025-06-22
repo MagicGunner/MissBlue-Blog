@@ -3,12 +3,7 @@
 namespace Backend.Domain.Entities;
 
 [SugarTable("t_photo")]
-public class Photo {
-    /// <summary>
-    /// 自增ID（主键）
-    /// </summary>
-    [SugarColumn(IsPrimaryKey = true, IsIdentity = true)]
-    public long Id { get; set; }
+public class Photo: RootEntity<long> {
 
     /// <summary>
     /// 创建者用户ID

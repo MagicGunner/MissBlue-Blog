@@ -3,13 +3,7 @@
 namespace Backend.Domain.Entities;
 
 [SugarTable("t_tree_hole")]
-public class TreeHole {
-    /// <summary>
-    /// 树洞ID（主键，自增）
-    /// </summary>
-    [SugarColumn(IsPrimaryKey = true, IsIdentity = true)]
-    public long Id { get; set; }
-
+public class TreeHole : RootEntity<long> {
     /// <summary>
     /// 发布用户ID
     /// </summary>

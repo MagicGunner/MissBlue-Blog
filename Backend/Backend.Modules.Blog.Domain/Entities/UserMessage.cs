@@ -3,13 +3,7 @@
 namespace Backend.Domain.Entities;
 
 [SugarTable("t_user_message")]
-public class UserMessage {
-    /// <summary>
-    /// 主键 ID，自增
-    /// </summary>
-    [SugarColumn(IsPrimaryKey = true, IsIdentity = true)]
-    public long Id { get; set; }
-
+public class UserMessage : RootEntity<long> {
     /// <summary>
     /// 留言用户 ID
     /// </summary>

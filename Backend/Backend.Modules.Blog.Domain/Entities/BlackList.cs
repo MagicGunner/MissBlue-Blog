@@ -4,10 +4,7 @@ using SqlSugar;
 namespace Backend.Domain.Entities;
 
 [SugarTable("t_black_list")]
-public class BlackList {
-    [SugarColumn(IsPrimaryKey = true, IsIdentity = true)]
-    public long Id { get; set; }
-
+public class BlackList : RootEntity<long> {
     public long UserId { get; set; }
 
     public string Reason { get; set; }

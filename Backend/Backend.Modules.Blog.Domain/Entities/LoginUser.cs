@@ -1,5 +1,5 @@
 ﻿namespace Backend.Domain.Entities;
 
-public class LoginUser {
+public class LoginUser: RootEntity<long> {
     
 }

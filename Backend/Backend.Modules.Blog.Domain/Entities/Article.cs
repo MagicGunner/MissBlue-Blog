@@ -3,10 +3,7 @@
 namespace Backend.Domain.Entities;
 
 [SugarTable("t_article")]
-public class Article {
-    [SugarColumn(IsPrimaryKey = true, IsIdentity = true)]
-    public long Id { get; set; }
-
+public class Article : RootEntity<long> {
     public long UserId { get; set; }
 
     public long CategoryId { get; set; }

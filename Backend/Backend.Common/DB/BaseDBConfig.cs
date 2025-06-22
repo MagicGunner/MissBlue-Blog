@@ -6,12 +6,12 @@ public class BaseDBConfig {
     /// <summary>
     /// 所有库配置
     /// </summary>
-    public static readonly List<ConnectionConfig> AllConfigs = new();
+    public static readonly List<ConnectionConfig> AllConfigs = [];
 
     /// <summary>
     /// 有效的库连接(除去Log库)
     /// </summary>
-    public static List<ConnectionConfig> ValidConfig = new();
+    public static List<ConnectionConfig> ValidConfig = [];
 
     public static ConnectionConfig MainConfig;
     public static ConnectionConfig LogConfig; //日志库
@@ -34,16 +34,16 @@ public class BaseDBConfig {
 
 
     public static (List<MutiDBOperate>, List<MutiDBOperate>) MutiInitConn() {
-        List<MutiDBOperate> listdatabase = AppSettings.App<MutiDBOperate>("DBS")
-                                                      .Where(i => i.Enabled)
-                                                      .ToList();
+        var listDatabase = AppSettings.App<MutiDBOperate>("DBS")
+                                      .Where(i => i.Enabled)
+                                      .ToList();
         var mainDbId = AppSettings.App("MainDB");
-        var mainDbModel = listdatabase.Single(d => d.ConnId == mainDbId);
-        listdatabase.Remove(mainDbModel);
-        listdatabase.Insert(0, mainDbModel);
+        var mainDbModel = listDatabase.Single(d => d.ConnId == mainDbId);
+        listDatabase.Remove(mainDbModel);
+        listDatabase.Insert(0, mainDbModel);
 
-        foreach (var i in listdatabase) SpecialDbString(i);
-        return (listdatabase, mainDbModel.Slaves);
+        foreach (var i in listDatabase) SpecialDbString(i);
+        return (listDatabase, mainDbModel.Slaves);
     }
 
     private static string DifDBConnOfSecurity(params string[] conn) {

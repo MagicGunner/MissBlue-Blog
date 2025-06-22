@@ -3,11 +3,7 @@
 namespace Backend.Domain.Entities;
 
 [SugarTable("t_article_tag")]
-public class ArticleTag {
-    // 主键ID（如果是主键自增，设定 IsPrimaryKey = true, IsIdentity = true）
-    [SugarColumn(IsPrimaryKey = true, IsIdentity = true)]
-    public long Id { get; set; }
-
+public class ArticleTag : RootEntity<long> {
     // 文章ID
     public long ArticleId { get; set; }
 
