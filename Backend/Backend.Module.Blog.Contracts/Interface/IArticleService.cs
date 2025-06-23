@@ -1,4 +1,5 @@
-﻿using Backend.Modules.Blog.Contracts.DTO;
+﻿using Backend.Common.Results;
+using Backend.Modules.Blog.Contracts.DTO;
 using Backend.Modules.Blog.Contracts.VO;
 using Microsoft.AspNetCore.Http;
 
@@ -14,7 +15,7 @@ public interface IArticleService {
     Task<List<CategoryArticleVO>>        ListCategoryArticleAsync(int      type, long typeId);
     Task                                 AddVisitCountAsync(long           id);
     Task<string>                         UploadArticleCoverAsync(IFormFile articleCover);
-    Task                                 PublishAsync(ArticleDto           articleDto);
+    Task<ResponseResult<object>>         PublishAsync(ArticleDto           articleDto);
     Task                                 DeleteArticleCoverAsync(string    articleCoverUrl);
     Task<string>                         UploadArticleImageAsync(IFormFile articleImage);
     Task<List<ArticleListVO>>            ListArticleAsync();

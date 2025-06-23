@@ -1,10 +1,9 @@
 ﻿using SqlSugar;
 
-namespace Backend.Domain.Entities;
+namespace Backend.Modules.Blog.Domain.Entities;
 
 [SugarTable("t_photo")]
-public class Photo: RootEntity<long> {
-
+public class Photo : RootEntity<long> {
     /// <summary>
     /// 创建者用户ID
     /// </summary>

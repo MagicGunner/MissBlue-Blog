@@ -26,12 +26,13 @@ public static class SqlSugarSetup {
                                                                                                    MoreSettings = new ConnMoreSettings() {
                                                                                                                       IsAutoRemoveDataCache = true,
                                                                                                                       SqlServerCodeFirstNvarchar = true,
+                                                                                                                      IsAuto
                                                                                                                   },
                                                                                                    // 自定义特性
                                                                                                    ConfigureExternalServices = new ConfigureExternalServices {
                                                                                                                                    DataInfoCacheService = new SqlSugarCacheService(),
                                                                                                                                },
-                                                                                                   InitKeyType = InitKeyType.Attribute
+                                                                                                   InitKeyType = InitKeyType.Attribute,
                                                                                                };
                                                              if (SqlSugarConst.LogConfigId.ToLower().Equals(m.ConnId.ToLower())) {
                                                                  BaseDBConfig.LogConfig = config;

@@ -1,6 +1,6 @@
 ﻿using SqlSugar;
 
-namespace Backend.Domain.Entities;
+namespace Backend.Modules.Blog.Domain.Entities;
 
 [SugarTable("sys_user_role")]
 public class UserRole : RootEntity<long> {

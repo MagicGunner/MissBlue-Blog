@@ -1,6 +1,6 @@
 ﻿using SqlSugar;
 
-namespace Backend.Domain.Entities;
+namespace Backend.Modules.Blog.Domain.Entities;
 
 [SugarTable("t_tag")]
 public class Tag : RootEntity<long> {

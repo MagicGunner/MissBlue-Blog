@@ -1,6 +1,6 @@
 ﻿using SqlSugar;
 
-namespace Backend.Domain.Entities;
+namespace Backend.Modules.Blog.Domain.Entities;
 
 [SugarTable("t_link")]
 public class Link : RootEntity<long> {

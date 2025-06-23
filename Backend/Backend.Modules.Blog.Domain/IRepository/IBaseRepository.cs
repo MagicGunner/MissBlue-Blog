@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using SqlSugar;
 
-namespace Backend.Domain.IRepository;
+namespace Backend.Modules.Blog.Domain.IRepository;
 
 public interface IBaseRepository<TEntity> where TEntity : class {
     ISqlSugarClient Db { get; }

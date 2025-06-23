@@ -5,12 +5,11 @@
         <LangVersion>preview</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RootNamespace>Backend.Modules.Blog.Application</RootNamespace>
+        <RootNamespace>Backend.Modules.Blog.Common</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Backend.Module.Blog.Contracts\Backend.Module.Blog.Contracts.csproj"/>
-        <ProjectReference Include="..\Backend.Modules.Blog.Domain\Backend.Modules.Blog.Domain.csproj"/>
+        <Folder Include="Utils\"/>
     </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-﻿using Backend.Modules.Blog.Infrastructure.Enums;
+﻿using Backend.Modules.Blog.Domain.Entities.Tenants;
 
 namespace Backend.Modules.Blog.Infrastructure.Attributes;
 

@@ -5,10 +5,16 @@
         <LangVersion>preview</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <RootNamespace>Backend.Modules.Blog.Infrastructure</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\Backend.Modules.Blog.Common\Backend.Modules.Blog.Common.csproj"/>
         <ProjectReference Include="..\Backend.Modules.Blog.Domain\Backend.Modules.Blog.Domain.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="Enums\"/>
     </ItemGroup>
 
 </Project>

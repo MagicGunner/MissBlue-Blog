@@ -18,7 +18,7 @@ builder.ConfigureApplication();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.Replace(ServiceDescriptor.Transient<IControllerActivator, ServiceBasedControllerActivator>());
+// builder.Services.Replace(ServiceDescriptor.Transient<IControllerActivator, ServiceBasedControllerActivator>());
 builder.Services.AddControllers();
 
 builder.Services.AddSingleton(new AppSettings(builder.Configuration));
@@ -26,6 +26,7 @@ builder.Services.AddAllOptionRegister();
 
 // ORM
 builder.Services.AddSqlSugarSetup();
+
 
 var app = builder.Build();
 app.ConfigureApplication();
@@ -37,5 +38,6 @@ if (app.Environment.IsDevelopment()) {
 
 app.UseHttpsRedirection();
 
+app.MapControllers();
 
 app.Run();

@@ -13,20 +13,16 @@ public class AutofacModuleRegister : Module {
        */
     protected override void Load(ContainerBuilder builder) {
         var basePath = AppContext.BaseDirectory;
-        List<string> dllList = [
-                                   "Backend.Modules.Blog.Application.dll",
-                                   "Backend.Modules.Blog.Domain.dll",
-                               ];
-        foreach (var se in dllList) {
-            LoadByDllName(builder, Path.Combine(basePath, se));
-        }
-    }
 
-    private void LoadByDllName(ContainerBuilder builder, string dllName) {
-        var assembly = Assembly.LoadFrom(dllName);
-        builder.RegisterAssemblyTypes(assembly)
+        var targetDlls = Directory.GetFiles(basePath, "*.dll", SearchOption.AllDirectories)
+                                  .Where(file => file.EndsWith("Application.dll") || file.EndsWith("Domain.dll"))
+                                  .ToList();
+
+        var assemblies = targetDlls.Select(Assembly.LoadFrom).ToArray();
+
+        builder.RegisterAssemblyTypes(assemblies)
+               .Where(t => t.Name.EndsWith("Service") || t.Name.EndsWith("Repository"))
                .AsImplementedInterfaces()
-               .PropertiesAutowired()
-               .InstancePerDependency();
+               .InstancePerLifetimeScope();
     }
 }

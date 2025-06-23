@@ -1,11 +1,12 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
 using Backend.Common.Core;
-using Backend.Domain.IRepository;
-using Backend.Modules.Blog.Infrastructure.Attributes;
-using Backend.Modules.Blog.Infrastructure.Enums;
+using Backend.Modules.Blog.Domain.Entities;
+using Backend.Modules.Blog.Domain.Entities.Tenants;
+using Backend.Modules.Blog.Domain.IRepository;
 using Backend.Modules.Blog.Infrastructure.UnitOfWorks;
 using SqlSugar;
+using MultiTenantAttribute = Backend.Modules.Blog.Infrastructure.Attributes.MultiTenantAttribute;
 
 namespace Backend.Modules.Blog.Infrastructure.Repository;
 

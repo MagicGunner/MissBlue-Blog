@@ -18,7 +18,7 @@ public class ArticleController(IArticleService articleService) : ControllerBase 
         var data = await articleService.InitSearchByTitleAsync();
         return Ok(new PageVO<IEnumerable<InitSearchTitleVO>> {
                                                                  Page = data,
-                                                                 Total = data.LongCount()
+                                                                 Total = data.Count
                                                              });
     }
 

@@ -1,6 +1,6 @@
 ﻿using SqlSugar;
 
-namespace Backend.Domain.Entities;
+namespace Backend.Modules.Blog.Domain.Entities;
 
 public abstract class RootEntity<TKey> where TKey : IEquatable<TKey> {
     /// <summary>

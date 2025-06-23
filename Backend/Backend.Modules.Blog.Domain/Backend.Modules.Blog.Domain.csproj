@@ -5,7 +5,7 @@
         <LangVersion>preview</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RootNamespace>Backend.Domain</RootNamespace>
+        <RootNamespace>Backend.Modules.Blog.Domain</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -17,6 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Folder Include="Enums\"/>
         <Folder Include="IManager\"/>
         <Folder Include="Service\"/>
     </ItemGroup>

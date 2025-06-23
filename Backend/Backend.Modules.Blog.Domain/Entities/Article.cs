@@ -1,6 +1,6 @@
 ﻿using SqlSugar;
 
-namespace Backend.Domain.Entities;
+namespace Backend.Modules.Blog.Domain.Entities;
 
 [SugarTable("t_article")]
 public class Article : RootEntity<long> {
@@ -37,5 +37,5 @@ public class Article : RootEntity<long> {
     [SugarColumn(IsOnlyIgnoreInsert = true, IsOnlyIgnoreUpdate = false)]
     public DateTime UpdateTime { get; set; }
 
-    public int IsDeleted { get; set; }
+    public long IsDeleted { get; set; }
 }
