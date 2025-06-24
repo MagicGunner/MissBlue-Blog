@@ -26,11 +26,15 @@ public static class SqlSugarSetup {
                                                                                                    MoreSettings = new ConnMoreSettings() {
                                                                                                                       IsAutoRemoveDataCache = true,
                                                                                                                       SqlServerCodeFirstNvarchar = true,
-                                                                                                                      IsAuto
                                                                                                                   },
                                                                                                    // 自定义特性
                                                                                                    ConfigureExternalServices = new ConfigureExternalServices {
                                                                                                                                    DataInfoCacheService = new SqlSugarCacheService(),
+                                                                                                                                   // ✅ 开启实体属性与表字段映射下划线支持（如 UserId <-> user_id）
+                                                                                                                                   EntityService = (type, column) => {
+                                                                                                                                       column.DbColumnName
+                                                                                                                                           = UtilMethods.ToUnderLine(column.PropertyName);
+                                                                                                                                   }
                                                                                                                                },
                                                                                                    InitKeyType = InitKeyType.Attribute,
                                                                                                };
@@ -51,6 +55,7 @@ public static class SqlSugarSetup {
         // 参考：https://www.donet5.com/Home/Doc?typeId=1181
         services.AddSingleton<ISqlSugarClient>(o => {
                                                    return new SqlSugarScope(BaseDBConfig.AllConfigs, db => {
+                                                                                                         // 开启字段映射 user_id ←→ UserId
                                                                                                          BaseDBConfig.ValidConfig.ForEach(config => {
                                                                                                              var dbProvider = db.GetConnectionScope((string)config.ConfigId);
                                                                                                              // 打印SQL语句
