@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using SqlSugar;
 
-namespace Backend.Modules.Blog.Infrastructure.UnitOfWorks;
+namespace Backend.Infrastructure.UnitOfWorks;
 
 public interface IUnitOfWorkManage {
     SqlSugarScope GetDbClient();

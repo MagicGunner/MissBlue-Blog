@@ -21,6 +21,9 @@ builder.Services.AddSwaggerGen();
 // builder.Services.Replace(ServiceDescriptor.Transient<IControllerActivator, ServiceBasedControllerActivator>());
 builder.Services.AddControllers();
 
+builder.Services.AddAutoMapper(typeof(AutoMapperConfig));
+AutoMapperConfig.RegisterMappings();
+
 builder.Services.AddSingleton(new AppSettings(builder.Configuration));
 builder.Services.AddAllOptionRegister();
 

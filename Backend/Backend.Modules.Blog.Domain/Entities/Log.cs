@@ -1,9 +1,10 @@
-﻿using SqlSugar;
+﻿using Backend.Domain.Entity;
+using SqlSugar;
 
 namespace Backend.Modules.Blog.Domain.Entities;
 
 [SugarTable("sys_log")]
-public class Log : RootEntity<long> {
+public class Log : RootEntity {
     /// <summary>
     /// 模块名称
     /// </summary>

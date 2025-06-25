@@ -1,10 +1,11 @@
 ﻿using Backend.Common.IP;
+using Backend.Domain.Entity;
 using SqlSugar;
 
 namespace Backend.Modules.Blog.Domain.Entities;
 
 [SugarTable("t_black_list")]
-public class BlackList : RootEntity<long> {
+public class BlackList : RootEntity {
     public long UserId { get; set; }
 
     public string Reason { get; set; }

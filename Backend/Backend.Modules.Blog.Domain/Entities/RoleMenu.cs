@@ -1,9 +1,10 @@
-﻿using SqlSugar;
+﻿using Backend.Domain.Entity;
+using SqlSugar;
 
 namespace Backend.Modules.Blog.Domain.Entities;
 
 [SugarTable("sys_role_menu")]
-public class RoleMenu : RootEntity<long> {
+public class RoleMenu : RootEntity {
     /// <summary>
     /// 角色ID
     /// </summary>

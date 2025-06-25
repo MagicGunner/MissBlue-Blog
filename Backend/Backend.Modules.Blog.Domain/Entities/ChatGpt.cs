@@ -1,9 +1,10 @@
-﻿using SqlSugar;
+﻿using Backend.Domain.Entity;
+using SqlSugar;
 
 namespace Backend.Modules.Blog.Domain.Entities;
 
 [SugarTable("t_chat_gpt")]
-public class ChatGpt : RootEntity<long> {
+public class ChatGpt : RootEntity {
     /// <summary>
     /// 所属用户 ID
     /// </summary>

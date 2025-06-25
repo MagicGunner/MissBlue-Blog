@@ -1,9 +1,10 @@
-﻿using SqlSugar;
+﻿using Backend.Domain.Entity;
+using SqlSugar;
 
 namespace Backend.Modules.Blog.Domain.Entities;
 
 [SugarTable("sys_menu")]
-public class Menu : RootEntity<long> {
+public class Menu : RootEntity {
     /// <summary>
     /// 菜单标题
     /// </summary>

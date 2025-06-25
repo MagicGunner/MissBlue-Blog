@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using SqlSugar;
 
-namespace Backend.Modules.Blog.Infrastructure.UnitOfWorks;
+namespace Backend.Infrastructure.UnitOfWorks;
 
 public class UnitOfWork : IDisposable {
     public ILogger         Logger { get; set; }

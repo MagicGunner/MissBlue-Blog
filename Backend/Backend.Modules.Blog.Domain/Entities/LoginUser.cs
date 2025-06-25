@@ -1,4 +1,6 @@
-﻿namespace Backend.Modules.Blog.Domain.Entities;
+﻿using Backend.Domain.Entity;
 
-public class LoginUser : RootEntity<long> {
+namespace Backend.Modules.Blog.Domain.Entities;
+
+public class LoginUser : RootEntity {
 }

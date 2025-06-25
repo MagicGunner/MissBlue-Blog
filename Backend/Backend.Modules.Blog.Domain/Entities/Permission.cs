@@ -1,9 +1,10 @@
-﻿using SqlSugar;
+﻿using Backend.Domain.Entity;
+using SqlSugar;
 
 namespace Backend.Modules.Blog.Domain.Entities;
 
 [SugarTable("sys_permission")]
-public class Permission : RootEntity<long> {
+public class Permission : RootEntity {
     /// <summary>
     /// 权限描述（例如“新增用户”）
     /// </summary>

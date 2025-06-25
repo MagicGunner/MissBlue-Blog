@@ -1,9 +1,10 @@
-﻿using SqlSugar;
+﻿using Backend.Domain.Entity;
+using SqlSugar;
 
 namespace Backend.Modules.Blog.Domain.Entities;
 
 [SugarTable("t_user_message")]
-public class UserMessage : RootEntity<long> {
+public class UserMessage : RootEntity {
     /// <summary>
     /// 留言用户 ID
     /// </summary>

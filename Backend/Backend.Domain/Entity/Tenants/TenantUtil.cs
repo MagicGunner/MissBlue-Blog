@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using SqlSugar;
 
-namespace Backend.Modules.Blog.Domain.Entities.Tenants;
+namespace Backend.Domain.Entity.Tenants;
 
 public static class TenantUtil {
     public static List<Type> GetTenantEntityTypes(TenantTypeEnum? tenantType = null) {

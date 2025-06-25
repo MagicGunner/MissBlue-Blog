@@ -1,6 +1,6 @@
-﻿using Backend.Modules.Blog.Domain.Entities.Tenants;
+﻿using Backend.Domain.Entity.Tenants;
 
-namespace Backend.Modules.Blog.Infrastructure.Attributes;
+namespace Backend.Infrastructure.Attributes;
 
 public class MultiTenantAttribute : Attribute {
     public MultiTenantAttribute() {

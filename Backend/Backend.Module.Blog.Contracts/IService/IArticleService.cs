@@ -3,7 +3,7 @@ using Backend.Modules.Blog.Contracts.DTO;
 using Backend.Modules.Blog.Contracts.VO;
 using Microsoft.AspNetCore.Http;
 
-namespace Backend.Modules.Blog.Contracts.Interface;
+namespace Backend.Modules.Blog.Contracts.IService;
 
 public interface IArticleService {
     Task<PageVO<List<ArticleVO>>>        ListAllArticleAsync(int pageNum, int pageSize);

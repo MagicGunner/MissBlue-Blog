@@ -1,9 +1,10 @@
-﻿using SqlSugar;
+﻿using Backend.Domain.Entity;
+using SqlSugar;
 
 namespace Backend.Modules.Blog.Domain.Entities;
 
 [SugarTable("t_banners")]
-public class Banners : RootEntity<long> {
+public class Banners : RootEntity {
     // 图片路径
     public string Path { get; set; }
 

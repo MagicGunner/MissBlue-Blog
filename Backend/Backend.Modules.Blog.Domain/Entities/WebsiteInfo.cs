@@ -1,9 +1,10 @@
-﻿using SqlSugar;
+﻿using Backend.Domain.Entity;
+using SqlSugar;
 
 namespace Backend.Modules.Blog.Domain.Entities;
 
 [SugarTable("sys_website_info")]
-public class WebsiteInfo : RootEntity<long> {
+public class WebsiteInfo : RootEntity {
     /// <summary>
     /// 站长头像
     /// </summary>

@@ -1,9 +1,9 @@
 ﻿using Backend.Common.Core;
-using Backend.Modules.Blog.Domain.Entities;
-using Backend.Modules.Blog.Domain.Entities.Tenants;
+using Backend.Domain.Entity;
+using Backend.Domain.Entity.Tenants;
 using SqlSugar;
 
-namespace Backend.Modules.Blog.Domain;
+namespace Backend.Domain;
 
 public class RepositorySetting {
     /// <summary>
@@ -22,10 +22,10 @@ public class RepositorySetting {
     }
 
     private static readonly Lazy<IEnumerable<Type>> AllEntitys = new(() => {
-                                                                         return typeof(RootEntity<>).Assembly
-                                                                                                    .GetTypes()
-                                                                                                    .Where(t => t.IsClass && !t.IsAbstract)
-                                                                                                    .Where(it => it.FullName != null && it.FullName.StartsWith("BCVP.Net8.Model"));
+                                                                         return typeof(RootEntity).Assembly
+                                                                                                  .GetTypes()
+                                                                                                  .Where(t => t.IsClass && !t.IsAbstract)
+                                                                                                  .Where(it => it.FullName != null && it.FullName.StartsWith("BCVP.Net8.Model"));
                                                                      });
 
     public static IEnumerable<Type> Entitys => AllEntitys.Value;

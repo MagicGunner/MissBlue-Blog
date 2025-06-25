@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Backend.Modules.Blog.Contracts.DTO;
-using Backend.Modules.Blog.Contracts.Interface;
+using Backend.Modules.Blog.Contracts.IService;
 using Backend.Modules.Blog.Contracts.VO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

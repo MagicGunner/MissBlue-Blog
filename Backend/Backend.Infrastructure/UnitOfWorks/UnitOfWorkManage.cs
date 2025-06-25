@@ -4,7 +4,7 @@ using Backend.Common.Extensions;
 using Microsoft.Extensions.Logging;
 using SqlSugar;
 
-namespace Backend.Modules.Blog.Infrastructure.UnitOfWorks {
+namespace Backend.Infrastructure.UnitOfWorks {
     public class UnitOfWorkManage : IUnitOfWorkManage {
         private readonly ILogger<UnitOfWorkManage> _logger;
         private readonly ISqlSugarClient           _sqlSugarClient;

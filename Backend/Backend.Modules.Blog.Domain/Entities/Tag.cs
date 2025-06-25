@@ -1,24 +1,19 @@
-﻿using SqlSugar;
+﻿using Backend.Domain.Entity;
+using SqlSugar;
 
 namespace Backend.Modules.Blog.Domain.Entities;
 
 [SugarTable("t_tag")]
-public class Tag : RootEntity<long> {
+public class Tag : RootEntity {
     /// <summary>
     /// 标签名称
     /// </summary>
     public string TagName { get; set; }
 
-    /// <summary>
-    /// 创建时间（插入时自动填充）
-    /// </summary>
-    [SugarColumn(IsOnlyIgnoreInsert = false, IsOnlyIgnoreUpdate = true)]
+    [SugarColumn(ColumnDescription = "创建时间", IsNullable = false, InsertServerTime = true)]
     public DateTime CreateTime { get; set; }
 
-    /// <summary>
-    /// 更新时间（插入和更新时自动填充）
-    /// </summary>
-    [SugarColumn(IsOnlyIgnoreInsert = false, IsOnlyIgnoreUpdate = false)]
+    [SugarColumn(ColumnDescription = "更新时间", IsNullable = false, InsertServerTime = true, UpdateServerTime = true)]
     public DateTime UpdateTime { get; set; }
 
     /// <summary>

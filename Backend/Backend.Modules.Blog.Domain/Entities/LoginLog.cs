@@ -1,9 +1,10 @@
-﻿using SqlSugar;
+﻿using Backend.Domain.Entity;
+using SqlSugar;
 
 namespace Backend.Modules.Blog.Domain.Entities;
 
 [SugarTable("sys_login_log")]
-public class LoginLog : RootEntity<long> {
+public class LoginLog : RootEntity {
     /// <summary>
     /// 用户名称
     /// </summary>

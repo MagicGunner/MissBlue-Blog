@@ -1,9 +1,10 @@
-﻿using SqlSugar;
+﻿using Backend.Domain.Entity;
+using SqlSugar;
 
 namespace Backend.Modules.Blog.Domain.Entities;
 
 [SugarTable("t_comment")]
-public class Comment : RootEntity<long> {
+public class Comment : RootEntity {
     /// <summary>
     /// 评论类型（1：文章，2：留言板）
     /// </summary>

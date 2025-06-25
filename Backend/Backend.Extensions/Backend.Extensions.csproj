@@ -12,11 +12,18 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\Backend.Application\Backend.Application.csproj"/>
         <ProjectReference Include="..\Backend.Common\Backend.Common.csproj"/>
+        <ProjectReference Include="..\Backend.Contracts\Backend.Contracts.csproj"/>
+        <ProjectReference Include="..\Backend.Domain\Backend.Domain.csproj"/>
+        <ProjectReference Include="..\Backend.Infrastructure\Backend.Infrastructure.csproj"/>
+        <ProjectReference Include="..\Backend.Module.Blog.Contracts\Backend.Module.Blog.Contracts.csproj"/>
+        <ProjectReference Include="..\Backend.Modules.Blog.Domain\Backend.Modules.Blog.Domain.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.0"/>
+        <PackageReference Include="Autofac.Extras.DynamicProxy" Version="7.1.0"/>
     </ItemGroup>
 
 </Project>

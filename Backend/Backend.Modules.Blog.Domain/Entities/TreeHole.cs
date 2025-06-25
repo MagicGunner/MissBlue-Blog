@@ -1,9 +1,10 @@
-﻿using SqlSugar;
+﻿using Backend.Domain.Entity;
+using SqlSugar;
 
 namespace Backend.Modules.Blog.Domain.Entities;
 
 [SugarTable("t_tree_hole")]
-public class TreeHole : RootEntity<long> {
+public class TreeHole : RootEntity {
     /// <summary>
     /// 发布用户ID
     /// </summary>

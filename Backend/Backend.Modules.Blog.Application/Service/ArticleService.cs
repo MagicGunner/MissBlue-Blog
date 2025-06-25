@@ -1,6 +1,6 @@
 ﻿using Backend.Common.Results;
 using Backend.Modules.Blog.Contracts.DTO;
-using Backend.Modules.Blog.Contracts.Interface;
+using Backend.Modules.Blog.Contracts.IService;
 using Backend.Modules.Blog.Contracts.VO;
 using Backend.Modules.Blog.Domain.Entities;
 using Microsoft.AspNetCore.Http;

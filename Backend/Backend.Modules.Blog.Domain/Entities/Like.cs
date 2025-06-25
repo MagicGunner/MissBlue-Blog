@@ -1,9 +1,10 @@
-﻿using SqlSugar;
+﻿using Backend.Domain.Entity;
+using SqlSugar;
 
 namespace Backend.Modules.Blog.Domain.Entities;
 
 [SugarTable("t_like")]
-public class Like : RootEntity<long> {
+public class Like : RootEntity {
     /// <summary>
     /// 点赞用户ID
     /// </summary>

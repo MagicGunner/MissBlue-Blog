@@ -1,9 +1,10 @@
-﻿using SqlSugar;
+﻿using Backend.Domain.Entity;
+using SqlSugar;
 
 namespace Backend.Modules.Blog.Domain.Entities;
 
 [SugarTable("t_favorite")]
-public class Favorite : RootEntity<long> {
+public class Favorite : RootEntity {
     /// <summary>
     /// 收藏的用户ID
     /// </summary>

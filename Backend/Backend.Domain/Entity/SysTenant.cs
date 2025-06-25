@@ -1,7 +1,7 @@
-﻿using Backend.Modules.Blog.Domain.Entities.Tenants;
+﻿using Backend.Domain.Entity.Tenants;
 using SqlSugar;
 
-namespace Backend.Modules.Blog.Domain.Entities;
+namespace Backend.Domain.Entity;
 
 /// <summary>
 /// 系统租户表 <br/>
@@ -14,7 +14,7 @@ namespace Backend.Modules.Blog.Domain.Entities;
 /// 注意:<br/>
 /// 使用租户Id方案,无需配置分库的连接
 /// </summary>
-public class SysTenant : RootEntity<long> {
+public class SysTenant : RootEntity {
     /// <summary>
     /// 名称
     /// </summary>

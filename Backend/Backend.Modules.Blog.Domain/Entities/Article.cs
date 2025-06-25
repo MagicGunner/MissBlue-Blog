@@ -1,9 +1,10 @@
-﻿using SqlSugar;
+﻿using Backend.Domain.Entity;
+using SqlSugar;
 
 namespace Backend.Modules.Blog.Domain.Entities;
 
 [SugarTable("t_article")]
-public class Article : RootEntity<long> {
+public class Article : RootEntity {
     public long UserId { get; set; }
 
     public long CategoryId { get; set; }

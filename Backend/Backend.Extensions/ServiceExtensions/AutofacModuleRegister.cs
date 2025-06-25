@@ -1,5 +1,11 @@
 ﻿using System.Reflection;
 using Autofac;
+using Autofac.Extras.DynamicProxy;
+using Backend.Application;
+using Backend.Contracts;
+using Backend.Domain;
+using Backend.Infrastructure;
+using Backend.Infrastructure.UnitOfWorks;
 using Module = Autofac.Module;
 
 namespace Backend.Extensions.ServiceExtensions;
@@ -20,9 +26,31 @@ public class AutofacModuleRegister : Module {
 
         var assemblies = targetDlls.Select(Assembly.LoadFrom).ToArray();
 
+        var aopTypes = new List<Type> {
+                                          typeof(ServiceAOP),
+                                          typeof(TranAOP)
+                                      };
+        builder.RegisterType<ServiceAOP>();
+        builder.RegisterType<TranAOP>();
+
         builder.RegisterAssemblyTypes(assemblies)
                .Where(t => t.Name.EndsWith("Service") || t.Name.EndsWith("Repository"))
                .AsImplementedInterfaces()
                .InstancePerLifetimeScope();
+
+        builder.RegisterGeneric(typeof(BaseRepositories<>))
+               .As(typeof(IBaseRepositories<>))
+               .InstancePerDependency(); //注册仓储
+        builder.RegisterGeneric(typeof(BaseServices<,>))
+               .As(typeof(IBaseServices<,>))
+               .EnableInterfaceInterceptors()
+               .InterceptedBy(aopTypes.ToArray())
+               .InstancePerDependency(); //注册服务
+
+        builder.RegisterType<UnitOfWorkManage>()
+               .As<IUnitOfWorkManage>()
+               .AsImplementedInterfaces()
+               .InstancePerLifetimeScope()
+               .PropertiesAutowired();
     }
 }

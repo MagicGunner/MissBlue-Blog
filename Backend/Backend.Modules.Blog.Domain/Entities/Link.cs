@@ -1,9 +1,10 @@
-﻿using SqlSugar;
+﻿using Backend.Domain.Entity;
+using SqlSugar;
 
 namespace Backend.Modules.Blog.Domain.Entities;
 
 [SugarTable("t_link")]
-public class Link : RootEntity<long> {
+public class Link : RootEntity {
     /// <summary>
     /// 用户ID（关联谁添加的友链）
     /// </summary>

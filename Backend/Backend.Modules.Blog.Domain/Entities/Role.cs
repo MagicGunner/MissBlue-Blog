@@ -1,9 +1,10 @@
-﻿using SqlSugar;
+﻿using Backend.Domain.Entity;
+using SqlSugar;
 
 namespace Backend.Modules.Blog.Domain.Entities;
 
 [SugarTable("sys_role")]
-public class Role : RootEntity<long> {
+public class Role : RootEntity {
     /// <summary>
     /// 角色名称（如“管理员”、“编辑”）
     /// </summary>

@@ -1,6 +1,6 @@
 ﻿using SqlSugar;
 
-namespace Backend.Modules.Blog.Domain.Entities.Tenants;
+namespace Backend.Domain.Entity.Tenants;
 
 /// <summary>
 /// 租户模型接口

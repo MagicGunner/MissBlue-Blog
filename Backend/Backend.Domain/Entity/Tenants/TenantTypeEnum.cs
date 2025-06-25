@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Backend.Modules.Blog.Domain.Entities.Tenants;
+namespace Backend.Domain.Entity.Tenants;
 
 /// <summary>
 /// 租户隔离方案

@@ -1,4 +1,4 @@
-﻿namespace Backend.Modules.Blog.Domain.Entities.Tenants;
+﻿namespace Backend.Domain.Entity.Tenants;
 
 /// <summary>
 /// 标识 多租户 的业务表 <br/>
