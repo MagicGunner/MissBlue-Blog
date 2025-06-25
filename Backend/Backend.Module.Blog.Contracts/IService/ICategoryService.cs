@@ -9,6 +9,6 @@ public interface ICategoryService {
     Task<ResponseResult<object>> DeleteByIdsAsync(List<long> ids);
     Task<ResponseResult<object>> UpdateAsync(CategoryDto     categoryDTO);
     Task<List<CategoryVO>>       ListAllAsync();
-    Task<CategoryVO?>            GetByIdAsync(long                id);
-    Task<List<CategoryVO>>       SearchTagAsync(SearchCategoryDTO searchCategoryDTO);
+    Task<CategoryVO?>            GetByIdAsync(long                     id);
+    Task<List<CategoryVO>>       SearchCategoryAsync(SearchCategoryDTO searchCategoryDto);
 }

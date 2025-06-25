@@ -3,8 +3,8 @@ using SqlSugar;
 
 namespace Backend.Modules.Blog.Domain.Entities;
 
-[SugarTable("t_user_message")]
-public class UserMessage : RootEntity {
+[SugarTable("t_leave_word")]
+public class LeaveWord : RootEntity {
     /// <summary>
     /// 留言用户 ID
     /// </summary>

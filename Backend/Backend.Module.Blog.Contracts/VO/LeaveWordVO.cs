@@ -3,7 +3,7 @@
 /// <summary>
 /// 留言视图对象（LeaveWordVO）
 /// </summary>
-public class UserMessageVO {
+public class LeaveWordVO {
     /// <summary>
     /// 留言ID
     /// </summary>

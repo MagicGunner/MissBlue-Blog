@@ -2,7 +2,7 @@
 
 namespace Backend.Modules.Blog.Contracts.DTO;
 
-public class UserMessageIsCheckDTO {
+public class LeaveWordIsCheckDTO {
     /// <summary>
     /// 留言id
     /// </summary>

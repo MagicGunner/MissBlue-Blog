@@ -23,5 +23,5 @@ public class CategoryService(IMapper mapper, IBaseRepositories<Category> baseRep
     public async Task<ResponseResult<object>> UpdateAsync(CategoryDto     categoryDto)            => await baseServices.UpdateAsync(mapper.Map<Category>(categoryDto));
     public async Task<List<CategoryVO>>       ListAllAsync()                                      => await baseServices.QueryAsync();
     public async Task<CategoryVO?>            GetByIdAsync(long                id)                => (await baseServices.QueryAsync(i => i.Id == id)).FirstOrDefault();
-    public async Task<List<CategoryVO>>       SearchTagAsync(SearchCategoryDTO searchCategoryDTO) => await baseServices.QueryAsync(category => category.CategoryName == searchCategoryDTO.CategoryName);
+    public async Task<List<CategoryVO>> SearchCategoryAsync(SearchCategoryDTO searchCategoryDTO) => await baseServices.QueryAsync(category => category.CategoryName == searchCategoryDTO.CategoryName);
 }
