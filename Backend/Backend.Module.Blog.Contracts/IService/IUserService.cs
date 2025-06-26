@@ -4,5 +4,6 @@ using Backend.Modules.Blog.Contracts.VO;
 namespace Backend.Modules.Blog.Contracts.IService;
 
 public interface IUserService {
-    Task<ResponseResult<UserAccountVO>> GetAccountByIdAsync();
+    Task<UserAccountVO>    GetAccountByIdAsync();
+    Task<List<UserListVO>> ListAllAsync();
 }

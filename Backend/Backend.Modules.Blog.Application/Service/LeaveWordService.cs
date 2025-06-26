@@ -9,10 +9,8 @@ using SqlSugar;
 
 namespace Backend.Modules.Blog.Application.Service;
 
-public class LeaveWordService(IMapper mapper, IBaseRepositories<Category> baseRepositories, IBaseServices<LeaveWord, LeaveWordVO> baseServices) : ILeaveWordService {
-    public ISqlSugarClient Db => baseRepositories.Db;
-
-    public Task<ResponseResult<object>> AddLeaveWordAsync(string content) {
+public class LeaveWordService(IMapper mapper, IBaseRepositories<Category> baseRepositories, IBaseServices<LeaveWord> baseServices) : ILeaveWordService {
+    public Task<long> AddLeaveWordAsync(string content) {
         throw new NotImplementedException();
     }
 }

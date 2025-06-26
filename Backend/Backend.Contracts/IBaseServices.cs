@@ -4,7 +4,7 @@ using SqlSugar;
 
 namespace Backend.Contracts;
 
-public interface IBaseServices<TEntity, TVo> where TEntity : class {
+public interface IBaseServices<TEntity> where TEntity : class {
     ISqlSugarClient Db { get; }
 
     #region 增(Add)
@@ -20,16 +20,16 @@ public interface IBaseServices<TEntity, TVo> where TEntity : class {
 
     #region 删(Delete)
 
-    Task<ResponseResult<object>> DeleteAsync(TEntity         entity);
-    Task<ResponseResult<object>> DeleteByIdsAsync(List<long> ids);
+    Task<bool> DeleteAsync(TEntity         entity);
+    Task<bool> DeleteByIdsAsync(List<long> ids);
 
     #endregion
 
     #region 改(Update)
 
-    Task<ResponseResult<object>> UpdateAsync(TEntity entity);
+    Task<bool> UpdateAsync(TEntity entity);
 
-    Task<ResponseResult<object>> UpdateAsync(Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TEntity>> updateExpression);
+    Task<bool> UpdateAsync(Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TEntity>> updateExpression);
 
     #endregion
 
@@ -40,7 +40,7 @@ public interface IBaseServices<TEntity, TVo> where TEntity : class {
     /// </summary>
     /// <param name="whereExpression">默认为空，为空时查询所有</param>
     /// <returns></returns>
-    Task<List<TVo>> QueryAsync(Expression<Func<TEntity, bool>>? whereExpression = null);
+    Task<List<TVo>> QueryAsync<TVo>(Expression<Func<TEntity, bool>>? whereExpression = null);
 
     #endregion
 }

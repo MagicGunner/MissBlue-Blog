@@ -11,25 +11,19 @@ public class ResponseResult<T> {
     public int Code { get; set; }
 
     /// <summary>提示信息</summary>
-    public string? Msg { get; set; }
+    public string? Message { get; set; }
 
     /// <summary>返回数据</summary>
     public T? Data { get; set; }
 
-    private ResponseResult() { }
+    public ResponseResult(bool result, T? data = default, RespEnum respType = RespEnum.Success, string? msg = null) {
+        if (result) {
+            Code = (int)RespEnum.Success;
+        } else {
+            Code = int.Max((int)respType, 500);
+        }
 
-
-    public static ResponseResult<T> Success(T? data = default, string? msg = null) =>
-        new() {
-                  Code = (int)RespEnum.Success,
-                  Msg = msg ?? RespEnum.Success.GetDescription(),
-                  Data = data
-              };
-
-    public static ResponseResult<T> Failure(int code = (int)RespEnum.Failure, string? msg = null, T? data = default) =>
-        new() {
-                  Code = code,
-                  Msg = msg ?? RespEnum.Failure.GetDescription(),
-                  Data = data
-              };
+        Data = data;
+        Message = msg ?? respType.GetDescription();
+    }
 }

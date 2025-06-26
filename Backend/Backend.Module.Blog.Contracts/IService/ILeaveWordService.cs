@@ -3,5 +3,5 @@
 namespace Backend.Modules.Blog.Contracts.IService;
 
 public interface ILeaveWordService {
-    Task<ResponseResult<object>> AddLeaveWordAsync(string content);
+    Task<long> AddLeaveWordAsync(string content);
 }

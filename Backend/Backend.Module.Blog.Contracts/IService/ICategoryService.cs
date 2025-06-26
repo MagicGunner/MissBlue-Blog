@@ -5,10 +5,10 @@ using Backend.Modules.Blog.Contracts.VO;
 namespace Backend.Modules.Blog.Contracts.IService;
 
 public interface ICategoryService {
-    Task<ResponseResult<object>> AddAsync(CategoryDto        categoryDTO);
-    Task<ResponseResult<object>> DeleteByIdsAsync(List<long> ids);
-    Task<ResponseResult<object>> UpdateAsync(CategoryDto     categoryDTO);
-    Task<List<CategoryVO>>       ListAllAsync();
-    Task<CategoryVO?>            GetByIdAsync(long                     id);
-    Task<List<CategoryVO>>       SearchCategoryAsync(SearchCategoryDTO searchCategoryDto);
+    Task<long>             AddAsync(CategoryDto        categoryDTO);
+    Task<bool>             DeleteByIdsAsync(List<long> ids);
+    Task<bool>             UpdateAsync(CategoryDto     categoryDTO);
+    Task<List<CategoryVO>> ListAllAsync();
+    Task<CategoryVO?>      GetByIdAsync(long                     id);
+    Task<List<CategoryVO>> SearchCategoryAsync(SearchCategoryDTO searchCategoryDto);
 }

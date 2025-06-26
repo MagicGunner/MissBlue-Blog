@@ -41,8 +41,8 @@ public class AutofacModuleRegister : Module {
         builder.RegisterGeneric(typeof(BaseRepositories<>))
                .As(typeof(IBaseRepositories<>))
                .InstancePerDependency(); //注册仓储
-        builder.RegisterGeneric(typeof(BaseServices<,>))
-               .As(typeof(IBaseServices<,>))
+        builder.RegisterGeneric(typeof(BaseServices<>))
+               .As(typeof(IBaseServices<>))
                .EnableInterfaceInterceptors()
                .InterceptedBy(aopTypes.ToArray())
                .InstancePerDependency(); //注册服务

@@ -12,24 +12,18 @@ using SqlSugar;
 
 namespace Backend.Modules.Blog.Application.Service;
 
-public class TagService(IMapper mapper, IBaseRepositories<Tag> baseRepositories, IBaseServices<Tag, TagVO> baseServices) : ITagService {
-    public ISqlSugarClient Db => baseRepositories.Db;
+public class TagService(IMapper mapper, IBaseRepositories<Tag> baseRepositories, IBaseServices<Tag> baseServices) : ITagService {
+    public async Task<long> AddAsync(TagDTO tagDTO) => await baseServices.AddAsync(mapper.Map<Tag>(tagDTO));
 
-    public async Task<ResponseResult<object>> AddAsync(TagDTO tagDTO) {
-        var tag = mapper.Map<Tag>(tagDTO);
-        var tagId = await baseServices.AddAsync(tag);
-        return tagId > 0 ? ResponseResult<object>.Success(tagId) : ResponseResult<object>.Failure(msg: "添加失败");
-    }
+    public async Task<bool> DeleteByIdsAsync(List<long> ids) => await baseServices.DeleteByIdsAsync(ids);
 
-    public async Task<ResponseResult<object>> DeleteByIdsAsync(List<long> ids) => await baseServices.DeleteByIdsAsync(ids);
-
-    public async Task<ResponseResult<object>> UpdateAsync(TagDTO tagDTO) => await baseServices.UpdateAsync(mapper.Map<Tag>(tagDTO));
+    public async Task<bool> UpdateAsync(TagDTO tagDTO) => await baseServices.UpdateAsync(mapper.Map<Tag>(tagDTO));
 
 
-    public async Task<List<TagVO>> ListAllAsync() => await baseServices.QueryAsync();
+    public async Task<List<TagVO>> ListAllAsync() => await baseServices.QueryAsync<TagVO>();
 
 
-    public async Task<List<TagVO>> SearchTagAsync(SearchTagDTO searchTagDTO) => await baseServices.QueryAsync(tag => tag.TagName == searchTagDTO.TagName);
+    public async Task<List<TagVO>> SearchTagAsync(SearchTagDTO searchTagDTO) => await baseServices.QueryAsync<TagVO>(tag => tag.TagName == searchTagDTO.TagName);
 
-    public async Task<TagVO?> GetByIdAsync(long id) => (await baseServices.QueryAsync(tag => tag.Id == id)).FirstOrDefault();
+    public async Task<TagVO?> GetByIdAsync(long id) => (await baseServices.QueryAsync<TagVO>(tag => tag.Id == id)).FirstOrDefault();
 }

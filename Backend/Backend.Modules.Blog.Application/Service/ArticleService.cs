@@ -131,9 +131,7 @@ public class ArticleService(ISqlSugarClient db) : IArticleService {
 
                                                    await db.Insertable(articleTags).ExecuteCommandAsync();
                                                });
-        return result.IsSuccess
-                   ? ResponseResult<object>.Success()
-                   : ResponseResult<object>.Failure(msg: "发布失败");
+        return new ResponseResult<object>(result.IsSuccess);
     }
 
     public Task DeleteArticleCoverAsync(string articleCoverUrl) {

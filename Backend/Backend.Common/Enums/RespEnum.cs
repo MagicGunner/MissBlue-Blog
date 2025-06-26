@@ -3,10 +3,10 @@
 namespace Backend.Common.Enums;
 
 public enum RespEnum {
-    [Description("success")]
+    [Description("操作成功")]
     Success = 200,
 
-    [Description("failure")]
+    [Description("操作失败")]
     Failure = 500,
 
     [Description("用户名或密码错误")]
