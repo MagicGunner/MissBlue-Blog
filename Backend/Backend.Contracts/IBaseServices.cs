@@ -14,22 +14,22 @@ public interface IBaseServices<TEntity> where TEntity : class {
     /// </summary>
     /// <param name="entity"></param>
     /// <returns></returns>
-    Task<long> AddAsync(TEntity entity);
+    Task<long> Add(TEntity entity);
 
     #endregion
 
     #region 删(Delete)
 
-    Task<bool> DeleteAsync(TEntity         entity);
-    Task<bool> DeleteByIdsAsync(List<long> ids);
+    Task<bool> Delete(TEntity         entity);
+    Task<bool> DeleteByIds(List<long> ids);
 
     #endregion
 
     #region 改(Update)
 
-    Task<bool> UpdateAsync(TEntity entity);
+    Task<bool> Update(TEntity entity);
 
-    Task<bool> UpdateAsync(Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TEntity>> updateExpression);
+    Task<bool> Update(Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TEntity>> updateExpression);
 
     #endregion
 
@@ -40,7 +40,14 @@ public interface IBaseServices<TEntity> where TEntity : class {
     /// </summary>
     /// <param name="whereExpression">默认为空，为空时查询所有</param>
     /// <returns></returns>
-    Task<List<TVo>> QueryAsync<TVo>(Expression<Func<TEntity, bool>>? whereExpression = null);
+    Task<List<TVo>> Query<TVo>(Expression<Func<TEntity, bool>>? whereExpression = null);
+
+    /// <summary>
+    /// 链式多条件查询
+    /// </summary>
+    /// <param name="buildQuery"></param>
+    /// <returns></returns>
+    Task<List<TVo>> QueryWithMulti<TVo>(Func<ISugarQueryable<TEntity>, ISugarQueryable<TEntity>>? buildQuery = null);
 
     #endregion
 }

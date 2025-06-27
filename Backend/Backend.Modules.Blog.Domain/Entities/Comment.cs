@@ -18,7 +18,7 @@ public class Comment : RootEntity {
     /// <summary>
     /// 父评论ID（顶级为0）
     /// </summary>
-    public long ParentId { get; set; }
+    public long? ParentId { get; set; }
 
     /// <summary>
     /// 回复评论ID

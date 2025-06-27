@@ -136,6 +136,16 @@ public class BaseRepositories<TEntity> : IBaseRepositories<TEntity> where TEntit
         return await _db.Queryable<TEntity>().WhereIF(expression != null, expression).ToListAsync();
     }
 
+    public async Task<List<TEntity>> QueryWithMulti(Func<ISugarQueryable<TEntity>, ISugarQueryable<TEntity>>? buildQuery = null) {
+        var query = _db.Queryable<TEntity>();
+
+        if (buildQuery != null) {
+            query = buildQuery(query);
+        }
+
+        return await query.ToListAsync();
+    }
+
     public async Task<List<TEntity>> QueryWithCache(Expression<Func<TEntity, bool>>? whereExpression = null) {
         return await _db.Queryable<TEntity>().WhereIF(whereExpression != null, whereExpression).WithCache().ToListAsync();
     }

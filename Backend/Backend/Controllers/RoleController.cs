@@ -32,6 +32,8 @@ public class RoleController(IRoleService roleService) : ControllerBase {
 
     [HttpPost("search")]
     public async Task<ResponseResult<List<RoleAllVO>>> SearchRoles([FromBody] RoleSearchDTO roleSearchDto) {
+        var list = await roleService.SearchAsync(roleSearchDto);
+        return new ResponseResult<List<RoleAllVO>>(list.Count > 0, list);
     }
 
     /// <summary>

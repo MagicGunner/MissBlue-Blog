@@ -12,16 +12,19 @@ public class BaseServices<TEntity>(IMapper mapper, IBaseRepositories<TEntity> ba
     where TEntity : class, new() {
     public ISqlSugarClient Db => baseRepositories.Db;
 
-    public async Task<long> AddAsync(TEntity entity) {
+    public async Task<long> Add(TEntity entity) {
         return await baseRepositories.Add(entity);
     }
 
-    public async Task<bool> DeleteAsync(TEntity         entity) => await baseRepositories.Delete(entity);
-    public async Task<bool> DeleteByIdsAsync(List<long> ids)    => await baseRepositories.DeleteByIds(ids);
-    public async Task<bool> UpdateAsync(TEntity         entity) => await baseRepositories.Update(entity);
+    public async Task<bool> Delete(TEntity         entity) => await baseRepositories.Delete(entity);
+    public async Task<bool> DeleteByIds(List<long> ids)    => await baseRepositories.DeleteByIds(ids);
+    public async Task<bool> Update(TEntity         entity) => await baseRepositories.Update(entity);
 
-    public async Task<bool> UpdateAsync(Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TEntity>> updateExpression) =>
+    public async Task<bool> Update(Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TEntity>> updateExpression) =>
         await baseRepositories.Update(whereExpression, updateExpression);
 
-    public async Task<List<TVo>> QueryAsync<TVo>(Expression<Func<TEntity, bool>>? whereExpression = null) => mapper.Map<List<TVo>>(await baseRepositories.Query(whereExpression));
+    public async Task<List<TVo>> Query<TVo>(Expression<Func<TEntity, bool>>? whereExpression = null) => mapper.Map<List<TVo>>(await baseRepositories.Query(whereExpression));
+
+    public async Task<List<TVo>> QueryWithMulti<TVo>(Func<ISugarQueryable<TEntity>, ISugarQueryable<TEntity>>? buildQuery = null) =>
+        mapper.Map<List<TVo>>(await baseRepositories.QueryWithMulti(buildQuery));
 }

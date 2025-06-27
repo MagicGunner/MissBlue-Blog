@@ -16,5 +16,5 @@ public class UserService(IMapper                 mapper,
         throw new NotImplementedException();
     }
 
-    public async Task<List<UserListVO>> ListAllAsync() => await baseServices.QueryAsync<UserListVO>();
+    public async Task<List<UserListVO>> ListAllAsync() => await baseServices.Query<UserListVO>();
 }
