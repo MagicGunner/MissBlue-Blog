@@ -9,6 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\Backend.Contracts\Backend.Contracts.csproj"/>
         <ProjectReference Include="..\Backend.Infrastructure\Backend.Infrastructure.csproj"/>
         <ProjectReference Include="..\Backend.Modules.Blog.Common\Backend.Modules.Blog.Common.csproj"/>
         <ProjectReference Include="..\Backend.Modules.Blog.Domain\Backend.Modules.Blog.Domain.csproj"/>

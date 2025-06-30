@@ -26,5 +26,8 @@ public class BlogMapperProfile : Profile {
         CreateMap<UpdateRoleStatusDTO, Role>();
 
         CreateMap<Comment, ArticleCommentVO>();
+
+        CreateMap<WebsiteInfo, WebsiteInfoVO>();
+        CreateMap<WebsiteInfoDTO, WebsiteInfo>();
     }
 }
