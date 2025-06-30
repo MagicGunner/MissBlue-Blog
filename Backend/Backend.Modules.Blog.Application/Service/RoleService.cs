@@ -1,6 +1,10 @@
 ﻿using AutoMapper;
 using Backend.Contracts;
+using Backend.Contracts.DTO;
+using Backend.Contracts.IService;
+using Backend.Contracts.VO;
 using Backend.Domain;
+using Backend.Domain.Entity;
 using Backend.Modules.Blog.Contracts.DTO;
 using Backend.Modules.Blog.Contracts.IService;
 using Backend.Modules.Blog.Contracts.VO;

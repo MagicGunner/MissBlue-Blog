@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Backend.Common.Results;
+using Backend.Contracts.DTO;
+using Backend.Contracts.VO;
 using Backend.Modules.Blog.Contracts.DTO;
 using Backend.Modules.Blog.Contracts.IService;
 using Backend.Modules.Blog.Contracts.VO;
@@ -8,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Backend.Controllers;
 
 [ApiController]
-[Route("role")]
+[Route("api/role")]
 [Tags("角色相关接口")]
 public class RoleController(IRoleService roleService) : ControllerBase {
     /// <summary>新增标签（文章列表用）</summary>

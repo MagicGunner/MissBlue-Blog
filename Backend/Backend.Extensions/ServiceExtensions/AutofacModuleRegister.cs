@@ -2,7 +2,9 @@
 using Autofac;
 using Autofac.Extras.DynamicProxy;
 using Backend.Application;
+using Backend.Application.Service;
 using Backend.Contracts;
+using Backend.Contracts.IService;
 using Backend.Domain;
 using Backend.Infrastructure;
 using Backend.Infrastructure.UnitOfWorks;

@@ -1,4 +1,7 @@
 ﻿using AutoMapper;
+using Backend.Contracts.DTO;
+using Backend.Contracts.VO;
+using Backend.Domain.Entity;
 using Backend.Modules.Blog.Contracts.DTO;
 using Backend.Modules.Blog.Contracts.VO;
 using Backend.Modules.Blog.Domain.Entities;
@@ -29,5 +32,7 @@ public class BlogMapperProfile : Profile {
 
         CreateMap<WebsiteInfo, WebsiteInfoVO>();
         CreateMap<WebsiteInfoDTO, WebsiteInfo>();
+
+        CreateMap<Permission, PermissionVO>();
     }
 }

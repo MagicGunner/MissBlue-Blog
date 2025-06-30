@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace Backend.Controllers;
 
 [ApiController]
-[Route("websiteInfo")]
+[Route("api/websiteInfo")]
+[Tags("网站信息")]
 public class WebsiteInfoController(IWebsiteInfoService websiteInfoService) : ControllerBase {
     /// <summary>
     /// 获取网站信息（前端）

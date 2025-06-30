@@ -1,13 +1,13 @@
 ﻿using Backend.Common.Results;
-using Backend.Modules.Blog.Contracts.IService;
-using Backend.Modules.Blog.Contracts.VO;
-using Microsoft.AspNetCore.Identity.Data;
+using Backend.Contracts.DTO;
+using Backend.Contracts.IService;
+using Backend.Contracts.VO;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers;
 
 [ApiController]
-[Route("user")]
+[Route("api/user")]
 [Tags("用户相关接口")]
 public class UserController(IUserService userService) : ControllerBase {
     /// <summary>
@@ -20,8 +20,9 @@ public class UserController(IUserService userService) : ControllerBase {
         return new ResponseResult<List<UserListVO>>(list.Count > 0, list);
     }
 
-    [HttpPost("login")]
-    public Task<ResponseResult<object>> Login([FromForm] LoginRequest request) {
-        throw new NotImplementedException();
+    [HttpPost("/register")]
+    public async Task<ResponseResult<object>> Register([FromBody] UserRegisterDTO userRegisterDto) {
+        var result = await userService.RegisterAsync(userRegisterDto, HttpContext);
+        return new ResponseResult<object>(result);
     }
 }

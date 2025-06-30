@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Backend.Common.Utils;
 using Backend.Contracts;
+using Backend.Contracts.IService;
 using Backend.Domain;
+using Backend.Domain.Entity;
 using Backend.Modules.Blog.Contracts.IService;
 using Backend.Modules.Blog.Contracts.VO;
 using Backend.Modules.Blog.Domain.Entities;
