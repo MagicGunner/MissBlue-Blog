@@ -7,5 +7,5 @@ public class UserRoleDTO {
     public long RoleId { get; set; }
 
     [Required(ErrorMessage = "选择的用户不能为空")]
-    public List<long> UserId { get; set; }
+    public List<long> UserIds { get; set; }
 }

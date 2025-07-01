@@ -12,21 +12,20 @@ namespace Backend.Controllers;
 
 [ApiController]
 [Route("api/auth")]
-public class AuthController(IUserService userService) : ControllerBase {
+public class AuthController(IUserService userService, IConfiguration configuration) : ControllerBase {
     [HttpPost("login")]
-    public ResponseResult<TokenInfoVO> Login([FromBody] LoginRequestDto loginRequestDto) {
-        if (!userService.ValidateUser(loginRequestDto.UserName, loginRequestDto.Password)) {
-            return new ResponseResult<TokenInfoVO>(false, msg: "用户名密码错误");
+    public async Task<ResponseResult<TokenInfoVO>> Login([FromBody] LoginRequestDto loginRequestDto) {
+        var result = await userService.ValidateUser(loginRequestDto.UserName, loginRequestDto.Password);
+        if (!result) {
+            return new ResponseResult<TokenInfoVO>(result, msg: "账号密码错误");
         }
 
-        var permissions = userService.GetUserPermissions(loginRequestDto.UserName);
+        var permissions = await userService.GetUserPermissions(loginRequestDto.UserName);
 
-        var claims = new List<Claim> {
-                                         new(ClaimTypes.Name, loginRequestDto.UserName)
-                                     };
-        claims.AddRange(permissions.Select(perm => new Claim("Permission", perm)));
+        var claims = new List<Claim> { new(ClaimTypes.Name, loginRequestDto.UserName) };
+        claims.AddRange(permissions.Select(perm => new Claim("Permission", perm.PermissionKey)));
 
-        var key = new SymmetricSecurityKey("SuperSecretKey123456"u8.ToArray());
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:Secret"]!));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(issuer: "MissBlue",
@@ -36,8 +35,6 @@ public class AuthController(IUserService userService) : ControllerBase {
                                          signingCredentials: creds);
 
         var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-        return new ResponseResult<TokenInfoVO>(true, new TokenInfoVO {
-                                                                         Token = jwt
-                                                                     });
+        return new ResponseResult<TokenInfoVO>(true, new TokenInfoVO { Token = jwt });
     }
 }

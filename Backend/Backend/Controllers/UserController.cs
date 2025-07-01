@@ -2,6 +2,7 @@
 using Backend.Contracts.DTO;
 using Backend.Contracts.IService;
 using Backend.Contracts.VO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers;
@@ -15,6 +16,7 @@ public class UserController(IUserService userService) : ControllerBase {
     /// </summary>
     /// <returns></returns>
     [HttpGet("list")]
+    [Authorize(Policy = "system:user:list")]
     public async Task<ResponseResult<List<UserListVO>>> ListAll() {
         var list = await userService.ListAllAsync();
         return new ResponseResult<List<UserListVO>>(list.Count > 0, list);

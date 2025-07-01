@@ -1,14 +1,14 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
 using Backend.Common.Core;
-using Backend.Domain;
 using Backend.Domain.Entity;
 using Backend.Domain.Entity.Tenants;
+using Backend.Domain.IRepository;
 using Backend.Infrastructure.UnitOfWorks;
 using SqlSugar;
 using MultiTenantAttribute = Backend.Infrastructure.Attributes.MultiTenantAttribute;
 
-namespace Backend.Infrastructure;
+namespace Backend.Infrastructure.Repository;
 
 public class BaseRepositories<TEntity> : IBaseRepositories<TEntity> where TEntity : class, new() {
     private readonly SqlSugarScope     _dbBase;

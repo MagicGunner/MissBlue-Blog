@@ -1,4 +1,7 @@
-﻿using Backend.Common.Results;
+﻿using AutoMapper;
+using Backend.Application.Service;
+using Backend.Common.Results;
+using Backend.Domain.IRepository;
 using Backend.Modules.Blog.Contracts.DTO;
 using Backend.Modules.Blog.Contracts.IService;
 using Backend.Modules.Blog.Contracts.VO;
@@ -8,173 +11,88 @@ using SqlSugar;
 
 namespace Backend.Modules.Blog.Application.Service;
 
-public class ArticleService(ISqlSugarClient db) : IArticleService {
-    public async Task<PageVO<List<ArticleVO>>> ListAllArticleAsync(int pageNum, int pageSize) {
-        RefAsync<int> total = 0;
-        var articleList = await db.Queryable<Article>()
-                                  .Where(a => a.Status == 0 && a.IsDeleted == 0)
-                                  .OrderBy(a => a.CreateTime, OrderByType.Desc)
-                                  .ToPageListAsync(pageNum, pageSize, total);
-
-        var articleIds = articleList.Select(a => a.Id).ToList();
-        var categoryIds = articleList.Select(a => a.CategoryId).Distinct().ToList();
-
-        // 1. 查询分类信息
-        var categories = (await db.Queryable<Category>()
-                                  .In(c => c.Id, categoryIds)
-                                  .ToDictionaryAsync(c => c.Id, c => c.CategoryName))
-           .ToDictionary(kv => long.Parse(kv.Key), kv => kv.Value?.ToString() ?? "");
-
-        // 2. 查询中间表 ArticleTag
-        var articleTags = await db.Queryable<ArticleTag>()
-                                  .Where(at => articleIds.Contains(at.ArticleId))
-                                  .ToListAsync();
-
-        var tagIds = articleTags.Select(at => at.TagId).Distinct().ToList();
-
-        // 3. 查询标签名
-        var tags = (await db.Queryable<Tag>()
-                            .In(t => t.Id, tagIds)
-                            .ToDictionaryAsync(t => t.Id, t => t.TagName))
-           .ToDictionary(kv => long.Parse(kv.Key), kv => kv.Value?.ToString() ?? "");
-
-        // 4.映射 VO
-        var voList = articleList.Select(article => {
-                                            var vo = new ArticleVO {
-                                                                       Id = article.Id,
-                                                                       ArticleTitle = article.ArticleTitle,
-                                                                       ArticleCover = article.ArticleCover,
-                                                                       ArticleContent = article.ArticleContent,
-                                                                       ArticleType = article.ArticleType,
-                                                                       VisitCount = article.VisitCount,
-                                                                       CreateTime = article.CreateTime,
-                                                                       UpdateTime = article.UpdateTime,
-                                                                       CategoryName = categories.TryGetValue(article.CategoryId, out var cname) ? cname : "",
-                                                                       Tags = articleTags
-                                                                             .Where(at => at.ArticleId == article.Id)
-                                                                             .Select(at => tags.TryGetValue(at.ArticleId, out var tagName) ? tagName : "")
-                                                                             .ToList()
-                                                                   };
-
-                                            return vo;
-                                        })
-                                .ToList();
-
-        return new PageVO<List<ArticleVO>> {
-                                               Page = voList,
-                                               Total = total
-                                           };
-    }
-
-    public Task<List<RecommendArticleVO>> ListRecommendArticleAsync() {
+public class ArticleService(IMapper mapper, IBaseRepositories<Article> baseRepositories) : BaseServices<Article>(mapper, baseRepositories), IArticleService {
+    public Task<PageVO<List<ArticleVO>>> ListAllArticle(int pageNum, int pageSize) {
         throw new NotImplementedException();
     }
 
-    public Task<List<RandomArticleVO>> ListRandomArticleAsync() {
+    public Task<List<RecommendArticleVO>> ListRecommendArticle() {
         throw new NotImplementedException();
     }
 
-    public Task<ArticleDetailVO> GetArticleDetailAsync(long id) {
+    public Task<List<RandomArticleVO>> ListRandomArticle() {
         throw new NotImplementedException();
     }
 
-    public Task<List<RelatedArticleVO>> RelatedArticleListAsync(long categoryId, long articleId) {
+    public Task<ArticleDetailVO> GetArticleDetail(long id) {
         throw new NotImplementedException();
     }
 
-    public Task<List<TimeLineVO>> ListTimeLineAsync() {
+    public Task<List<RelatedArticleVO>> RelatedArticleList(long categoryId, long articleId) {
         throw new NotImplementedException();
     }
 
-    public Task<List<CategoryArticleVO>> ListCategoryArticleAsync(int type, long typeId) {
+    public Task<List<TimeLineVO>> ListTimeLine() {
         throw new NotImplementedException();
     }
 
-    public Task AddVisitCountAsync(long id) {
+    public Task<List<CategoryArticleVO>> ListCategoryArticle(int type, long typeId) {
         throw new NotImplementedException();
     }
 
-    public Task<string> UploadArticleCoverAsync(IFormFile articleCover) {
+    public Task AddVisitCount(long id) {
         throw new NotImplementedException();
     }
 
-    public async Task<ResponseResult<object>> PublishAsync(ArticleDto articleDto) {
-        var result = await db.Ado.UseTranAsync(async () => {
-                                                   // 1. 将 DTO 映射为实体
-                                                   // todo 这边要重写
-                                                   var article = new Article {
-                                                                                 Id = articleDto.Id ?? 0,
-                                                                                 ArticleTitle = articleDto.ArticleTitle,
-                                                                                 ArticleContent = articleDto.ArticleContent,
-                                                                                 ArticleCover = articleDto.ArticleCover,
-                                                                                 ArticleType = articleDto.ArticleType,
-                                                                                 Status = articleDto.Status,
-                                                                                 IsTop = articleDto.IsTop,
-                                                                                 CategoryId = articleDto.CategoryId,
-                                                                                 UserId = 1 // 从上下文中获取登录用户
-                                                                             };
-
-                                                   // 2. 插入或更新文章
-                                                   var articleResult = await db.Storageable(article).ExecuteCommandAsync();
-
-                                                   // 3. 删除旧的标签关系
-                                                   await db.Deleteable<ArticleTag>()
-                                                           .Where(at => at.ArticleId == article.Id)
-                                                           .ExecuteCommandAsync();
-
-                                                   // 4. 插入新的标签关系
-                                                   var articleTags = articleDto.TagId.Select(tagId => new ArticleTag {
-                                                                                                                         ArticleId = article.Id,
-                                                                                                                         TagId = tagId
-                                                                                                                     })
-                                                                               .ToList();
-
-                                                   await db.Insertable(articleTags).ExecuteCommandAsync();
-                                               });
-        return new ResponseResult<object>(result.IsSuccess);
-    }
-
-    public Task DeleteArticleCoverAsync(string articleCoverUrl) {
+    public Task<string> UploadArticleCover(IFormFile articleCover) {
         throw new NotImplementedException();
     }
 
-    public Task<string> UploadArticleImageAsync(IFormFile articleImage) {
+    public Task<ResponseResult<object>> Publish(ArticleDto articleDto) {
         throw new NotImplementedException();
     }
 
-    public Task<List<ArticleListVO>> ListArticleAsync() {
+    public Task DeleteArticleCover(string articleCoverUrl) {
         throw new NotImplementedException();
     }
 
-    public Task<List<ArticleListVO>> SearchArticleAsync(SearchArticleDTO searchDto) {
+    public Task<string> UploadArticleImage(IFormFile articleImage) {
         throw new NotImplementedException();
     }
 
-    public Task UpdateStatusAsync(long id, int status) {
+    public Task<List<ArticleListVO>> ListArticle() {
         throw new NotImplementedException();
     }
 
-    public Task UpdateIsTopAsync(long id, bool isTop) {
+    public Task<List<ArticleListVO>> SearchArticle(SearchArticleDTO searchDto) {
         throw new NotImplementedException();
     }
 
-    public Task<ArticleDto> GetArticleDtoAsync(long id) {
+    public Task UpdateStatus(long id, int status) {
         throw new NotImplementedException();
     }
 
-    public Task DeleteArticleAsync(List<long> ids) {
+    public Task UpdateIsTop(long id, bool isTop) {
         throw new NotImplementedException();
     }
 
-    public Task<List<InitSearchTitleVO>> InitSearchByTitleAsync() {
+    public Task<ArticleDto> GetArticleDto(long id) {
         throw new NotImplementedException();
     }
 
-    public Task<List<HotArticleVO>> ListHotArticleAsync() {
+    public Task DeleteArticle(List<long> ids) {
         throw new NotImplementedException();
     }
 
-    public Task<List<SearchArticleByContentVO>> SearchArticleByContentAsync(string content) {
+    public Task<List<InitSearchTitleVO>> InitSearchByTitle() {
+        throw new NotImplementedException();
+    }
+
+    public Task<List<HotArticleVO>> ListHotArticle() {
+        throw new NotImplementedException();
+    }
+
+    public Task<List<SearchArticleByContentVO>> SearchArticleByContent(string content) {
         throw new NotImplementedException();
     }
 }

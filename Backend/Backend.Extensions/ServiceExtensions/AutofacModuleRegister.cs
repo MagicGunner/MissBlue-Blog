@@ -6,7 +6,9 @@ using Backend.Application.Service;
 using Backend.Contracts;
 using Backend.Contracts.IService;
 using Backend.Domain;
+using Backend.Domain.IRepository;
 using Backend.Infrastructure;
+using Backend.Infrastructure.Repository;
 using Backend.Infrastructure.UnitOfWorks;
 using Module = Autofac.Module;
 
@@ -23,7 +25,7 @@ public class AutofacModuleRegister : Module {
         var basePath = AppContext.BaseDirectory;
 
         var targetDlls = Directory.GetFiles(basePath, "*.dll", SearchOption.AllDirectories)
-                                  .Where(file => file.EndsWith("Application.dll") || file.EndsWith("Domain.dll"))
+                                  .Where(file => file.EndsWith("Application.dll") || file.EndsWith("Domain.dll") || file.EndsWith("Infrastructure.dll"))
                                   .ToList();
 
         var assemblies = targetDlls.Select(Assembly.LoadFrom).ToArray();

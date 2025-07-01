@@ -16,7 +16,7 @@ public class ArticleController(IArticleService articleService) : ControllerBase 
     /// </summary>
     [HttpGet("search/init/title")]
     public async Task<ActionResult<PageVO<IEnumerable<InitSearchTitleVO>>>> InitSearchByTitle() {
-        var data = await articleService.InitSearchByTitleAsync();
+        var data = await articleService.InitSearchByTitle();
         return Ok(new PageVO<IEnumerable<InitSearchTitleVO>> {
                                                                  Page = data,
                                                                  Total = data.Count
@@ -28,7 +28,7 @@ public class ArticleController(IArticleService articleService) : ControllerBase 
     /// </summary>
     [HttpGet("search/by/content")]
     public async Task<ActionResult<IEnumerable<SearchArticleByContentVO>>> SearchByContent([FromQuery, Required, StringLength(15, MinimumLength = 1)] string content) {
-        var result = await articleService.SearchArticleByContentAsync(content);
+        var result = await articleService.SearchArticleByContent(content);
         return Ok(result);
     }
 
@@ -37,7 +37,7 @@ public class ArticleController(IArticleService articleService) : ControllerBase 
     /// </summary>
     [HttpGet("hot")]
     public async Task<ActionResult<IEnumerable<HotArticleVO>>> Hot() {
-        var result = await articleService.ListHotArticleAsync();
+        var result = await articleService.ListHotArticle();
         return Ok(result);
     }
 
@@ -47,7 +47,7 @@ public class ArticleController(IArticleService articleService) : ControllerBase 
     [HttpGet("list")]
     public async Task<ActionResult<PageVO<IEnumerable<ArticleVO>>>> ListAll([FromQuery, Required] int pageNum,
                                                                             [FromQuery, Required] int pageSize) {
-        var page = await articleService.ListAllArticleAsync(pageNum, pageSize);
+        var page = await articleService.ListAllArticle(pageNum, pageSize);
         return Ok(page);
     }
 
@@ -56,7 +56,7 @@ public class ArticleController(IArticleService articleService) : ControllerBase 
     /// </summary>
     [HttpGet("recommend")]
     public async Task<ActionResult<IEnumerable<RecommendArticleVO>>> Recommend() {
-        var result = await articleService.ListRecommendArticleAsync();
+        var result = await articleService.ListRecommendArticle();
         return Ok(result);
     }
 
@@ -65,7 +65,7 @@ public class ArticleController(IArticleService articleService) : ControllerBase 
     /// </summary>
     [HttpGet("random")]
     public async Task<ActionResult<IEnumerable<RandomArticleVO>>> Random() {
-        var result = await articleService.ListRandomArticleAsync();
+        var result = await articleService.ListRandomArticle();
         return Ok(result);
     }
 
@@ -74,7 +74,7 @@ public class ArticleController(IArticleService articleService) : ControllerBase 
     /// </summary>
     [HttpGet("detail/{id}")]
     public async Task<ActionResult<ArticleDetailVO>> Detail([FromRoute] long id) {
-        var detail = await articleService.GetArticleDetailAsync(id);
+        var detail = await articleService.GetArticleDetail(id);
         return Ok(detail);
     }
 
@@ -84,7 +84,7 @@ public class ArticleController(IArticleService articleService) : ControllerBase 
     [HttpGet("related/{categoryId}/{articleId}")]
     public async Task<ActionResult<IEnumerable<RelatedArticleVO>>> Related([FromRoute] long categoryId,
                                                                            [FromRoute] long articleId) {
-        var list = await articleService.RelatedArticleListAsync(categoryId, articleId);
+        var list = await articleService.RelatedArticleList(categoryId, articleId);
         return Ok(list);
     }
 
@@ -93,7 +93,7 @@ public class ArticleController(IArticleService articleService) : ControllerBase 
     /// </summary>
     [HttpGet("timeLine")]
     public async Task<ActionResult<IEnumerable<TimeLineVO>>> TimeLine() {
-        var list = await articleService.ListTimeLineAsync();
+        var list = await articleService.ListTimeLine();
         return Ok(list);
     }
 
@@ -103,7 +103,7 @@ public class ArticleController(IArticleService articleService) : ControllerBase 
     [HttpGet("where/list/{typeId}")]
     public async Task<ActionResult<IEnumerable<CategoryArticleVO>>> ListCategoryArticle([FromRoute]           long typeId,
                                                                                         [FromQuery, Required] int  type) {
-        var list = await articleService.ListCategoryArticleAsync(type, typeId);
+        var list = await articleService.ListCategoryArticle(type, typeId);
         return Ok(list);
     }
 
@@ -112,7 +112,7 @@ public class ArticleController(IArticleService articleService) : ControllerBase 
     /// </summary>
     [HttpGet("visit/{id}")]
     public async Task<IActionResult> Visit([FromRoute] long id) {
-        await articleService.AddVisitCountAsync(id);
+        await articleService.AddVisitCount(id);
         return NoContent();
     }
 
@@ -122,7 +122,7 @@ public class ArticleController(IArticleService articleService) : ControllerBase 
     [Authorize(Policy = "blog:publish:article")]
     [HttpPost("upload/articleCover")]
     public async Task<ActionResult<string>> UploadArticleCover(IFormFile articleCover) {
-        var url = await articleService.UploadArticleCoverAsync(articleCover);
+        var url = await articleService.UploadArticleCover(articleCover);
         return Ok(url);
     }
 
@@ -132,7 +132,7 @@ public class ArticleController(IArticleService articleService) : ControllerBase 
     [Authorize(Policy = "blog:publish:article")]
     [HttpPost("publish")]
     public async Task<IActionResult> Publish([FromBody, Required] ArticleDto articleDto) {
-        await articleService.PublishAsync(articleDto);
+        await articleService.Publish(articleDto);
         return NoContent();
     }
 
@@ -142,7 +142,7 @@ public class ArticleController(IArticleService articleService) : ControllerBase 
     [Authorize(Policy = "blog:publish:article")]
     [HttpGet("delete/articleCover")]
     public async Task<IActionResult> DeleteArticleCover([FromQuery, Required] string articleCoverUrl) {
-        await articleService.DeleteArticleCoverAsync(articleCoverUrl);
+        await articleService.DeleteArticleCover(articleCoverUrl);
         return NoContent();
     }
 
@@ -152,7 +152,7 @@ public class ArticleController(IArticleService articleService) : ControllerBase 
     [Authorize(Policy = "blog:publish:article")]
     [HttpPost("upload/articleImage")]
     public async Task<ActionResult<string>> UploadArticleImage(IFormFile articleImage) {
-        var url = await articleService.UploadArticleImageAsync(articleImage);
+        var url = await articleService.UploadArticleImage(articleImage);
         return Ok(url);
     }
 
@@ -162,7 +162,7 @@ public class ArticleController(IArticleService articleService) : ControllerBase 
     [Authorize(Policy = "blog:article:list")]
     [HttpGet("back/list")]
     public async Task<ActionResult<IEnumerable<ArticleListVO>>> ListArticle() {
-        var list = await articleService.ListArticleAsync();
+        var list = await articleService.ListArticle();
         return Ok(list);
     }
 
@@ -172,7 +172,7 @@ public class ArticleController(IArticleService articleService) : ControllerBase 
     [Authorize(Policy = "blog:article:search")]
     [HttpPost("back/search")]
     public async Task<ActionResult<IEnumerable<ArticleListVO>>> SearchArticle([FromBody, Required] SearchArticleDTO dto) {
-        var list = await articleService.SearchArticleAsync(dto);
+        var list = await articleService.SearchArticle(dto);
         return Ok(list);
     }
 
@@ -183,7 +183,7 @@ public class ArticleController(IArticleService articleService) : ControllerBase 
     [HttpPost("back/update/status")]
     public async Task<IActionResult> UpdateArticleStatus([FromQuery, Required] long id,
                                                          [FromQuery, Required] int  status) {
-        await articleService.UpdateStatusAsync(id, status);
+        await articleService.UpdateStatus(id, status);
         return NoContent();
     }
 
@@ -194,7 +194,7 @@ public class ArticleController(IArticleService articleService) : ControllerBase 
     [HttpPost("back/update/isTop")]
     public async Task<IActionResult> UpdateArticleIsTop([FromQuery, Required] long id,
                                                         [FromQuery, Required] bool isTop) {
-        await articleService.UpdateIsTopAsync(id, isTop);
+        await articleService.UpdateIsTop(id, isTop);
         return NoContent();
     }
 
@@ -204,7 +204,7 @@ public class ArticleController(IArticleService articleService) : ControllerBase 
     [Authorize(Policy = "blog:article:echo")]
     [HttpGet("back/echo/{id}")]
     public async Task<ActionResult<ArticleDto>> GetArticleEcho([FromRoute] long id) {
-        var dto = await articleService.GetArticleDtoAsync(id);
+        var dto = await articleService.GetArticleDto(id);
         return Ok(dto);
     }
 
@@ -214,7 +214,7 @@ public class ArticleController(IArticleService articleService) : ControllerBase 
     [Authorize(Policy = "blog:article:delete")]
     [HttpDelete("back/delete")]
     public async Task<IActionResult> DeleteArticle([FromBody, Required] List<long> ids) {
-        await articleService.DeleteArticleAsync(ids);
+        await articleService.DeleteArticle(ids);
         return NoContent();
     }
 }

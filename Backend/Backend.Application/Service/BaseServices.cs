@@ -2,6 +2,7 @@
 using AutoMapper;
 using Backend.Contracts.IService;
 using Backend.Domain;
+using Backend.Domain.IRepository;
 using SqlSugar;
 
 namespace Backend.Application.Service;

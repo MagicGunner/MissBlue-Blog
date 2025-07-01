@@ -16,11 +16,11 @@ public class UserRole : RootEntity {
 
     /// <summary>
     /// 构造函数（用于快速初始化）
-    /// </summary>
-    public UserRole() { }
-
-    public UserRole(long userId, long roleId) {
-        UserId = userId;
-        RoleId = roleId;
-    }
+    /// </summary>`
+    // public UserRole() { }
+    //
+    // public UserRole(long userId, long roleId) {
+    //     UserId = userId;
+    //     RoleId = roleId;
+    // }
 }

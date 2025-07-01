@@ -34,5 +34,7 @@ public class BlogMapperProfile : Profile {
         CreateMap<WebsiteInfoDTO, WebsiteInfo>();
 
         CreateMap<Permission, PermissionVO>();
+
+        // CreateMap<UserRoleDTO, UserRole>();
     }
 }
