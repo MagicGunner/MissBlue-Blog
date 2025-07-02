@@ -38,7 +38,7 @@ public class UserService(IMapper                 mapper,
         return permissions.Select(i => _mapper.Map<PermissionVO>(i)).ToList();
     }
 
-    public async Task<bool> RegisterAsync(UserRegisterDTO userRegisterDto, HttpContext context) {
+    public async Task<bool> Register(UserRegisterDTO userRegisterDto, HttpContext context) {
         // 1. 判断用户名或邮箱是否存在
         var exists = await Query<UserListVO>(i => i.Username == userRegisterDto.Username || i.Email == userRegisterDto.Email);
         if (exists.Count > 0) {

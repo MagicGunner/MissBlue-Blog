@@ -17,30 +17,12 @@ namespace Backend.Controllers;
 
 [ApiController]
 [Route("api/user")]
-[Tags("用户相关接口")]
+[SwaggerTag("用户相关接口")]
 public class UserController(IUserService userService, IConfiguration configuration) : ControllerBase {
-    [HttpGet("auth/info")]
-    [SwaggerOperation(Summary = "获取当前登录用户信息", Description = "111111")]
-    public async Task<ResponseResult<UserAccountVO?>> GetInfo() => new(true, await userService.GetAccountById());
-
-    [HttpPost("auth/update")]
-    [AccessLimit(60, 30)] // 👈 限流参数
-    public async Task<ResponseResult<object>> UpdateUser([FromBody] UserUpdateDTO userUpdateDto) => new(await userService.UpdateUser(userUpdateDto));
-
-    [HttpPost("auth/upload/avatar")]
-    [AccessLimit(60, 3)] // 👈 限流参数
-    public Task<ResponseResult<string>> UpdateAvatar(IFormFile avatarFile) {
-        throw new NotImplementedException();
-    }
-
-    [HttpPost("auth/update/email")]
-    [AccessLimit(60, 30)] // 👈 限流参数
-    public Task<ResponseResult<object>> UpdateEmail([FromBody] UpdateEmailDTO updateEmailDto) {
-        throw new NotImplementedException();
-    }
-
+    #region 登入登出相关
 
     [HttpPost("login")]
+    [SwaggerOperation(Summary = "用户登录", Description = "账号密码登录")]
     public async Task<ResponseResult<TokenInfoVO>> Login([FromBody] LoginRequestDto loginRequestDto) {
         var userId = await userService.ValidateUser(loginRequestDto.UserName, loginRequestDto.Password);
         if (userId < 0) {
@@ -65,23 +47,101 @@ public class UserController(IUserService userService, IConfiguration configurati
                                          signingCredentials: creds);
 
         var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-        return new ResponseResult<TokenInfoVO>(true, new TokenInfoVO { Token = jwt });
+        return new ResponseResult<TokenInfoVO>(true, new TokenInfoVO {
+                                                                         Token = jwt
+                                                                     });
     }
 
+    #endregion
+
+    [HttpGet("auth/info")]
+    [SwaggerOperation(Summary = "获取用户信息", Description = "通过用户ID获取详细的用户信息")]
+    public async Task<ResponseResult<UserAccountVO?>> GetInfo() => new(true, await userService.GetAccountById());
+
+    [HttpPost("auth/update")]
+    [AccessLimit(60, 30)] // 👈 限流参数
+    [SwaggerOperation(Summary = "修改用户信息", Description = "修改用户信息")]
+    public async Task<ResponseResult<object>> UpdateUser([FromBody] UserUpdateDTO userUpdateDto) => new(await userService.UpdateUser(userUpdateDto));
+
+    [HttpPost("auth/upload/avatar")]
+    [AccessLimit(60, 3)] // 👈 限流参数
+    [SwaggerOperation(Summary = "用户头像上传", Description = "用户头像上传")]
+    public Task<ResponseResult<string>> UpdateAvatar(IFormFile avatarFile) {
+        throw new NotImplementedException();
+    }
+
+    [HttpPost("auth/update/email")]
+    [AccessLimit(60, 30)] // 👈 限流参数
+    [SwaggerOperation(Summary = "修改用户绑定邮箱", Description = "修改用户绑定邮箱")]
+    public Task<ResponseResult<object>> UpdateEmail([FromBody] UpdateEmailDTO updateEmailDto) {
+        throw new NotImplementedException();
+    }
+
+    [HttpPost("auth/third/update/email")]
+    [AccessLimit(60, 30)] // 👈 限流参数
+    [SwaggerOperation(Summary = "第三方登录用户绑定邮箱", Description = "第三方登录用户绑定邮箱")]
+    public Task<ResponseResult<object>> ThirdUpdateEmail([FromBody] UpdateEmailDTO updateEmailDto) {
+        throw new NotImplementedException();
+    }
+
+    [HttpPost("register")]
+    [AccessLimit(60, 30)] // 👈 限流参数
+    [SwaggerOperation(Summary = "前台注册", Description = "前台注册")]
+    public async Task<ResponseResult<object>> Register([FromBody] UserRegisterDTO userRegisterDto) {
+        var result = await userService.Register(userRegisterDto, HttpContext);
+        return new ResponseResult<object>(result);
+    }
+
+    [HttpPost("reset-confirm")]
+    [AccessLimit(60, 30)] // 👈 限流参数
+    [SwaggerOperation(Summary = "重置密码-确认邮件", Description = "重置密码-确认邮件")]
+    public Task<ResponseResult<object>> ResetConfirm([FromBody] UserResetConfirmDTO userResetConfirmDto) {
+        throw new NotImplementedException();
+    }
+
+    [HttpPost("reset-password")]
+    [AccessLimit(60, 30)] // 👈 限流参数
+    [SwaggerOperation(Summary = "重置密码-确认邮件", Description = "重置密码-确认邮件")]
+    public Task<ResponseResult<object>> ResetPassword([FromBody] UserResetPasswordDTO userResetPassword) {
+        throw new NotImplementedException();
+    }
+    
+    
+    
     /// <summary>
     /// 获取用户列表
     /// </summary>
     /// <returns></returns>
     [HttpGet("list")]
+    [AccessLimit(60, 30)] // 👈 限流参数
     [Authorize(Policy = "system:user:list")]
+    [SwaggerOperation(Summary = "搜索用户列表", Description = "搜索用户列表，需要权限")]
     public async Task<ResponseResult<List<UserListVO>>> ListAll() {
         var list = await userService.ListAllAsync();
         return new ResponseResult<List<UserListVO>>(list.Count > 0, list);
     }
 
-    [HttpPost("/register")]
-    public async Task<ResponseResult<object>> Register([FromBody] UserRegisterDTO userRegisterDto) {
-        var result = await userService.RegisterAsync(userRegisterDto, HttpContext);
-        return new ResponseResult<object>(result);
+    [HttpPost("update/status")]
+    [AccessLimit(60, 30)] // 👈 限流参数
+    [Authorize(Policy = "system:user:status:update")]
+    [SwaggerOperation(Summary = "更新用户状态", Description = "更新用户状态")]
+    public Task<ResponseResult<object>> UpdateStatus([FromBody] UpdateRoleStatusDTO updateRoleStatusDto) {
+        throw new NotImplementedException();
+    }
+
+    [HttpGet("details/{id}")]
+    [AccessLimit(60, 30)] // 👈 限流参数
+    [Authorize(Policy = "system:user:details")]
+    [SwaggerOperation(Summary = "获取用户详细信息", Description = "获取用户详细信息")]
+    public Task<ResponseResult<UserDetailsVO>> GetUserDetails([FromRoute] long id) {
+        throw new NotImplementedException();
+    }
+
+    [HttpDelete("delete")]
+    [AccessLimit(60, 30)] // 👈 限流参数
+    [Authorize(Policy = "system:user:delete")]
+    [SwaggerOperation(Summary = "删除用户", Description = "删除用户")]
+    public Task<ResponseResult<UserDetailsVO>> DeleteUser([FromBody] UserDeleteDTO userDeleteDto) {
+        throw new NotImplementedException();
     }
 }
