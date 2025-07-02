@@ -8,8 +8,7 @@ public interface IBaseRepositories<TEntity> where TEntity : class {
 
     #region 查询（Query）
 
-    Task<List<TEntity>> Query(Expression<Func<TEntity, bool>>? expression);
-
+    Task<List<TEntity>> Query(Expression<Func<TEntity, bool>>?                                   expression                             = null);
     Task<List<TEntity>> QueryWithMulti(Func<ISugarQueryable<TEntity>, ISugarQueryable<TEntity>>? buildQuery                             = null);
     Task<List<TEntity>> QuerySplit(Expression<Func<TEntity, bool>>                               whereExpression, string? orderByFields = null);
     Task<List<TEntity>> QueryWithCache(Expression<Func<TEntity, bool>>?                          whereExpression = null);

@@ -15,13 +15,9 @@ public class SqlSugarCacheService : ICacheService {
         Caching.Set(key, value, TimeSpan.FromSeconds(cacheDurationInSeconds));
     }
 
-    public bool ContainsKey<V>(string key) {
-        return Caching.Exists(key);
-    }
+    public bool ContainsKey<V>(string key) => Caching.Exists(key);
 
-    public V Get<V>(string key) {
-        return Caching.Get<V>(key);
-    }
+    public V Get<V>(string key) => Caching.Get<V>(key);
 
     public IEnumerable<string> GetAllKey<V>() {
         return Caching.GetAllCacheKeys();

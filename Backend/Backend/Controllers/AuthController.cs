@@ -15,9 +15,9 @@ namespace Backend.Controllers;
 public class AuthController(IUserService userService, IConfiguration configuration) : ControllerBase {
     [HttpPost("login")]
     public async Task<ResponseResult<TokenInfoVO>> Login([FromBody] LoginRequestDto loginRequestDto) {
-        var result = await userService.ValidateUser(loginRequestDto.UserName, loginRequestDto.Password);
-        if (!result) {
-            return new ResponseResult<TokenInfoVO>(result, msg: "账号密码错误");
+        var userId = await userService.ValidateUser(loginRequestDto.UserName, loginRequestDto.Password);
+        if (userId < 0) {
+            return new ResponseResult<TokenInfoVO>(false, msg: "账号密码错误");
         }
 
         var permissions = await userService.GetUserPermissions(loginRequestDto.UserName);

@@ -21,6 +21,7 @@ public class BlogMapperProfile : Profile {
         CreateMap<User, UserListVO>();
         CreateMap<User, UserAccountVO>();
         CreateMap<User, UserDetailsVO>();
+        CreateMap<UserUpdateDTO, User>();
 
         CreateMap<Role, RoleVO>();
         CreateMap<Role, RoleAllVO>();
@@ -36,5 +37,11 @@ public class BlogMapperProfile : Profile {
         CreateMap<Permission, PermissionVO>();
 
         // CreateMap<UserRoleDTO, UserRole>();
+
+        CreateMap<Article, ArticleVO>()
+           .ForMember(dest => dest.Tags, opt => opt.Ignore()) // 数据库查询
+           .ForMember(dest => dest.CategoryName, opt => opt.Ignore());
+        CreateMap<Article, RecommendArticleVO>();
+        CreateMap<Article, RandomArticleVO>();
     }
 }

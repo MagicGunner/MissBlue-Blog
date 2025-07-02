@@ -3,7 +3,7 @@
 namespace Backend.Domain.IRepository;
 
 public interface IUserRepository : IBaseRepositories<User> {
-    Task<bool> ValidateUser(string userName, string password);
+    Task<long> ValidateUser(string userName, string password);
 
     Task<List<Permission>> GetUserPermissions(string userName);
 

@@ -5,4 +5,4 @@ using Backend.Modules.Blog.Domain.IRepository;
 
 namespace Backend.Modules.Blog.Infrastructure.Repository;
 
-public class TagRepository(IUnitOfWorkManage unitOfWorkManage) : BaseRepositories<Tag>(unitOfWorkManage), ITagRepository;
+public class BannersRepository(IUnitOfWorkManage unitOfWorkManage) : BaseRepositories<Banners>(unitOfWorkManage), IBannersRepository;

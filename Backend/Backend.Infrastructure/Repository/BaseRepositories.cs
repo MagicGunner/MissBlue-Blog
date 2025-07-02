@@ -132,7 +132,7 @@ public class BaseRepositories<TEntity> : IBaseRepositories<TEntity> where TEntit
     #region 查(Query)
 
     public async Task<List<TEntity>> Query(Expression<Func<TEntity, bool>>? expression = null) {
-        await Console.Out.WriteLineAsync(Db.GetHashCode().ToString());
+        // await Console.Out.WriteLineAsync(Db.GetHashCode().ToString());
         return await _db.Queryable<TEntity>().WhereIF(expression != null, expression).ToListAsync();
     }
 

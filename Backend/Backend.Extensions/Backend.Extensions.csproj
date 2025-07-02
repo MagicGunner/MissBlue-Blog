@@ -19,6 +19,7 @@
         <ProjectReference Include="..\Backend.Infrastructure\Backend.Infrastructure.csproj"/>
         <ProjectReference Include="..\Backend.Module.Blog.Contracts\Backend.Module.Blog.Contracts.csproj"/>
         <ProjectReference Include="..\Backend.Modules.Blog.Domain\Backend.Modules.Blog.Domain.csproj"/>
+        <ProjectReference Include="..\Backend.Modules.Blog.Infrastructure\Backend.Modules.Blog.Infrastructure.csproj"/>
     </ItemGroup>
 
     <ItemGroup>

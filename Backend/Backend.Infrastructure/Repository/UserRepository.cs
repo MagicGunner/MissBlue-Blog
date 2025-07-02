@@ -5,9 +5,13 @@ using Backend.Infrastructure.UnitOfWorks;
 namespace Backend.Infrastructure.Repository;
 
 public class UserRepository(IUnitOfWorkManage unitOfWorkManage) : BaseRepositories<User>(unitOfWorkManage), IUserRepository {
-    public async Task<bool> ValidateUser(string userName, string password) {
+    public async Task<long> ValidateUser(string userName, string password) {
         var user = await GetUserByName(userName);
-        return user != null && BCrypt.Net.BCrypt.Verify(password, user.Password);
+        if (user != null && BCrypt.Net.BCrypt.Verify(password, user.Password)) {
+            return user.Id;
+        }
+
+        return -1;
     }
 
     public async Task<List<Permission>> GetUserPermissions(string userName) {

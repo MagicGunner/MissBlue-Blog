@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Backend.Common.Results;
 using Backend.Modules.Blog.Contracts.DTO;
 using Backend.Modules.Blog.Contracts.IService;
 using Backend.Modules.Blog.Contracts.VO;
@@ -45,28 +46,28 @@ public class ArticleController(IArticleService articleService) : ControllerBase 
     /// 获取所有文章（分页）
     /// </summary>
     [HttpGet("list")]
-    public async Task<ActionResult<PageVO<IEnumerable<ArticleVO>>>> ListAll([FromQuery, Required] int pageNum,
-                                                                            [FromQuery, Required] int pageSize) {
+    public async Task<ResponseResult<PageVO<List<ArticleVO>>>> ListAll([FromQuery, Required] int pageNum,
+                                                                       [FromQuery, Required] int pageSize) {
         var page = await articleService.ListAllArticle(pageNum, pageSize);
-        return Ok(page);
+        return new ResponseResult<PageVO<List<ArticleVO>>>(true, page);
     }
 
     /// <summary>
     /// 获取推荐文章
     /// </summary>
     [HttpGet("recommend")]
-    public async Task<ActionResult<IEnumerable<RecommendArticleVO>>> Recommend() {
+    public async Task<ResponseResult<List<RecommendArticleVO>>> Recommend() {
         var result = await articleService.ListRecommendArticle();
-        return Ok(result);
+        return new ResponseResult<List<RecommendArticleVO>>(true, result);
     }
 
     /// <summary>
     /// 获取随机文章
     /// </summary>
     [HttpGet("random")]
-    public async Task<ActionResult<IEnumerable<RandomArticleVO>>> Random() {
+    public async Task<ResponseResult<List<RandomArticleVO>>> Random() {
         var result = await articleService.ListRandomArticle();
-        return Ok(result);
+        return new ResponseResult<List<RandomArticleVO>>(true, result);
     }
 
     /// <summary>

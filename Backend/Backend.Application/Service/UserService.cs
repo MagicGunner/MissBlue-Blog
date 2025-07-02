@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Backend.Application.Interface;
 using Backend.Common.Results;
 using Backend.Common.Utils;
 using Backend.Contracts.DTO;
@@ -14,16 +15,23 @@ namespace Backend.Application.Service;
 
 public class UserService(IMapper                 mapper,
                          IBaseRepositories<User> baseRepositories,
-                         IUserRepository         userRepository) : BaseServices<User>(mapper, baseRepositories), IUserService {
+                         IUserRepository         userRepository,
+                         ICurrentUser            currentUser) : BaseServices<User>(mapper, baseRepositories), IUserService {
     private readonly IMapper _mapper = mapper;
 
-    public Task<UserAccountVO> GetAccountByIdAsync() {
-        throw new NotImplementedException();
+    public async Task<UserAccountVO?> GetAccountById() {
+        var userId = currentUser.UserId;
+        if (userId == null) {
+            return null;
+        }
+
+        var user = await Db.Queryable<User>().FirstAsync(u => u.Id == userId);
+        return _mapper.Map<UserAccountVO>(user);
     }
 
     public async Task<List<UserListVO>> ListAllAsync() => await Query<UserListVO>();
 
-    public async Task<bool> ValidateUser(string userName, string password) => await userRepository.ValidateUser(userName, password);
+    public async Task<long> ValidateUser(string userName, string password) => await userRepository.ValidateUser(userName, password);
 
     public async Task<List<PermissionVO>> GetUserPermissions(string userName) {
         var permissions = await userRepository.GetUserPermissions(userName);
@@ -62,5 +70,23 @@ public class UserService(IMapper                 mapper,
         // 5. 保存用户
         var id = await Add(user);
         return id > 0;
+    }
+
+    public async Task<bool> UpdateUser(UserUpdateDTO userUpdateDto) {
+        var userId = currentUser.UserId;
+        if (userId is null or <= 0) {
+            return false;
+        }
+
+        // 数据库更新
+        var result = await Db.Updateable<User>()
+                             .SetColumns(u => u.Nickname == userUpdateDto.Nickname)
+                             .SetColumns(u => u.Gender == userUpdateDto.Gender)
+                             .SetColumns(u => u.Avatar == userUpdateDto.Avatar)
+                             .SetColumns(u => u.Intro == userUpdateDto.Intro)
+                             .Where(u => u.Id == userId)
+                             .ExecuteCommandAsync();
+
+        return result > 0;
     }
 }

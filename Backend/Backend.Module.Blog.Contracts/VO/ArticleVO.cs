@@ -12,27 +12,27 @@ public class ArticleVO {
     /// <summary>
     /// 分类名称
     /// </summary>
-    public string CategoryName { get; set; }
+    public string? CategoryName { get; set; }
 
     /// <summary>
     /// 文章标签
     /// </summary>
-    public List<string> Tags { get; set; }
+    public List<string>? Tags { get; set; }
 
     /// <summary>
     /// 文章缩略图
     /// </summary>
-    public string ArticleCover { get; set; }
+    public string? ArticleCover { get; set; }
 
     /// <summary>
     /// 文章标题
     /// </summary>
-    public string ArticleTitle { get; set; }
+    public string? ArticleTitle { get; set; }
 
     /// <summary>
     /// 文章内容
     /// </summary>
-    public string ArticleContent { get; set; }
+    public string? ArticleContent { get; set; }
 
     /// <summary>
     /// 类型（1：原创，2：转载，3：翻译）
