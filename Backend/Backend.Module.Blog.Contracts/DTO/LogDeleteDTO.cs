@@ -2,7 +2,7 @@
 
 namespace Backend.Modules.Blog.Contracts.DTO;
 
-public class LogDeleteDto {
+public class LogDeleteDTO {
     /// <summary>
     /// 日志 ID 集合
     /// </summary>

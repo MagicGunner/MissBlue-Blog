@@ -1,9 +1,63 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.ComponentModel.DataAnnotations;
+using Backend.Common.Attributes;
+using Backend.Common.Results;
+using Backend.Modules.Blog.Contracts.DTO;
+using Backend.Modules.Blog.Contracts.VO;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Backend.Controllers.Blog;
 
 [ApiController]
 [Route("api/leaveWord")]
-[Tags("留言板")]
+[SwaggerTag("留言板")]
 public class LeaveWordController : ControllerBase {
+    [HttpGet("list")]
+    [AllowAnonymous]
+    [AccessLimit(60, 10)]
+    [SwaggerOperation(Summary = "获取留言板列表", Description = "获取留言板列表")]
+    public Task<ResponseResult<List<LeaveWordVO>>> List([FromQuery] string? id) {
+        throw new NotImplementedException();
+    }
+
+    [HttpPost("auth/userLeaveWord")]
+    [AllowAnonymous] // CheckBlacklist 可扩展实现
+    [AccessLimit(60, 10)]
+    [SwaggerOperation(Summary = "用户留言", Description = "用户留言")]
+    public Task<ResponseResult<object>> UserLeaveWord([FromBody] [Required] string content) {
+        throw new NotImplementedException();
+    }
+
+    [HttpGet("back/list")]
+    [Authorize(Policy = "blog:leaveword:list")]
+    [AccessLimit(60, 30)]
+    [SwaggerOperation(Summary = "后台留言列表", Description = "后台留言列表")]
+    public Task<ResponseResult<List<LeaveWordListVO>>> BackList() {
+        throw new NotImplementedException();
+    }
+
+    [HttpPost("back/search")]
+    [Authorize(Policy = "blog:leaveword:search")]
+    [AccessLimit(60, 30)]
+    [SwaggerOperation(Summary = "搜索后台留言列表", Description = "搜索后台留言列表")]
+    public Task<ResponseResult<List<LeaveWordListVO>>> BackSearch([FromBody] [Required] SearchLeaveWordDTO searchDTO) {
+        throw new NotImplementedException();
+    }
+
+    [HttpPost("back/isCheck")]
+    [Authorize(Policy = "blog:leaveword:isCheck")]
+    [AccessLimit(60, 30)]
+    [SwaggerOperation(Summary = "修改留言是否通过", Description = "修改留言是否通过")]
+    public Task<ResponseResult<object>> IsCheck([FromBody] [Required] LeaveWordIsCheckDTO leaveWordIsCheckDTO) {
+        throw new NotImplementedException();
+    }
+
+    [HttpDelete("back/delete")]
+    [Authorize(Policy = "blog:leaveword:delete")]
+    [AccessLimit(60, 30)]
+    [SwaggerOperation(Summary = "删除留言", Description = "删除留言")]
+    public Task<ResponseResult<object>> Delete([FromBody] [Required] List<long> ids) {
+        throw new NotImplementedException();
+    }
 }

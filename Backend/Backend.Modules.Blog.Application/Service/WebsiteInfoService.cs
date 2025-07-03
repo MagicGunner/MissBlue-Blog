@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Backend.Application.Service;
 using Backend.Common.Utils;
 using Backend.Contracts;
 using Backend.Contracts.IService;
@@ -12,11 +13,13 @@ using SqlSugar;
 
 namespace Backend.Modules.Blog.Application.Service;
 
-public class WebsiteInfoService(IMapper mapper, IBaseRepositories<WebsiteInfo> baseRepositories, IBaseServices<WebsiteInfo> baseServices) : IWebsiteInfoService {
-    private ISqlSugarClient Db => baseRepositories.Db;
+public class WebsiteInfoService(IMapper mapper, IBaseRepositories<WebsiteInfo> baseRepositories)
+    : BaseServices<WebsiteInfo>(mapper, baseRepositories), IWebsiteInfoService {
+    private readonly IBaseRepositories<WebsiteInfo> _baseRepositories = baseRepositories;
+    private new      ISqlSugarClient                Db => _baseRepositories.Db;
 
     public async Task<WebsiteInfoVO> GetWebsiteInfo() {
-        var websiteInfoVo = (await baseServices.Query<WebsiteInfoVO>()).First();
+        var websiteInfoVo = (await Query<WebsiteInfoVO>()).First();
         // 查询文章数
         websiteInfoVo.ArticleCount = await Db.Queryable<Article>().CountAsync();
         // 查询评论数

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Backend.Application.Service;
 using Backend.Contracts;
 using Backend.Contracts.IService;
 using Backend.Domain;
@@ -11,7 +12,7 @@ using SqlSugar;
 
 namespace Backend.Modules.Blog.Application.Service;
 
-public class CommentService(IMapper mapper, IBaseRepositories<Comment> baseRepositories, IBaseServices<Comment> baseServices) : ICommentService {
+public class CommentService(IMapper mapper, IBaseRepositories<Comment> baseRepositories) : BaseServices<Comment>(mapper, baseRepositories), ICommentService {
     public Task<long> Add(UserCommentDTO userCommentDto) {
         throw new NotImplementedException();
     }
@@ -30,16 +31,16 @@ public class CommentService(IMapper mapper, IBaseRepositories<Comment> baseRepos
 
     public async Task<PageVO<List<ArticleCommentVO>>> GetComment(int type, int typeId, int pageNum, int pageSize) {
         // 查询父评论
-        var parentComments = await baseServices.QueryWithMulti<ArticleCommentVO>(query =>
-                                                                                     query.Where(x => x.Type == type && x.TypeId == typeId && x.IsCheck == 1 && x.ParentId == null)
-                                                                                          .OrderBy(x => x.CreateTime, OrderByType.Desc)
-                                                                                );
+        var parentComments = await QueryWithMulti<ArticleCommentVO>(query =>
+                                                                        query.Where(x => x.Type == type && x.TypeId == typeId && x.IsCheck == 1 && x.ParentId == null)
+                                                                             .OrderBy(x => x.CreateTime, OrderByType.Desc)
+                                                                   );
 
         // 查询子评论
-        var childComments = await baseServices.QueryWithMulti<ArticleCommentVO>(query =>
-                                                                                    query.Where(x => x.Type == type && x.TypeId == typeId && x.IsCheck == 1 && x.ParentId != null)
-                                                                                         .OrderBy(x => x.CreateTime, OrderByType.Desc)
-                                                                               );
+        var childComments = await QueryWithMulti<ArticleCommentVO>(query =>
+                                                                       query.Where(x => x.Type == type && x.TypeId == typeId && x.IsCheck == 1 && x.ParentId != null)
+                                                                            .OrderBy(x => x.CreateTime, OrderByType.Desc)
+                                                                  );
 
         // 内存组装父子评论
         foreach (var parent in parentComments) {

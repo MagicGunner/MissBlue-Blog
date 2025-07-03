@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Backend.Application.Service;
 using Backend.Common.Results;
 using Backend.Contracts;
 using Backend.Contracts.IService;
@@ -11,7 +12,8 @@ using SqlSugar;
 
 namespace Backend.Modules.Blog.Application.Service;
 
-public class LeaveWordService(IMapper mapper, IBaseRepositories<Category> baseRepositories, IBaseServices<LeaveWord> baseServices) : ILeaveWordService {
+public class LeaveWordService(IMapper mapper, IBaseRepositories<LeaveWord> baseRepositories)
+    : BaseServices<LeaveWord>(mapper, baseRepositories), ILeaveWordService {
     public Task<long> AddLeaveWordAsync(string content) {
         throw new NotImplementedException();
     }

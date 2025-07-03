@@ -5,7 +5,7 @@ namespace Backend.Modules.Blog.Contracts.DTO;
 /// <summary>
 /// 评论审核状态 DTO
 /// </summary>
-public class CommentIsCheckDto {
+public class CommentIsCheckDTO {
     /// <summary>
     /// 评论 ID
     /// </summary>

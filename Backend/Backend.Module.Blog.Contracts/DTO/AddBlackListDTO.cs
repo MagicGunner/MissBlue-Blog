@@ -6,7 +6,7 @@ namespace Backend.Modules.Blog.Contracts.DTO;
 /// <summary>
 /// 添加黑名单请求 DTO
 /// </summary>
-public class AddBlackListDto {
+public class AddBlackListDTO {
     /// <summary>
     /// 用户ID列表
     /// </summary>

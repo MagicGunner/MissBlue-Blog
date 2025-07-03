@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using AutoMapper;
 using Backend.Application;
+using Backend.Application.Service;
 using Backend.Common.Results;
 using Backend.Contracts;
 using Backend.Contracts.IService;
@@ -14,18 +15,19 @@ using SqlSugar;
 
 namespace Backend.Modules.Blog.Application.Service;
 
-public class TagService(IMapper mapper, IBaseRepositories<Tag> baseRepositories, IBaseServices<Tag> baseServices) : ITagService {
-    public async Task<long> AddAsync(TagDTO tagDTO) => await baseServices.Add(mapper.Map<Tag>(tagDTO));
+public class TagService(IMapper mapper, IBaseRepositories<Tag> baseRepositories) : BaseServices<Tag>(mapper, baseRepositories), ITagService {
+    private readonly IMapper    _mapper = mapper;
+    public async     Task<long> AddAsync(TagDTO tagDTO) => await Add(_mapper.Map<Tag>(tagDTO));
 
-    public async Task<bool> DeleteByIdsAsync(List<long> ids) => await baseServices.DeleteByIds(ids);
+    public async Task<bool> DeleteByIdsAsync(List<long> ids) => await DeleteByIds(ids);
 
-    public async Task<bool> UpdateAsync(TagDTO tagDTO) => await baseServices.Update(mapper.Map<Tag>(tagDTO));
-
-
-    public async Task<List<TagVO>> ListAllAsync() => await baseServices.Query<TagVO>();
+    public async Task<bool> UpdateAsync(TagDTO tagDTO) => await Update(_mapper.Map<Tag>(tagDTO));
 
 
-    public async Task<List<TagVO>> SearchTagAsync(SearchTagDTO searchTagDTO) => await baseServices.Query<TagVO>(tag => tag.TagName == searchTagDTO.TagName);
+    public async Task<List<TagVO>> ListAllAsync() => await Query<TagVO>();
 
-    public async Task<TagVO?> GetByIdAsync(long id) => (await baseServices.Query<TagVO>(tag => tag.Id == id)).FirstOrDefault();
+
+    public async Task<List<TagVO>> SearchTagAsync(SearchTagDTO searchTagDTO) => await Query<TagVO>(tag => tag.TagName == searchTagDTO.TagName);
+
+    public async Task<TagVO?> GetByIdAsync(long id) => (await Query<TagVO>(tag => tag.Id == id)).FirstOrDefault();
 }
