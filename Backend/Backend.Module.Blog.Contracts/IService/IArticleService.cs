@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 namespace Backend.Modules.Blog.Contracts.IService;
 
 public interface IArticleService {
-    Task<PageVO<List<ArticleVO>>>        ListAllArticle(int pageNum, int pageSize);
+    Task<PageVO<List<ArticleVO>>>        ListAll(int pageNum, int pageSize);
     Task<List<RecommendArticleVO>>       ListRecommendArticle();
     Task<List<RandomArticleVO>>          ListRandomArticle();
     Task<ArticleDetailVO>                GetArticleDetail(long   id);
@@ -26,5 +26,5 @@ public interface IArticleService {
     Task                                 DeleteArticle(List<long>       ids);
     Task<List<InitSearchTitleVO>>        InitSearchByTitle();
     Task<List<HotArticleVO>>             ListHotArticle();
-    Task<List<SearchArticleByContentVO>> SearchArticleByContent(string content);
+    Task<List<SearchArticleByContentVO>> SearchArticleByContent(string keyword);
 }

@@ -17,23 +17,19 @@ public class ArticleController(IArticleService articleService) : ControllerBase 
     [HttpGet("search/init/title")]
     [AccessLimit(60, 5)]
     [SwaggerOperation(Summary = "初始化通过标题搜索文章", Description = "初始化通过标题搜索文章")]
-    public Task<ResponseResult<PageVO<List<InitSearchTitleVO>>>> InitSearchByTitle() {
-        // var data = await articleService.InitSearchByTitle();
-        // return Ok(new PageVO<IEnumerable<InitSearchTitleVO>> {
-        //                                                          Page = data,
-        //                                                          Total = data.Count
-        //                                                      });
-        throw new NotImplementedException();
+    public async Task<ResponseResult<List<InitSearchTitleVO>>> InitSearchByTitle() {
+        var data = await articleService.InitSearchByTitle();
+        return new ResponseResult<List<InitSearchTitleVO>>(data.Count > 0, data);
     }
 
     [HttpGet("search/by/content")]
     [AccessLimit(60, 5)]
     [SwaggerOperation(Summary = "内容搜索文章", Description = "内容搜索文章")]
-    public Task<ResponseResult<List<SearchArticleByContentVO>>> SearchByContent([FromQuery, Required(ErrorMessage = "文章内容不能为空")]
-                                                                                [StringLength(15, MinimumLength = 1, ErrorMessage = "文章搜索长度应在1-15之间")]
-                                                                                [SwaggerParameter(Description = "搜索文章内容", Required = true)]
-                                                                                string content) {
-        // var result = await articleService.SearchArticleByContent(content);
+    public async Task<ResponseResult<List<SearchArticleByContentVO>>> SearchByContent([FromQuery, Required(ErrorMessage = "文章内容不能为空")]
+                                                                                      [StringLength(15, MinimumLength = 1, ErrorMessage = "文章搜索长度应在1-15之间")]
+                                                                                      [SwaggerParameter(Description = "搜索文章内容", Required = true)]
+                                                                                      string keyword) {
+        var result = await articleService.SearchArticleByContent(keyword);
         // return Ok(result);
         throw new NotImplementedException();
     }
@@ -53,7 +49,7 @@ public class ArticleController(IArticleService articleService) : ControllerBase 
     public async Task<ResponseResult<PageVO<List<ArticleVO>>>> List([FromQuery, Required] [SwaggerParameter(Description = "页码", Required = true)] int pageNum,
                                                                     [FromQuery, Required] [SwaggerParameter(Description = "每页数量", Required = true)]
                                                                     int pageSize) {
-        var page = await articleService.ListAllArticle(pageNum, pageSize);
+        var page = await articleService.ListAll(pageNum, pageSize);
         return new ResponseResult<PageVO<List<ArticleVO>>>(true, page);
     }
 

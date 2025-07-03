@@ -3,6 +3,7 @@ using Backend.Common.Attributes;
 using Backend.Common.Results;
 using Backend.Contracts.VO;
 using Backend.Modules.Blog.Contracts.DTO;
+using Backend.Modules.Blog.Contracts.IService;
 using Backend.Modules.Blog.Contracts.VO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,13 +14,14 @@ namespace Backend.Controllers.Blog;
 [ApiController]
 [Route("api/menu")]
 [SwaggerTag("菜单相关接口")]
-public class MenuController : ControllerBase {
+public class MenuController(IMenuService menuService) : ControllerBase {
     [HttpGet("list/{typeId}")]
     [AccessLimit(60, 30)]
     [Authorize(Policy = "system:menu:list")]
     [SwaggerOperation(Summary = "获取管理菜单列表", Description = "获取管理菜单列表")]
-    public Task<ResponseResult<List<MenuVO>>> List([FromRoute] int typeId) {
-        throw new NotImplementedException();
+    public async Task<ResponseResult<List<MenuVO>>> List([FromRoute] int typeId) {
+        var list = await menuService.GetMenuList(typeId);
+        return new ResponseResult<List<MenuVO>>(list.Count > 0, list);
     }
 
     [HttpGet("search/list/{typeId}")]
@@ -41,8 +43,9 @@ public class MenuController : ControllerBase {
     [HttpGet("router/list/{typeId}")]
     [AccessLimit(60, 30)]
     [SwaggerOperation(Summary = "获取路由菜单列表", Description = "获取路由菜单列表")]
-    public Task<ResponseResult<List<MenuVO>>> RouterList([FromRoute] int typeId) {
-        throw new NotImplementedException();
+    public async Task<ResponseResult<List<MenuVO>>> RouterList([FromRoute] int typeId) {
+        var list = await menuService.GetMenuList(typeId);
+        return new ResponseResult<List<MenuVO>>(list.Count > 0, list);
     }
 
     [HttpPost]

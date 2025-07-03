@@ -106,12 +106,6 @@ public class UserController(IUserService userService, IConfiguration configurati
         throw new NotImplementedException();
     }
     
-    
-    
-    /// <summary>
-    /// 获取用户列表
-    /// </summary>
-    /// <returns></returns>
     [HttpGet("list")]
     [AccessLimit(60, 30)] // 👈 限流参数
     [Authorize(Policy = "system:user:list")]

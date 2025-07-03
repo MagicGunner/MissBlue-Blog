@@ -10,4 +10,5 @@ public static class MarkdownUtil {
         text = Regex.Replace(text, @"\n{2,}", "\n");
         return text;
     }
+    
 }

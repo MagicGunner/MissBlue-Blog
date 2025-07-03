@@ -43,5 +43,12 @@ public class BlogMapperProfile : Profile {
            .ForMember(dest => dest.CategoryName, opt => opt.Ignore());
         CreateMap<Article, RecommendArticleVO>();
         CreateMap<Article, RandomArticleVO>();
+        CreateMap<Article, InitSearchTitleVO>();
+
+        CreateMap<Menu, MenuVO>()
+           .ForMember(dest => dest.Affix, opt => opt.Ignore())
+           .ForMember(dest => dest.HideInMenu, opt => opt.Ignore())
+           .ForMember(dest => dest.KeepAlive, opt => opt.Ignore())
+           .ForMember(dest => dest.IsDisable, opt => opt.Ignore());
     }
 }
