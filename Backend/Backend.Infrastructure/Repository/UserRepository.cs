@@ -38,4 +38,8 @@ public class UserRepository(IUnitOfWorkManage unitOfWorkManage) : BaseRepositori
     public async Task<User?> GetUserByName(string userName) {
         return (await Db.Queryable<User>().Where(user => user.Username == userName).ToListAsync()).FirstOrDefault();
     }
+
+    public async Task<Dictionary<long, User>> GetUserNameDic(List<long> userIds) {
+        return (await Db.Queryable<User>().Where(user => userIds.Contains(user.Id)).ToListAsync()).ToDictionary(user => user.Id, user => user);
+    }
 }

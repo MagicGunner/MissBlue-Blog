@@ -13,7 +13,7 @@ public class Comment : RootEntity {
     /// <summary>
     /// 类型关联ID（如文章ID、留言板ID）
     /// </summary>
-    public int TypeId { get; set; }
+    public long TypeId { get; set; }
 
     /// <summary>
     /// 父评论ID（顶级为0）

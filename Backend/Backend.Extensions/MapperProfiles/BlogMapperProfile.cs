@@ -50,5 +50,10 @@ public class BlogMapperProfile : Profile {
            .ForMember(dest => dest.HideInMenu, opt => opt.Ignore())
            .ForMember(dest => dest.KeepAlive, opt => opt.Ignore())
            .ForMember(dest => dest.IsDisable, opt => opt.Ignore());
+
+        CreateMap<LeaveWord, LeaveWordListVO>();
+        CreateMap<LeaveWord, LeaveWordVO>();
+
+        CreateMap<Like, LikeVo>();
     }
 }

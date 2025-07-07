@@ -18,7 +18,7 @@ public class Like : RootEntity {
     /// <summary>
     /// 点赞对象的ID（如文章ID或评论ID）
     /// </summary>
-    public int TypeId { get; set; }
+    public long TypeId { get; set; }
 
     /// <summary>
     /// 点赞时间（插入时自动填充）

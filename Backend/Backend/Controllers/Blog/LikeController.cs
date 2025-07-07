@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Backend.Common.Attributes;
 using Backend.Common.Results;
+using Backend.Modules.Blog.Contracts.VO;
 using Backend.Modules.Blog.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -32,8 +33,8 @@ public class LikeController : ControllerBase {
     [HttpGet("whether/like")]
     [AccessLimit(60, 60)]
     [SwaggerOperation(Summary = "是否已经点赞", Description = "是否已经点赞")]
-    public Task<ResponseResult<List<Like>>> IsLike([FromQuery] [Required] int  type,
-                                                   [FromQuery]            int? typeId) {
+    public Task<ResponseResult<List<LikeVo>>> IsLike([FromQuery] [Required] int   type,
+                                                     [FromQuery]            long? typeId) {
         throw new NotImplementedException();
     }
 }

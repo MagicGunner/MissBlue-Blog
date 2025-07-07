@@ -2,6 +2,7 @@
 using Backend.Common.Attributes;
 using Backend.Common.Results;
 using Backend.Modules.Blog.Contracts.DTO;
+using Backend.Modules.Blog.Contracts.IService;
 using Backend.Modules.Blog.Contracts.VO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,13 +13,14 @@ namespace Backend.Controllers.Blog;
 [ApiController]
 [Route("api/leaveWord")]
 [SwaggerTag("留言板")]
-public class LeaveWordController : ControllerBase {
+public class LeaveWordController(ILeaveWordService leaveWordService) : ControllerBase {
     [HttpGet("list")]
     [AllowAnonymous]
     [AccessLimit(60, 10)]
     [SwaggerOperation(Summary = "获取留言板列表", Description = "获取留言板列表")]
-    public Task<ResponseResult<List<LeaveWordVO>>> List([FromQuery] string? id) {
-        throw new NotImplementedException();
+    public async Task<ResponseResult<List<LeaveWordVO>>> List([FromQuery] string? id) {
+        var result = await leaveWordService.GetList(id);
+        return new ResponseResult<List<LeaveWordVO>>(result.Count > 0, result);
     }
 
     [HttpPost("auth/userLeaveWord")]
@@ -33,8 +35,9 @@ public class LeaveWordController : ControllerBase {
     [Authorize(Policy = "blog:leaveword:list")]
     [AccessLimit(60, 30)]
     [SwaggerOperation(Summary = "后台留言列表", Description = "后台留言列表")]
-    public Task<ResponseResult<List<LeaveWordListVO>>> BackList() {
-        throw new NotImplementedException();
+    public async Task<ResponseResult<List<LeaveWordListVO>>> BackList() {
+        var result = await leaveWordService.GetBackList();
+        return new ResponseResult<List<LeaveWordListVO>>(result.Count > 0, result);
     }
 
     [HttpPost("back/search")]

@@ -10,6 +10,8 @@ using Backend.Modules.Blog.Domain.Entities;
 namespace Backend.Modules.Blog.Application.Service;
 
 public class MenuService(IMapper mapper, IBaseRepositories<Menu> baseRepositories, ICurrentUser currentUser) : BaseServices<Menu>(mapper, baseRepositories), IMenuService {
+    private readonly IMapper _mapper = mapper;
+
     public async Task<List<MenuVO>> GetMenuList(int typeId, string? userName = null, int status = 0) {
         var query = Db.Queryable<Menu>().OrderBy(m => m.OrderNum);
 
@@ -47,7 +49,7 @@ public class MenuService(IMapper mapper, IBaseRepositories<Menu> baseRepositorie
         var menus = await query.ToListAsync();
 
         return menus.Select(menu => {
-                                var menuVo = mapper.Map<MenuVO>(menu);
+                                var menuVo = _mapper.Map<MenuVO>(menu);
                                 menuVo.Affix = menu.Affix == 1;
                                 menuVo.HideInMenu = menu.HideInMenu == 1;
                                 menuVo.KeepAlive = menu.KeepAlive == 1;
