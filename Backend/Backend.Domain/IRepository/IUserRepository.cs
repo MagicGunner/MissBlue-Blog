@@ -7,5 +7,6 @@ public interface IUserRepository : IBaseRepositories<User> {
     Task<List<Permission>> GetUserPermissions(string userName);
     Task<User?>            GetUserByName(string      userName);
 
-    Task<Dictionary<long, User>> GetUserNameDic(List<long> userIds);
+    Task<Dictionary<long, User>> GetUserDic(List<long> userIds);
+    Task<List<long>>             GetIds(string?        userName);
 }

@@ -39,7 +39,16 @@ public class UserRepository(IUnitOfWorkManage unitOfWorkManage) : BaseRepositori
         return (await Db.Queryable<User>().Where(user => user.Username == userName).ToListAsync()).FirstOrDefault();
     }
 
-    public async Task<Dictionary<long, User>> GetUserNameDic(List<long> userIds) {
+    public async Task<Dictionary<long, User>> GetUserDic(List<long> userIds) {
         return (await Db.Queryable<User>().Where(user => userIds.Contains(user.Id)).ToListAsync()).ToDictionary(user => user.Id, user => user);
+    }
+
+    public async Task<List<long>> GetIds(string? userName) {
+        var query = Db.Queryable<User>();
+        if (userName != null) {
+            query = query.Where(user => user.Username == userName);
+        }
+
+        return await query.Select(user => user.Id).ToListAsync();
     }
 }

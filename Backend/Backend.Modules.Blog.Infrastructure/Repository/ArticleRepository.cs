@@ -39,4 +39,8 @@ public class ArticleRepository(IUnitOfWorkManage unitOfWorkManage, ICategoryRepo
     }
 
     public async Task<string> GetCategoryName(Article article) => await categoryRepository.GetNameByIdAsync(article.CategoryId);
+
+    public async Task<Dictionary<long, string>> GetContentDic(List<long> userIds) =>
+        (await Db.Queryable<Article>().Where(article => userIds.Contains(article.UserId)).ToListAsync())
+       .ToDictionary(article => article.Id, article => article.ArticleContent);
 }

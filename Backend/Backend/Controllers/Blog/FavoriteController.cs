@@ -2,6 +2,7 @@
 using Backend.Common.Attributes;
 using Backend.Common.Results;
 using Backend.Modules.Blog.Contracts.DTO;
+using Backend.Modules.Blog.Contracts.IService;
 using Backend.Modules.Blog.Contracts.VO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,62 +13,57 @@ namespace Backend.Controllers.Blog;
 [ApiController]
 [Route("api/favorite")]
 [SwaggerTag("收藏相关接口")]
-public class FavoriteController : ControllerBase {
+public class FavoriteController(IFavoriteService favoriteService) : ControllerBase {
     [HttpPost("auth/favorite")]
     [AccessLimit(60, 10)]
     [CheckBlacklist]
     [SwaggerOperation(Summary = "收藏", Description = "收藏")]
-    public Task<ResponseResult<object>> Favorite([FromQuery] [Required] int   type,
-                                                 [FromQuery]            long? typeId) {
-        throw new NotImplementedException();
-    }
+    public async Task<ResponseResult<object>> SetFavorited([FromQuery] [Required] int  type,
+                                                           [FromQuery] [Required] long typeId) =>
+        new(await favoriteService.SetFavorited(type, typeId));
 
     [HttpDelete("auth/favorite")]
     [AccessLimit(60, 10)]
     [CheckBlacklist]
     [SwaggerOperation(Summary = "取消收藏", Description = "取消收藏")]
-    public Task<ResponseResult<object>> CancelFavorite([FromQuery] [Required] int  type,
-                                                       [FromQuery]            int? typeId) {
-        throw new NotImplementedException();
-    }
+    public async Task<ResponseResult<object>> UnSetFavorited([FromQuery] [Required] int type,
+                                                             [FromQuery] [Required] int typeId) =>
+        new(await favoriteService.UnSetFavorited(type, typeId));
 
     [HttpGet("whether/favorite")]
     [AccessLimit(60, 60)]
     [SwaggerOperation(Summary = "是否已经收藏", Description = "是否已经收藏")]
-    public Task<ResponseResult<bool>> IsFavorite([FromQuery] [Required] int  type,
-                                                 [FromQuery]            int? typeId) {
-        throw new NotImplementedException();
-    }
+    public async Task<ResponseResult<bool>> IsFavorite([FromQuery] [Required] int type,
+                                                       [FromQuery] [Required] int typeId) =>
+        new(await favoriteService.IsFavorited(type, typeId));
 
     [HttpGet("back/list")]
     [AccessLimit(60, 30)]
     [Authorize(Policy = "blog:favorite:list")]
     [SwaggerOperation(Summary = "后台收藏列表", Description = "后台收藏列表")]
-    public Task<ResponseResult<List<FavoriteListVO>>> BackList() {
-        throw new NotImplementedException();
+    public async Task<ResponseResult<List<FavoriteListVO>>> BackList() {
+        var result = await favoriteService.GetBackList(null);
+        return new ResponseResult<List<FavoriteListVO>>(result.Count > 0, result);
     }
 
     [HttpPost("back/search")]
     [AccessLimit(60, 30)]
     [Authorize(Policy = "blog:favorite:search")]
     [SwaggerOperation(Summary = "搜索后台收藏列表", Description = "搜索后台收藏列表")]
-    public Task<ResponseResult<List<FavoriteListVO>>> BackList([FromBody] SearchFavoriteDTO searchDTO) {
-        throw new NotImplementedException();
+    public async Task<ResponseResult<List<FavoriteListVO>>> BackList([FromBody] SearchFavoriteDTO searchDTO) {
+        var result = await favoriteService.GetBackList(searchDTO);
+        return new ResponseResult<List<FavoriteListVO>>(result.Count > 0, result);
     }
 
     [HttpPost("back/isCheck")]
     [AccessLimit(60, 30)]
     [Authorize(Policy = "blog:favorite:isCheck")]
     [SwaggerOperation(Summary = "修改收藏是否通过", Description = "修改收藏是否通过")]
-    public Task<ResponseResult<object>> IsCheck([FromBody] [Required] FavoriteIsCheckDTO favoriteIsCheckDTO) {
-        throw new NotImplementedException();
-    }
+    public async Task<ResponseResult<object>> SetChecked([FromBody] [Required] FavoriteIsCheckDTO favoriteIsCheckDto) => new(await favoriteService.SetChecked(favoriteIsCheckDto));
 
     [HttpDelete("back/delete")]
     [AccessLimit(60, 30)]
     [Authorize(Policy = "blog:favorite:delete")]
     [SwaggerOperation(Summary = "删除收藏", Description = "删除收藏")]
-    public Task<ResponseResult<object>> Delete([FromBody] [Required] List<long> ids) {
-        throw new NotImplementedException();
-    }
+    public async Task<ResponseResult<object>> Delete([FromBody] [Required] List<long> ids) => new(await favoriteService.Delete(ids));
 }

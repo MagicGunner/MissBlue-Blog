@@ -15,4 +15,6 @@ public interface ILeaveWordRepository : IBaseRepositories<LeaveWord> {
     Task<List<LeaveWord>> GetBackList(string userName, int isCheck = 1, string? startTime = null, string? endTime = null);
 
     Task<List<LeaveWord>> GetList(string? id);
+
+    Task<Dictionary<long, string>> GetContentDic(List<long> userIds);
 }

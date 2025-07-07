@@ -18,4 +18,6 @@ public interface IArticleRepository : IBaseRepositories<Article> {
     );
 
     Task<string> GetCategoryName(Article article);
+
+    Task<Dictionary<long, string>> GetContentDic(List<long> userIds);
 }

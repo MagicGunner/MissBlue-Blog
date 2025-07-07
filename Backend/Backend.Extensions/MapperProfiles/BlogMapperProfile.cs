@@ -55,5 +55,7 @@ public class BlogMapperProfile : Profile {
         CreateMap<LeaveWord, LeaveWordVO>();
 
         CreateMap<Like, LikeVo>();
+
+        CreateMap<Favorite, FavoriteListVO>();
     }
 }

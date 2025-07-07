@@ -35,7 +35,7 @@ public class LeaveWordService(IMapper                      mapper,
                              ? await leaveWordRepository.Query()
                              : await leaveWordRepository.GetBackList(searchLeaveWordDto.UserName, searchLeaveWordDto.isCheck, searchLeaveWordDto.startTime, searchLeaveWordDto.endTime);
 
-        var userDic = await userRepository.GetUserNameDic(leaveWords.Select(lw => lw.UserId).ToList());
+        var userDic = await userRepository.GetUserDic(leaveWords.Select(lw => lw.UserId).ToList());
         return leaveWords.Select(lw => {
                                      var vo = _mapper.Map<LeaveWordListVO>(lw);
                                      if (userDic.TryGetValue(lw.UserId, out var user)) {
@@ -49,7 +49,7 @@ public class LeaveWordService(IMapper                      mapper,
 
     public async Task<List<LeaveWordVO>> GetList(string? id) {
         var leaveWords = await leaveWordRepository.GetList(id);
-        var userDic = await userRepository.GetUserNameDic(leaveWords.Select(lw => lw.UserId).ToList());
+        var userDic = await userRepository.GetUserDic(leaveWords.Select(lw => lw.UserId).ToList());
         var typeIds = leaveWords.Select(lw => lw.Id).ToList();
         var commentCountDic = await commentRepository.GetCountDic(CommentType.LeaveWord, typeIds);
         var favoriteCountDic = await favoriteRepository.GetCountDic(CommentType.LeaveWord, typeIds);

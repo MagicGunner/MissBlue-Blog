@@ -37,4 +37,8 @@ public class LeaveWordRepository(IUnitOfWorkManage unitOfWorkManage) : BaseRepos
 
         return await query.OrderByDescending(lw => lw.CreateTime).ToListAsync();
     }
+
+    public async Task<Dictionary<long, string>> GetContentDic(List<long> userIds) =>
+        (await Db.Queryable<LeaveWord>().Where(leaveWord => userIds.Contains(leaveWord.UserId)).ToListAsync())
+       .ToDictionary(leaveWord => leaveWord.Id, leaveWord => leaveWord.Content);
 }

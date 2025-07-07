@@ -13,7 +13,7 @@ public class Article : RootEntity {
 
     public string? ArticleTitle { get; set; }
 
-    public string? ArticleContent { get; set; }
+    public string ArticleContent { get; set; }
 
     /// <summary>
     /// 类型 (1原创 2转载 3翻译)
