@@ -20,6 +20,8 @@ public class LikeRepository(IUnitOfWorkManage unitOfWorkManage) : BaseRepositori
                         .ToListAsync()).ToDictionary(i => i.TypeId, i => i.Count);
     }
 
+    public async Task<long> GetCount(LikeType type, long typeId) => await Db.Queryable<Like>().Where(l => l.Type == (int)type && l.TypeId == typeId).CountAsync();
+
     public async Task<List<Like>> IsLike(long userId, int type, long? typeId) {
         var query = Db.Queryable<Like>().Where(like => like.UserId == userId && like.Type == type);
         if (type != (int)LikeType.Comment && typeId.HasValue) {

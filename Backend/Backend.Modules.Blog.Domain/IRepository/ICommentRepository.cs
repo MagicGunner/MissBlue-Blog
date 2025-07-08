@@ -6,4 +6,5 @@ namespace Backend.Modules.Blog.Domain.IRepository;
 
 public interface ICommentRepository : IBaseRepositories<Comment> {
     Task<Dictionary<long, long>> GetCountDic(CommentType type, List<long> typeIds);
+    Task<long>                   GetCount(CommentType    type, long       typeId);
 }

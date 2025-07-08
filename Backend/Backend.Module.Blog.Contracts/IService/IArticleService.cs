@@ -7,9 +7,9 @@ namespace Backend.Modules.Blog.Contracts.IService;
 
 public interface IArticleService {
     Task<PageVO<List<ArticleVO>>>        ListAll(int pageNum, int pageSize);
-    Task<List<RecommendArticleVO>>       ListRecommendArticle();
+    Task<List<RecommendArticleVO>>       ListRecommend();
     Task<List<RandomArticleVO>>          ListRandomArticle();
-    Task<ArticleDetailVO>                GetArticleDetail(long   id);
+    Task<ArticleDetailVO?>               GetDetail(long          id);
     Task<List<RelatedArticleVO>>         RelatedArticleList(long categoryId, long articleId);
     Task<List<TimeLineVO>>               ListTimeLine();
     Task<List<CategoryArticleVO>>        ListCategoryArticle(int      type, long typeId);

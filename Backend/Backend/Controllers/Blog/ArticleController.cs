@@ -30,8 +30,7 @@ public class ArticleController(IArticleService articleService) : ControllerBase 
                                                                                       [SwaggerParameter(Description = "搜索文章内容", Required = true)]
                                                                                       string keyword) {
         var result = await articleService.SearchArticleByContent(keyword);
-        // return Ok(result);
-        throw new NotImplementedException();
+        return new ResponseResult<List<SearchArticleByContentVO>>(result.Count > 0, result);
     }
 
     [HttpGet("hot")]
@@ -57,7 +56,7 @@ public class ArticleController(IArticleService articleService) : ControllerBase 
     [AccessLimit(60, 60)]
     [SwaggerOperation(Summary = "获取推荐的文章信息", Description = "获取推荐的文章信息")]
     public async Task<ResponseResult<List<RecommendArticleVO>>> Recommend() {
-        var result = await articleService.ListRecommendArticle();
+        var result = await articleService.ListRecommend();
         return new ResponseResult<List<RecommendArticleVO>>(true, result);
     }
 
@@ -72,10 +71,9 @@ public class ArticleController(IArticleService articleService) : ControllerBase 
     [HttpGet("detail/{id}")]
     [AccessLimit(60, 60)]
     [SwaggerOperation(Summary = "获取文章详情", Description = "获取文章详情")]
-    public Task<ResponseResult<ArticleDetailVO>> Detail([FromRoute, Required] [SwaggerParameter("文章Id", Required = true)] long id) {
-        // var detail = await articleService.GetArticleDetail(id);
-        // return Ok(detail);
-        throw new NotImplementedException();
+    public async Task<ResponseResult<ArticleDetailVO>> Detail([FromRoute, Required] [SwaggerParameter("文章Id", Required = true)] long id) {
+        var result = await articleService.GetDetail(id);
+        return new ResponseResult<ArticleDetailVO>(result != null, result);
     }
 
     [HttpGet("related/{categoryId}/{articleId}")]

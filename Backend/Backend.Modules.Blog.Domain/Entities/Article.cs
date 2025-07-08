@@ -9,9 +9,9 @@ public class Article : RootEntity {
 
     public long CategoryId { get; set; }
 
-    public string? ArticleCover { get; set; }
+    public string ArticleCover { get; set; }
 
-    public string? ArticleTitle { get; set; }
+    public string ArticleTitle { get; set; }
 
     public string ArticleContent { get; set; }
 

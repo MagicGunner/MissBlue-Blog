@@ -38,12 +38,15 @@ public class BlogMapperProfile : Profile {
 
         // CreateMap<UserRoleDTO, UserRole>();
 
+        CreateMap<Article, ArticleDetailVO>();
         CreateMap<Article, ArticleVO>()
            .ForMember(dest => dest.Tags, opt => opt.Ignore()) // 数据库查询
            .ForMember(dest => dest.CategoryName, opt => opt.Ignore());
         CreateMap<Article, RecommendArticleVO>();
         CreateMap<Article, RandomArticleVO>();
         CreateMap<Article, InitSearchTitleVO>();
+        CreateMap<Article, TimeLineVO>();
+        CreateMap<Article, HotArticleVO>();
 
         CreateMap<Menu, MenuVO>()
            .ForMember(dest => dest.Affix, opt => opt.Ignore())

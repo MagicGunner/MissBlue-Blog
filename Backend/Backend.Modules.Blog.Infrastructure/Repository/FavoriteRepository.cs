@@ -10,7 +10,7 @@ using SqlSugar;
 namespace Backend.Modules.Blog.Infrastructure.Repository;
 
 public class FavoriteRepository(IUnitOfWorkManage unitOfWorkManage) : BaseRepositories<Favorite>(unitOfWorkManage), IFavoriteRepository {
-    public async Task<Dictionary<long, long>> GetCountDic(CommentType type, List<long> typeIds) {
+    public async Task<Dictionary<long, long>> GetCountDic(FavoriteType type, List<long> typeIds) {
         return (await Db.Queryable<Favorite>()
                         .Where(favorite => favorite.Type == (int)type && typeIds.Contains(favorite.TypeId))
                         .GroupBy(favorite => favorite.TypeId)
@@ -20,6 +20,8 @@ public class FavoriteRepository(IUnitOfWorkManage unitOfWorkManage) : BaseReposi
                                                 })
                         .ToListAsync()).ToDictionary(i => i.TypeId, i => i.Count);
     }
+
+    public async Task<long> GetCount(FavoriteType type, long typeId) => await Db.Queryable<Favorite>().Where(f => f.Type == (int)type && f.IsCheck == 1 && f.TypeId == typeId).CountAsync();
 
     public async Task<bool> SetFavorited(long userId, int type, long typeId) {
         // 判断是否已经设置收藏

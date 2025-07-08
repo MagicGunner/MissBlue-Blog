@@ -52,7 +52,7 @@ public class LeaveWordService(IMapper                      mapper,
         var userDic = await userRepository.GetUserDic(leaveWords.Select(lw => lw.UserId).ToList());
         var typeIds = leaveWords.Select(lw => lw.Id).ToList();
         var commentCountDic = await commentRepository.GetCountDic(CommentType.LeaveWord, typeIds);
-        var favoriteCountDic = await favoriteRepository.GetCountDic(CommentType.LeaveWord, typeIds);
+        var favoriteCountDic = await favoriteRepository.GetCountDic(FavoriteType.LeaveWord, typeIds);
         var likeCountDic = await likeRepository.GetCountDic(LikeType.LeaveWord, typeIds);
         return leaveWords.Select(lw => {
                                      var vo = _mapper.Map<LeaveWordVO>(lw);

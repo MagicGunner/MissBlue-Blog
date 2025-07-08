@@ -13,9 +13,11 @@ public class CommentRepository(IUnitOfWorkManage unitOfWorkManage) : BaseReposit
                         .Where(comment => comment.Type == (int)type && comment.IsCheck == 1 && typeIds.Contains(comment.TypeId))
                         .GroupBy(comment => comment.TypeId)
                         .Select(comment => new {
-                                             comment.TypeId,
+                                                   comment.TypeId,
                                                    Count = (long)SqlFunc.AggregateCount(comment.Id)
                                                })
                         .ToListAsync()).ToDictionary(i => i.TypeId, i => i.Count);
     }
+
+    public async Task<long> GetCount(CommentType type, long typeId) => await Db.Queryable<Comment>().Where(c => c.Type == (int)type && c.IsCheck == 1 && c.TypeId == typeId).CountAsync();
 }

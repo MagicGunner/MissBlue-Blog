@@ -1,6 +1,11 @@
 ﻿namespace Backend.Common.Enums;
 
 public class SQLConst {
+    /// <summary>
+    /// 热门文章数量
+    /// </summary>
+    public static readonly int HotArticleCount = 5;
+
     /**
     * 推荐文章的字段标识
     */

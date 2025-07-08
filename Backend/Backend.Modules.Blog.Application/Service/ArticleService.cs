@@ -8,73 +8,112 @@ using Backend.Modules.Blog.Contracts.DTO;
 using Backend.Modules.Blog.Contracts.IService;
 using Backend.Modules.Blog.Contracts.VO;
 using Backend.Modules.Blog.Domain.Entities;
+using Backend.Modules.Blog.Domain.Enums;
 using Backend.Modules.Blog.Domain.IRepository;
 using Microsoft.AspNetCore.Http;
 using SqlSugar;
 
 namespace Backend.Modules.Blog.Application.Service;
 
-public class ArticleService(IMapper mapper, IBaseRepositories<Article> baseRepositories, IArticleRepository articleRepository) : BaseServices<Article>(mapper, baseRepositories), IArticleService {
+public class ArticleService(IMapper                    mapper,
+                            IBaseRepositories<Article> baseRepositories,
+                            IArticleRepository         articleRepository,
+                            ICategoryRepository        categoryRepository,
+                            ITagRepository             tagRepository,
+                            ICommentRepository         commentRepository,
+                            ILikeRepository            likeRepository,
+                            IFavoriteRepository        favoriteRepository)
+    : BaseServices<Article>(mapper, baseRepositories), IArticleService {
     private readonly IMapper _mapper = mapper;
-    // private readonly IBaseRepositories<Article> _baseRepositories = baseRepositories;
 
     public async Task<PageVO<List<ArticleVO>>> ListAll(int pageNum, int pageSize) {
         var totalCount = new RefAsync<int>();
-        // var pageList = await Db.Queryable<Article>()
-        //                        .Where(it => it.Status == SQLConst.PUBLIC_ARTICLE)
-        //                        .OrderBy(it => it.CreateTime, OrderByType.Desc)
-        //                        .ToPageListAsync(pageNum, pageSize, totalCount);
-        var pageList = await articleRepository.FullQueryAsync(it => it.Status == SQLConst.PUBLIC_ARTICLE, it => it.CreateTime, OrderByType.Desc, pageNum, pageSize, totalCount);
-        
+        var pageList = await articleRepository.ListAll(pageNum, pageSize, totalCount);
+
+        // todo 完善Redis相关功能
+
+        // 1. 判断 Redis 是否已缓存点赞/评论/收藏数
+        // var hasKey = await _redisClient.KeyExistsAsync(RedisConst.ARTICLE_LIKE_COUNT) &&
+        //              await _redisClient.KeyExistsAsync(RedisConst.ARTICLE_COMMENT_COUNT) &&
+        //              await _redisClient.KeyExistsAsync(RedisConst.ARTICLE_FAVORITE_COUNT);
+
+        // 6. Redis 点赞/评论/收藏数量（如果缓存存在）
+        // if (hasKey) {
+        //     foreach (var vo in articleVOs) {
+        //         await SetArticleCountAsync(vo, RedisConst.ARTICLE_LIKE_COUNT, CountTypeEnum.Like);
+        //         await SetArticleCountAsync(vo, RedisConst.ARTICLE_COMMENT_COUNT, CountTypeEnum.Comment);
+        //         await SetArticleCountAsync(vo, RedisConst.ARTICLE_FAVORITE_COUNT, CountTypeEnum.Favorite);
+        //     }
+        // }
+
+
         return new PageVO<List<ArticleVO>> {
                                                Page = await Article2VO(pageList),
                                                Total = totalCount
                                            };
     }
 
-    public async Task<List<RecommendArticleVO>> ListRecommendArticle() {
-        // var articles = await Db.Queryable<Article>()
-        //                        .Where(it => it.IsTop == SQLConst.RECOMMEND_ARTICLE
-        //                                  && it.Status == SQLConst.PUBLIC_ARTICLE)
-        //                        .ToListAsync();
-        var articles = await articleRepository.Query(it => it.IsTop == SQLConst.RECOMMEND_ARTICLE && it.Status == SQLConst.PUBLIC_ARTICLE);
+    public async Task<List<RecommendArticleVO>> ListRecommend() {
+        var articles = await articleRepository.ListComment();
         return articles.Select(a => _mapper.Map<RecommendArticleVO>(a)).ToList();
     }
 
     public async Task<List<RandomArticleVO>> ListRandomArticle() {
-        // var articles = await Db.Queryable<Article>()
-        //                        .Where(it => it.Status == SQLConst.PUBLIC_ARTICLE)
-        //                        .OrderBy(it => SqlFunc.GetRandom())
-        //                        .Take(SQLConst.RANDOM_ARTICLE_COUNT) // 限制返回数量
-        //                        .ToListAsync();
-        var articles = await articleRepository.FullQueryAsync(whereExpression: it => it.Status == SQLConst.PUBLIC_ARTICLE, take: SQLConst.RANDOM_ARTICLE_COUNT, isRandom: true);
+        var articles = await articleRepository.ListRandom();
         return articles.Select(a => _mapper.Map<RandomArticleVO>(a)).ToList();
     }
 
-    public Task<ArticleDetailVO> GetArticleDetail(long id) {
-        throw new NotImplementedException();
+    public async Task<ArticleDetailVO?> GetDetail(long id) {
+        var article = await articleRepository.GetById(id);
+        if (article == null) {
+            return null;
+        }
+
+        var category = await categoryRepository.GetById(article.CategoryId);
+        var tagsId = await Db.Queryable<ArticleTag>().Where(articleTag => articleTag.ArticleId == article.Id).Select(articleTag => articleTag.TagId).ToListAsync();
+        var tags = await tagRepository.GetByIds(tagsId);
+
+        // 当前文章的上一篇文章与下一篇文章,大于当前文章的最小文章与小于当前文章的最大文章
+        var preArticle = await articleRepository.FindPre(article.Id);
+        var nextArticle = await articleRepository.FindNext(article.Id);
+        var tagVoTasks = tags.Select(async tag => {
+                                         var vo = _mapper.Map<TagVO>(tag);
+                                         vo.ArticleCount = await articleRepository.CountByTag(tag.Id);
+                                         return vo;
+                                     });
+        var tagVos = (await Task.WhenAll(tagVoTasks)).ToList();
+        var articleDetailVo = _mapper.Map<ArticleDetailVO>(article);
+        articleDetailVo.CategoryName = category.CategoryName;
+        articleDetailVo.CategoryId = category.Id;
+        articleDetailVo.Tags = tagVos;
+        articleDetailVo.CommentCount = await commentRepository.GetCount(CommentType.Article, article.Id);
+        articleDetailVo.LikeCount = await likeRepository.GetCount(LikeType.Article, article.Id);
+        articleDetailVo.FavoriteCount = await favoriteRepository.GetCount(FavoriteType.Article, article.Id);
+        if (preArticle != null) {
+            articleDetailVo.PreArticleId = preArticle.Id;
+            articleDetailVo.PreArticleTitle = preArticle.ArticleTitle;
+        }
+
+        if (nextArticle != null) {
+            articleDetailVo.NextArticleId = nextArticle.Id;
+            articleDetailVo.NextArticleTitle = nextArticle.ArticleTitle;
+        }
+
+        return articleDetailVo;
     }
 
     public async Task<List<RelatedArticleVO>> RelatedArticleList(long categoryId, long articleId) {
-        // 查询满足条件的文章
-        // var articles = await Db.Queryable<Article>()
-        //                        .Where(it => it.Status == SQLConst.PUBLIC_ARTICLE) // 状态=公开
-        //                        .Where(it => it.CategoryId == categoryId)          // 分类=目标分类
-        //                        .Where(it => it.Id != articleId)                   // 排除自己
-        //                        .OrderBy(it => it.CreateTime, OrderByType.Desc)    // 可以按创建时间排序
-        //                        .Take(SQLConst.RELATED_ARTICLE_COUNT)              // 限制数量，比如5
-        //                        .ToListAsync();
-        var articles = await articleRepository.FullQueryAsync(whereExpression: it => it.Status == SQLConst.PUBLIC_ARTICLE && it.CategoryId == categoryId && it.Id != articleId,
-                                                              orderByExpression: it => it.CreateTime, orderByType: OrderByType.Desc, take: SQLConst.RELATED_ARTICLE_COUNT);
+        var articles = await articleRepository.ListRelated(categoryId, articleId);
         return articles.Select(a => _mapper.Map<RelatedArticleVO>(a)).ToList();
     }
 
-    public Task<List<TimeLineVO>> ListTimeLine() {
-        throw new NotImplementedException();
-    }
+    public async Task<List<TimeLineVO>> ListTimeLine() => await Query<TimeLineVO>();
 
-    public Task<List<CategoryArticleVO>> ListCategoryArticle(int type, long typeId) {
-        throw new NotImplementedException();
+    public async Task<List<CategoryArticleVO>> ListCategoryArticle(int type, long typeId) {
+        var articles = await articleRepository.ListCategoryArticle(type, typeId);
+        var articleIds = articles.Select(a => a.Id).ToList();
+        var articleTags = await Db.Queryable<ArticleTag>().In(at => at.ArticleId, articleIds).ToListAsync();
+        var tagDic = new Dictionary<long, Tag>();
     }
 
     public Task AddVisitCount(long id) {
@@ -125,36 +164,33 @@ public class ArticleService(IMapper mapper, IBaseRepositories<Article> baseRepos
         // 查询公开文章
         var articles = await articleRepository.Query(article => article.Status == SQLConst.PUBLIC_ARTICLE);
 
-        if (articles.Count == 0)
-            return [];
-
-        // 映射为 VO，并设置 CategoryName
-        var result = await Task.WhenAll(articles.Select(async article => {
-                                                            var vo = _mapper.Map<InitSearchTitleVO>(article);
-                                                            vo.CategoryName = await articleRepository.GetCategoryName(article);
-                                                            return vo;
-                                                        }));
-
-        return result.ToList();
+        if (articles.Count == 0) return [];
+        var categoryDic = await categoryRepository.GetNameDic(articles.Select(a => a.CategoryId).ToList());
+        // 映射为 VO，并设置 CategoryNam
+        return articles.Select(article => {
+                                   var vo = _mapper.Map<InitSearchTitleVO>(article);
+                                   if (categoryDic.TryGetValue(article.CategoryId, out var categoryName)) vo.CategoryName = categoryName;
+                                   return vo;
+                               })
+                       .ToList();
     }
 
-    public Task<List<HotArticleVO>> ListHotArticle() {
-        throw new NotImplementedException();
-    }
+    public async Task<List<HotArticleVO>> ListHotArticle() => (await articleRepository.LisHot()).Select(a => _mapper.Map<HotArticleVO>(a)).ToList();
+
 
     public async Task<List<SearchArticleByContentVO>> SearchArticleByContent(string keyword) {
         // 1. 查询文章内容包含关键字且为公开状态的文章
-        var articles = await Db.Queryable<Article>().Where(a => a.ArticleContent != null && a.ArticleContent.Contains(keyword) && a.Status == SQLConst.PUBLIC_ARTICLE).ToListAsync();
+        var articles = await articleRepository.FindByContent(keyword);
 
-        if (articles == null || articles.Count == 0)
-            return [];
-
+        if (articles.Count == 0) return [];
+        var categoryDic = await categoryRepository.GetNameDic(articles.Select(a => a.CategoryId).ToList());
         // 3. 转换为 VO 并设置 CategoryName
-        var listVos = (await Task.WhenAll(articles.Select(async article => {
-                                                              var vo = _mapper.Map<SearchArticleByContentVO>(article);
-                                                              vo.CategoryName = await articleRepository.GetCategoryName(article);
-                                                              return vo;
-                                                          }))).ToList();
+        var listVos = articles.Select(article => {
+                                          var vo = _mapper.Map<SearchArticleByContentVO>(article);
+                                          if (categoryDic.TryGetValue(article.CategoryId, out var categoryName)) vo.CategoryName = categoryName;
+                                          return vo;
+                                      })
+                              .ToList();
         // 4. 处理匹配内容摘要
         var hasMatch = false;
         foreach (var vo in listVos) {
@@ -179,26 +215,18 @@ public class ArticleService(IMapper mapper, IBaseRepositories<Article> baseRepos
         var articleIds = articles.Select(a => a.Id).ToList();
         var categoryIds = articles.Select(a => a.CategoryId).ToList();
 
-        // 2️⃣ 查询分类
-        var categoryList = await Db.Queryable<Category>()
-                                   .In(it => it.Id, categoryIds)
-                                   .ToListAsync();
-
-        var categoryMap = categoryList.ToDictionary(it => it.Id, it => it.CategoryName);
+        var categoryMap = await categoryRepository.GetNameDic(categoryIds);
 
         // 3️⃣ 查询文章标签关联
         var articleTagList = await Db.Queryable<ArticleTag>()
-                                     .In(it => it.ArticleId, articleIds)
+                                     .In(articleTag => articleTag.ArticleId, articleIds)
                                      .ToListAsync();
 
         var tagIds = articleTagList.Select(at => at.TagId).Distinct().ToList();
 
         // 4️⃣ 查询标签
-        var tagList = await Db.Queryable<Tag>()
-                              .In(it => it.Id, tagIds)
-                              .ToListAsync();
 
-        var tagMap = tagList.ToDictionary(it => it.Id, it => it.TagName);
+        var tagMap = await tagRepository.GetNameDic(tagIds);
 
         // 5️⃣ 封装VO
         return articles.Select(article => {
@@ -210,5 +238,30 @@ public class ArticleService(IMapper mapper, IBaseRepositories<Article> baseRepos
                                    return articleVo;
                                })
                        .ToList();
+    }
+
+    private async Task SetArticleCountAsync(ArticleVO articleVO, string redisKey, CountType articleField) {
+        // todo 完善Redis相关功能
+
+        // var articleId = articleVO.Id.ToString();
+        //
+        // // 获取 Redis 中的字段值（Hash）
+        // var countObj = await _redisClient.HashGetAsync(redisKey, articleId);
+        //
+        // long count = 0;
+        //
+        // if (countObj.HasValue) {
+        //     long.TryParse(countObj.ToString(), out count);
+        // } else {
+        //     // 如果缓存不存在，初始化为 0
+        //     await _redisClient.HashSetAsync(redisKey, articleId, 0);
+        // }
+        //
+        // // 设置到 VO 对象中
+        // switch (articleField) {
+        //     case CountTypeEnum.Favorite: articleVO.FavoriteCount = count; break;
+        //     case CountTypeEnum.Like:     articleVO.LikeCount = count; break;
+        //     case CountTypeEnum.Comment:  articleVO.CommentCount = count; break;
+        // }
     }
 }
