@@ -36,10 +36,9 @@ public class ArticleController(IArticleService articleService) : ControllerBase 
     [HttpGet("hot")]
     [AccessLimit(60, 60)]
     [SwaggerOperation(Summary = "获取热门推荐文章", Description = "获取热门推荐文章")]
-    public Task<ResponseResult<List<HotArticleVO>>> Hot() {
-        // var result = await articleService.ListHotArticle();
-        // return Ok(result);
-        throw new NotImplementedException();
+    public async Task<ResponseResult<List<HotArticleVO>>> Hot() {
+        var result = await articleService.ListHotArticle();
+        return new ResponseResult<List<HotArticleVO>>(result.Count > 0, result);
     }
 
     [HttpGet("list")]
@@ -79,12 +78,11 @@ public class ArticleController(IArticleService articleService) : ControllerBase 
     [HttpGet("related/{categoryId}/{articleId}")]
     [AccessLimit(60, 60)]
     [SwaggerOperation(Summary = "相关文章信息", Description = "相关文章信息")]
-    public Task<ResponseResult<List<RelatedArticleVO>>> Related([FromRoute, Required] [SwaggerParameter("分类id", Required = true)] long categoryId,
-                                                                [FromRoute, Required] [SwaggerParameter("文章id", Required = true)]
-                                                                long articleId) {
-        // var list = await articleService.RelatedArticleList(categoryId, articleId);
-        // return Ok(list);
-        throw new NotImplementedException();
+    public async Task<ResponseResult<List<RelatedArticleVO>>> Related([FromRoute, Required] [SwaggerParameter("分类id", Required = true)] long categoryId,
+                                                                      [FromRoute, Required] [SwaggerParameter("文章id", Required = true)]
+                                                                      long articleId) {
+        var result = await articleService.RelatedArticleList(categoryId, articleId);
+        return new ResponseResult<List<RelatedArticleVO>>(result.Count > 0, result);
     }
 
     /// <summary>
@@ -93,32 +91,27 @@ public class ArticleController(IArticleService articleService) : ControllerBase 
     [HttpGet("timeLine")]
     [AccessLimit(60, 15)]
     [SwaggerOperation(Summary = "获取时间轴数据", Description = "获取时间轴数据")]
-    public Task<ResponseResult<List<TimeLineVO>>> TimeLine() {
-        // var list = await articleService.ListTimeLine();
-        // return Ok(list);
-        throw new NotImplementedException();
+    public async Task<ResponseResult<List<TimeLineVO>>> TimeLine() {
+        var result = await articleService.ListTimeLine();
+        return new ResponseResult<List<TimeLineVO>>(result.Count > 0, result);
     }
 
 
     [HttpGet("where/list/{typeId}")]
     [AccessLimit(60, 15)]
     [SwaggerOperation(Summary = "获取分类与标签下的文章", Description = "获取分类与标签下的文章")]
-    public Task<ResponseResult<List<CategoryArticleVO>>> ListCategoryArticle([FromRoute, Required] [SwaggerParameter("类型id", Required = true)] long typeId,
-                                                                             [FromQuery, Required] [SwaggerParameter("类型", Required = true)]
-                                                                             int type) {
-        // var list = await articleService.ListCategoryArticle(type, typeId);
-        // return Ok(list);
-        throw new NotImplementedException();
+    public async Task<ResponseResult<List<CategoryArticleVO>>> ListCategoryArticle([FromRoute, Required] [SwaggerParameter("类型id", Required = true)] long typeId,
+                                                                                   [FromQuery, Required] [SwaggerParameter("类型", Required = true)]
+                                                                                   int type) {
+        var result = await articleService.ListCategoryArticle(type, typeId);
+        return new ResponseResult<List<CategoryArticleVO>>(result.Count > 0, result);
     }
 
 
     [HttpGet("visit/{id}")]
     [AccessLimit(60, 60)]
     [SwaggerOperation(Summary = "文章访问量+1", Description = "文章访问量+1")]
-    public Task<ResponseResult<object>> Visit([FromRoute, Required] [SwaggerParameter("文章id", Required = true)] long id) {
-        // await articleService.AddVisitCount(id);
-        throw new NotImplementedException();
-    }
+    public async Task<ResponseResult<object>> Visit([FromRoute, Required] [SwaggerParameter("文章id", Required = true)] long id) => new(await articleService.AddVisitCount(id));
 
     [HttpPost("upload/articleCover")]
     [Authorize(Policy = "blog:publish:article")]
@@ -165,10 +158,9 @@ public class ArticleController(IArticleService articleService) : ControllerBase 
     [Authorize(Policy = "blog:article:list")]
     [AccessLimit(60, 30)]
     [SwaggerOperation(Summary = "获取所有的文章列表", Description = "获取所有的文章列表")]
-    public Task<ResponseResult<List<ArticleListVO>>> ListArticle() {
-        // var list = await articleService.ListArticle();
-        // return Ok(list);
-        throw new NotImplementedException();
+    public async Task<ResponseResult<List<ArticleListVO>>> ListArticle() {
+        var result = await articleService.ListArticle();
+        return new ResponseResult<List<ArticleListVO>>(result.Count > 0, result);
     }
 
     [HttpPost("back/search")]

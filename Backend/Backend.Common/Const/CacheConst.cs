@@ -1,6 +1,6 @@
 ﻿namespace Backend.Common.Const;
 
-public class CacheConst {
+public abstract class CacheConst {
     /// <summary>
     /// 用户缓存
     /// </summary>

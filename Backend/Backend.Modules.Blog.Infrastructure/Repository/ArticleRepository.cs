@@ -83,4 +83,10 @@ public class ArticleRepository(IUnitOfWorkManage unitOfWorkManage, ICategoryRepo
             default: return [];
         }
     }
+
+    #region 后台接口
+
+    public async Task<List<Article>> ListAll() => await Db.Queryable<Article>().OrderByDescending(article => article.CreateTime).ToListAsync();
+
+    #endregion
 }

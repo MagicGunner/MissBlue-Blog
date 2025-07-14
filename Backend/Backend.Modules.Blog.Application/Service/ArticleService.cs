@@ -112,11 +112,17 @@ public class ArticleService(IMapper                    mapper,
     public async Task<List<CategoryArticleVO>> ListCategoryArticle(int type, long typeId) {
         var articles = await articleRepository.ListCategoryArticle(type, typeId);
         var articleIds = articles.Select(a => a.Id).ToList();
-        var articleTags = await Db.Queryable<ArticleTag>().In(at => at.ArticleId, articleIds).ToListAsync();
-        var tagDic = new Dictionary<long, Tag>();
+        // var articleTags = await Db.Queryable<ArticleTag>().In(at => at.ArticleId, articleIds).ToListAsync();
+        var tagDic = await tagRepository.GetDicByArticleId(articleIds);
+        return articles.Select(article => {
+                                   var vo = _mapper.Map<CategoryArticleVO>(article);
+                                   vo.Tags = tagDic[article.Id].Select(at => _mapper.Map<TagVO>(at)).ToList();
+                                   return vo;
+                               })
+                       .ToList();
     }
 
-    public Task AddVisitCount(long id) {
+    public Task<bool> AddVisitCount(long id) {
         throw new NotImplementedException();
     }
 
@@ -136,8 +142,17 @@ public class ArticleService(IMapper                    mapper,
         throw new NotImplementedException();
     }
 
-    public Task<List<ArticleListVO>> ListArticle() {
-        throw new NotImplementedException();
+    public async Task<List<ArticleListVO>> ListArticle() {
+        var articles = await articleRepository.ListAll();
+        var categoryDic = await categoryRepository.GetNameDic(articles.Select(a => a.CategoryId).ToList());
+        var tagDic = await tagRepository.GetDicByArticleId(articles.Select(a => a.Id).ToList());
+        return articles.Select(a => {
+                                   var vo = _mapper.Map<ArticleListVO>(a);
+                                   if (categoryDic.TryGetValue(a.CategoryId, out var categoryName)) vo.CategoryName = categoryName;
+                                   if (tagDic.TryGetValue(a.CategoryId, out var tags)) vo.TagsName = tags.Select(tag => tag.TagName).ToList();
+                                   return vo;
+                               })
+                       .ToList();
     }
 
     public Task<List<ArticleListVO>> SearchArticle(SearchArticleDTO searchDto) {

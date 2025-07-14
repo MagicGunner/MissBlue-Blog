@@ -16,15 +16,30 @@ public interface IArticleRepository : IBaseRepositories<Article> {
                                   bool                               isRandom          = false);
 
     Task<Dictionary<long, string>> GetContentDic(List<long> userIds);
-    Task<List<Article>>            ListAll(int              pageNum, int pageSize, RefAsync<int> totalCount);
-    Task<List<Article>>            ListComment();
-    Task<List<Article>>            ListRandom();
-    Task<List<Article>>            ListRelated(long categoryId, long articleId);
-    Task<List<Article>>            LisHot();
-    Task<Article?>                 GetById(long            id);
-    Task<Article?>                 FindPre(long            currentId);
-    Task<Article?>                 FindNext(long           currentId);
-    Task<long>                     CountByTag(long         tagId);
-    Task<List<Article>>            FindByContent(string    keyword);
-    Task<List<Article>>            ListCategoryArticle(int type, long typeId);
+
+    /// <summary>
+    /// 前台展根据页面数量和页面尺寸示文章
+    /// </summary>
+    /// <param name="pageNum"></param>
+    /// <param name="pageSize"></param>
+    /// <param name="totalCount"></param>
+    /// <returns></returns>
+    Task<List<Article>> ListAll(int pageNum, int pageSize, RefAsync<int> totalCount);
+
+    Task<List<Article>> ListComment();
+    Task<List<Article>> ListRandom();
+    Task<List<Article>> ListRelated(long categoryId, long articleId);
+    Task<List<Article>> LisHot();
+    Task<Article?>      GetById(long            id);
+    Task<Article?>      FindPre(long            currentId);
+    Task<Article?>      FindNext(long           currentId);
+    Task<long>          CountByTag(long         tagId);
+    Task<List<Article>> FindByContent(string    keyword);
+    Task<List<Article>> ListCategoryArticle(int type, long typeId);
+
+    #region 后台接口
+
+    Task<List<Article>> ListAll();
+
+    #endregion
 }
