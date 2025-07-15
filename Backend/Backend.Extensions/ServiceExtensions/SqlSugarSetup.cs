@@ -29,7 +29,7 @@ public static class SqlSugarSetup {
                                                                                                                   },
                                                                                                    // 自定义特性
                                                                                                    ConfigureExternalServices = new ConfigureExternalServices {
-                                                                                                                                   // DataInfoCacheService = new SqlSugarCacheService(),
+                                                                                                                                   DataInfoCacheService = new SqlSugarCacheService(),
                                                                                                                                    // ✅ 开启实体属性与表字段映射下划线支持（如 UserId <-> user_id）
                                                                                                                                    EntityService = (type, column) => {
                                                                                                                                        column.DbColumnName

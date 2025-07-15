@@ -5,7 +5,10 @@ using Backend.Application.Implement;
 using Backend.Application.Interface;
 using Backend.Common;
 using Backend.Common.Core;
+using Backend.Common.Option;
+using Backend.Contracts.IService;
 using Backend.Extensions.ServiceExtensions;
+using Backend.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -67,6 +70,11 @@ AutoMapperConfig.RegisterMappings();
 builder.Services.AddSingleton(new AppSettings(builder.Configuration));
 builder.Services.AddAllOptionRegister();
 
+builder.Services.AddCacheSetup();
+
+builder.Services.AddHostedService<VisitCountSyncService>();
+
+
 builder.Services.AddAuthentication("Bearer")
        .AddJwtBearer("Bearer", options => {
                                    options.TokenValidationParameters = new TokenValidationParameters {
@@ -87,6 +95,10 @@ builder.Services.AddScoped<IAuthorizationHandler, PermissionRequirementHandler>(
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUser, CurrentUser>();
+
+// MinIO 注入
+builder.Services.Configure<MinioOptions>(builder.Configuration.GetSection("Minio"));
+builder.Services.AddSingleton<IMinIOService, MinIOService>();
 
 // ORM
 builder.Services.AddSqlSugarSetup();

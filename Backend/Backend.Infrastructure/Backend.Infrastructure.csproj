@@ -8,7 +8,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\Backend.Contracts\Backend.Contracts.csproj"/>
         <ProjectReference Include="..\Backend.Domain\Backend.Domain.csproj"/>
     </ItemGroup>
-
+    <ItemGroup>
+        <PackageReference Include="Minio" Version="6.0.5"/>
+    </ItemGroup>
 </Project>

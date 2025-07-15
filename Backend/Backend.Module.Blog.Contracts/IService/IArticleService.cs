@@ -13,7 +13,7 @@ public interface IArticleService {
     Task<List<RelatedArticleVO>>         RelatedArticleList(long categoryId, long articleId);
     Task<List<TimeLineVO>>               ListTimeLine();
     Task<List<CategoryArticleVO>>        ListCategoryArticle(int      type, long typeId);
-    Task<bool>                           AddVisitCount(long           id);
+    Task<bool>                           AddVisitCount(long           articleId);
     Task<string>                         UploadArticleCover(IFormFile articleCover);
     Task<ResponseResult<object>>         Publish(ArticleDto           articleDto);
     Task                                 DeleteArticleCover(string    articleCoverUrl);

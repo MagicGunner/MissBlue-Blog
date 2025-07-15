@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
+using Backend.Application.Interface;
 using Backend.Application.Service;
+using Backend.Common.Const;
 using Backend.Common.Enums;
+using Backend.Common.Redis;
 using Backend.Common.Results;
 using Backend.Common.Utils;
+using Backend.Contracts.IService;
 using Backend.Domain.IRepository;
 using Backend.Modules.Blog.Contracts.DTO;
 using Backend.Modules.Blog.Contracts.IService;
@@ -22,7 +26,10 @@ public class ArticleService(IMapper                    mapper,
                             ITagRepository             tagRepository,
                             ICommentRepository         commentRepository,
                             ILikeRepository            likeRepository,
-                            IFavoriteRepository        favoriteRepository)
+                            IFavoriteRepository        favoriteRepository,
+                            IRedisBasketRepository     redisBasketRepository,
+                            IMinIOService              minIoService,
+                            ICurrentUser               currentUser)
     : BaseServices<Article>(mapper, baseRepositories), IArticleService {
     private readonly IMapper _mapper = mapper;
 
@@ -122,8 +129,24 @@ public class ArticleService(IMapper                    mapper,
                        .ToList();
     }
 
-    public Task<bool> AddVisitCount(long id) {
-        throw new NotImplementedException();
+    public async Task<bool> AddVisitCount(long articleId) {
+        var ip = currentUser.IpAddress;
+        if (string.IsNullOrEmpty(ip)) return false;
+
+        var limitKey = $"visit_limit:{articleId}:{ip}";
+        var countKey = $"visit_count:{articleId}";
+
+        // 判断该 IP 是否在限流范围内
+        if (!await redisBasketRepository.Exist(limitKey)) {
+            // 设置 IP 限流 key，过期自动删除
+            await redisBasketRepository.Set(limitKey, "1", TimeSpan.FromSeconds(RedisConst.ARTICLE_VISIT_COUNT_INTERVAL));
+
+            // 判断访问计数 key 是否存在
+            if (await redisBasketRepository.Exist(countKey)) await redisBasketRepository.IncrementSortedSetScoreAsync("article_views_count", $"article_{articleId}");
+            else await redisBasketRepository.AddOrUpdateSortedSetAsync("article_views_count", 1, $"article_{articleId}");
+        }
+
+        return true;
     }
 
     public Task<string> UploadArticleCover(IFormFile articleCover) {

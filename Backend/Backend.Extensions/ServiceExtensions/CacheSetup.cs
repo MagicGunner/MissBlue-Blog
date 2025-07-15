@@ -1,7 +1,7 @@
 ﻿using Backend.Common.Caches;
 using Backend.Common.Core;
 using Backend.Common.Option;
-using Backend.Extensions.Redis;
+using Backend.Common.Redis;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
 

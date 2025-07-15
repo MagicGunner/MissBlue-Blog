@@ -13,6 +13,8 @@ public class CurrentUser(IHttpContextAccessor httpContextAccessor) : ICurrentUse
         }
     }
 
+    public string? IpAddress => httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString();
+
     public string UserName => httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "";
 
     public List<string> Roles =>
