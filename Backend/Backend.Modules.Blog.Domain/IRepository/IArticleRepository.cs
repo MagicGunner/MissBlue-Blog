@@ -41,5 +41,7 @@ public interface IArticleRepository : IBaseRepositories<Article> {
 
     Task<List<Article>> ListAll();
 
+    Task<bool> InsertOrUpdate(Article article);
+
     #endregion
 }

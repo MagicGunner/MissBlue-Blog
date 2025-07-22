@@ -15,7 +15,7 @@ public interface IArticleService {
     Task<List<CategoryArticleVO>>        ListCategoryArticle(int      type, long typeId);
     Task<bool>                           AddVisitCount(long           articleId);
     Task<string>                         UploadArticleCover(IFormFile articleCover);
-    Task<ResponseResult<object>>         Publish(ArticleDto           articleDto);
+    Task<bool>                           Publish(ArticleDto           articleDto);
     Task                                 DeleteArticleCover(string    articleCoverUrl);
     Task<string>                         UploadArticleImage(IFormFile articleImage);
     Task<List<ArticleListVO>>            ListArticle();

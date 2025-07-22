@@ -117,10 +117,9 @@ public class ArticleController(IArticleService articleService) : ControllerBase 
     [Authorize(Policy = "blog:publish:article")]
     [AccessLimit(60, 5)]
     [SwaggerOperation(Summary = "上传文章封面", Description = "上传文章封面")]
-    public Task<ResponseResult<string>> UploadArticleCover(IFormFile articleCover) {
-        // var url = await articleService.UploadArticleCover(articleCover);
-        // return Ok(url);
-        throw new NotImplementedException();
+    public async Task<ResponseResult<string>> UploadArticleCover(IFormFile articleCover) {
+        var url = await articleService.UploadArticleCover(articleCover);
+        return new ResponseResult<string>(!string.IsNullOrEmpty(url), url);
     }
 
     [HttpPost("publish")]

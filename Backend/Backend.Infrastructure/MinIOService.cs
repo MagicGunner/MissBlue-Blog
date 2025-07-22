@@ -1,5 +1,6 @@
 ﻿using Backend.Common.Enums;
 using Backend.Common.Option;
+using Backend.Common.Static;
 using Backend.Contracts.IService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
@@ -13,12 +14,6 @@ public class MinIOService : IMinIOService {
     private readonly IMinioClient _minio;
     private readonly MinioOptions _options;
 
-    private readonly Dictionary<UploadEnum, (string[] Formats, double MaxSizeMB, string Dir)> _rules = new() {
-                                                                                                                 { UploadEnum.Avatar, ([".jpg", ".png", ".jpeg"], 2.0, "avatar/") },
-                                                                                                                 { UploadEnum.Article, ([".jpg", ".png", ".jpeg", ".gif"], 5.0, "article/") },
-                                                                                                                 { UploadEnum.Other, ([".zip", ".pdf", ".docx"], 10.0, "other/") }
-                                                                                                             };
-
     public MinIOService(IOptions<MinioOptions> options) {
         _options = options.Value;
         _minio = new MinioClient()
@@ -28,16 +23,18 @@ public class MinIOService : IMinIOService {
     }
 
     public async Task<string> UploadAsync(UploadEnum type, IFormFile file, string? fileName = null, string? extraDir = null) {
-        var (formats, maxSizeMB, baseDir) = _rules[type];
+        var rule = UploadRules.Get(type);
         var ext = Path.GetExtension(file.FileName).ToLower();
-        if (!formats.Contains(ext)) throw new Exception("不支持的文件格式");
-        if (ConvertToMB(file.Length) > maxSizeMB) throw new Exception($"文件超过大小限制 {maxSizeMB}MB");
 
-        var finalDir = baseDir + (string.IsNullOrWhiteSpace(extraDir) ? "" : extraDir.Trim('/') + "/");
+        if (!rule.Formats.Contains(ext)) throw new Exception("不支持的文件格式");
+
+        if (ConvertToMB(file.Length) > rule.LimitSizeMB) throw new Exception($"文件超过大小限制 {rule.LimitSizeMB}MB");
+
+        var finalDir = rule.Dir + (string.IsNullOrWhiteSpace(extraDir) ? "" : extraDir.Trim('/') + "/");
         var finalName = fileName ?? Guid.NewGuid().ToString();
         var objectName = finalDir + finalName + ext;
 
-        using var stream = file.OpenReadStream();
+        await using var stream = file.OpenReadStream();
         await _minio.PutObjectAsync(new PutObjectArgs()
                                    .WithBucket(_options.BucketName)
                                    .WithObject(objectName)

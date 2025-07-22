@@ -36,26 +36,25 @@ public class ArticleService(IMapper                    mapper,
     public async Task<PageVO<List<ArticleVO>>> ListAll(int pageNum, int pageSize) {
         var totalCount = new RefAsync<int>();
         var pageList = await articleRepository.ListAll(pageNum, pageSize, totalCount);
-
-        // todo 完善Redis相关功能
+        var articleVOs = await Article2VO(pageList);
 
         // 1. 判断 Redis 是否已缓存点赞/评论/收藏数
-        // var hasKey = await _redisClient.KeyExistsAsync(RedisConst.ARTICLE_LIKE_COUNT) &&
-        //              await _redisClient.KeyExistsAsync(RedisConst.ARTICLE_COMMENT_COUNT) &&
-        //              await _redisClient.KeyExistsAsync(RedisConst.ARTICLE_FAVORITE_COUNT);
+        var hasKey = await redisBasketRepository.Exist(RedisConst.ARTICLE_LIKE_COUNT) &&
+                     await redisBasketRepository.Exist(RedisConst.ARTICLE_COMMENT_COUNT) &&
+                     await redisBasketRepository.Exist(RedisConst.ARTICLE_FAVORITE_COUNT);
 
         // 6. Redis 点赞/评论/收藏数量（如果缓存存在）
-        // if (hasKey) {
-        //     foreach (var vo in articleVOs) {
-        //         await SetArticleCountAsync(vo, RedisConst.ARTICLE_LIKE_COUNT, CountTypeEnum.Like);
-        //         await SetArticleCountAsync(vo, RedisConst.ARTICLE_COMMENT_COUNT, CountTypeEnum.Comment);
-        //         await SetArticleCountAsync(vo, RedisConst.ARTICLE_FAVORITE_COUNT, CountTypeEnum.Favorite);
-        //     }
-        // }
+        if (hasKey) {
+            foreach (var vo in articleVOs) {
+                await SetArticleCountAsync(vo, RedisConst.ARTICLE_LIKE_COUNT, CountType.Like);
+                await SetArticleCountAsync(vo, RedisConst.ARTICLE_COMMENT_COUNT, CountType.Comment);
+                await SetArticleCountAsync(vo, RedisConst.ARTICLE_FAVORITE_COUNT, CountType.Favorite);
+            }
+        }
 
 
         return new PageVO<List<ArticleVO>> {
-                                               Page = await Article2VO(pageList),
+                                               Page = articleVOs,
                                                Total = totalCount
                                            };
     }
@@ -149,12 +148,31 @@ public class ArticleService(IMapper                    mapper,
         return true;
     }
 
-    public Task<string> UploadArticleCover(IFormFile articleCover) {
-        throw new NotImplementedException();
+    public async Task<string> UploadArticleCover(IFormFile articleCover) {
+        if (articleCover == null || articleCover.Length == 0) throw new Exception("上传文件不能为空");
+
+        try {
+            // 调用 MinIO 上传，类型为 ArticleCover（自动包含格式、大小校验等）
+            var fileUrl = await minIoService.UploadAsync(UploadEnum.ArticleCover, articleCover);
+            return fileUrl;
+        } catch (Exception ex) {
+            throw new Exception("文章封面上传失败：" + ex.Message);
+        }
     }
 
-    public Task<ResponseResult<object>> Publish(ArticleDto articleDto) {
-        throw new NotImplementedException();
+    public async Task<bool> Publish(ArticleDto articleDto) {
+        var article = _mapper.Map<Article>(articleDto);
+        if (currentUser.UserId == null) {
+            return false;
+        }
+
+        article.UserId = currentUser.UserId.Value;
+        // 启用事务
+        return await Db.Ado.UseTranAsync(async () => {
+                                             // 插入或更新文章
+                                             var success = await articleRepository.InsertOrUpdate(article);
+                                         })
+                       .IsCompletedSuccessfully;
     }
 
     public Task DeleteArticleCover(string articleCoverUrl) {

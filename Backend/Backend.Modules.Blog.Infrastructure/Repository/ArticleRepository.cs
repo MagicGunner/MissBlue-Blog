@@ -88,5 +88,9 @@ public class ArticleRepository(IUnitOfWorkManage unitOfWorkManage, ICategoryRepo
 
     public async Task<List<Article>> ListAll() => await Db.Queryable<Article>().OrderByDescending(article => article.CreateTime).ToListAsync();
 
+    public Task<bool> InsertOrUpdate(Article article) {
+        throw new NotImplementedException();
+    }
+
     #endregion
 }

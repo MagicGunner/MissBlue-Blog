@@ -49,6 +49,7 @@ public class BlogMapperProfile : Profile {
         CreateMap<Article, HotArticleVO>();
         CreateMap<Article, CategoryArticleVO>();
         CreateMap<Article, ArticleListVO>();
+        CreateMap<ArticleDto, Article>();
 
         CreateMap<Menu, MenuVO>()
            .ForMember(dest => dest.Affix, opt => opt.Ignore())
