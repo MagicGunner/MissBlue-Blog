@@ -16,13 +16,13 @@ public interface IArticleService {
     Task<bool>                           AddVisitCount(long           articleId);
     Task<string>                         UploadArticleCover(IFormFile articleCover);
     Task<bool>                           Publish(ArticleDto           articleDto);
-    Task                                 DeleteArticleCover(string    articleCoverUrl);
+    Task<bool>                           DeleteArticleCover(string    articleCoverUrl);
     Task<string>                         UploadArticleImage(IFormFile articleImage);
     Task<List<ArticleListVO>>            ListArticle();
     Task<List<ArticleListVO>>            SearchArticle(SearchArticleDTO searchDto);
-    Task                                 UpdateStatus(long              id, int  status);
-    Task                                 UpdateIsTop(long               id, bool isTop);
-    Task<ArticleDto>                     GetArticleDto(long             id);
+    Task<bool>                           UpdateStatus(long              id, int status);
+    Task<bool>                           UpdateIsTop(long               id, int isTop);
+    Task<ArticleDto?>                    GetArticleDto(long             id);
     Task                                 DeleteArticle(List<long>       ids);
     Task<List<InitSearchTitleVO>>        InitSearchByTitle();
     Task<List<HotArticleVO>>             ListHotArticle();

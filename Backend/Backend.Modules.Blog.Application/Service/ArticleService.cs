@@ -28,6 +28,7 @@ public class ArticleService(IMapper                    mapper,
                             ILikeRepository            likeRepository,
                             IFavoriteRepository        favoriteRepository,
                             IRedisBasketRepository     redisBasketRepository,
+                            IUserRepository            userRepository,
                             IMinIOService              minIoService,
                             ICurrentUser               currentUser)
     : BaseServices<Article>(mapper, baseRepositories), IArticleService {
@@ -167,20 +168,36 @@ public class ArticleService(IMapper                    mapper,
         }
 
         article.UserId = currentUser.UserId.Value;
-        // 启用事务
-        return await Db.Ado.UseTranAsync(async () => {
-                                             // 插入或更新文章
-                                             var success = await articleRepository.InsertOrUpdate(article);
-                                         })
-                       .IsCompletedSuccessfully;
+        return await articleRepository.Publish(article, articleDto.TagId);
     }
 
-    public Task DeleteArticleCover(string articleCoverUrl) {
-        throw new NotImplementedException();
+    public async Task<bool> DeleteArticleCover(string articleCoverUrl) {
+        try {
+            // 提取对象名（即 MinIO 中的 ObjectName）
+            var bucketName = minIoService.BucketName;
+            var index = articleCoverUrl.IndexOf(bucketName, StringComparison.Ordinal);
+            if (index == -1) return false;
+
+            var objectName = articleCoverUrl.Substring(index + bucketName.Length).TrimStart('/');
+
+            // 调用删除方法
+            var success = await minIoService.DeleteAsync(objectName);
+            return success;
+        } catch (Exception ex) {
+            return false;
+        }
     }
 
-    public Task<string> UploadArticleImage(IFormFile articleImage) {
-        throw new NotImplementedException();
+    public async Task<string> UploadArticleImage(IFormFile articleImage) {
+        if (articleImage == null || articleImage.Length == 0) throw new Exception("上传文件不能为空");
+
+        try {
+            // 调用 MinIO 上传，类型为 ArticleImage（自动格式和大小校验）
+            var fileUrl = await minIoService.UploadAsync(UploadEnum.ArticleImage, articleImage);
+            return fileUrl;
+        } catch (Exception ex) {
+            throw new Exception("文章图片上传失败：" + ex.Message);
+        }
     }
 
     public async Task<List<ArticleListVO>> ListArticle() {
@@ -196,20 +213,36 @@ public class ArticleService(IMapper                    mapper,
                        .ToList();
     }
 
-    public Task<List<ArticleListVO>> SearchArticle(SearchArticleDTO searchDto) {
-        throw new NotImplementedException();
+    public async Task<List<ArticleListVO>> SearchArticle(SearchArticleDTO searchDto) {
+        var articles = await articleRepository.SearchArticle(searchDto.ArticleTitle, searchDto.CategoryId, searchDto.Status, searchDto.IsTop);
+        if (articles.Count == 0) return [];
+        var categoryNameDic = await categoryRepository.GetNameDic(articles.Select(a => a.CategoryId).ToList());
+        var dicByArticleId = await tagRepository.GetDicByArticleId(articles.Select(a => a.Id).ToList());
+        var userNameDic = await userRepository.GetNameDicByIds(articles.Select(a => a.UserId).ToList());
+        return articles.Select(a => {
+                                   var vo = _mapper.Map<ArticleListVO>(a);
+                                   if (categoryNameDic.TryGetValue(a.CategoryId, out var categoryName)) vo.CategoryName = categoryName;
+                                   if (dicByArticleId.TryGetValue(a.Id, out var tags)) vo.TagsName = tags.Select(t => t.TagName).ToList();
+                                   if (userNameDic.TryGetValue(a.UserId, out var userName)) vo.UserName = userName;
+                                   return vo;
+                               })
+                       .ToList();
     }
 
-    public Task UpdateStatus(long id, int status) {
-        throw new NotImplementedException();
-    }
+    public async Task<bool> UpdateStatus(long id, int status) => await articleRepository.UpdateStatus(id, status);
 
-    public Task UpdateIsTop(long id, bool isTop) {
-        throw new NotImplementedException();
-    }
+    public async Task<bool> UpdateIsTop(long id, int isTop) => await articleRepository.UpdateIsTop(id, isTop);
 
-    public Task<ArticleDto> GetArticleDto(long id) {
-        throw new NotImplementedException();
+    public async Task<ArticleDto?> GetArticleDto(long id) {
+        var article = await articleRepository.GetById(id);
+        if (article == null) return null;
+        var articleDto = _mapper.Map<ArticleDto>(article);
+        var tagDic = await tagRepository.GetDicByArticleId([id]);
+        if (tagDic.TryGetValue(id, out var tags)) {
+            articleDto.TagId = tags.Select(t => t.Id).ToList();
+        }
+
+        return articleDto;
     }
 
     public Task DeleteArticle(List<long> ids) {

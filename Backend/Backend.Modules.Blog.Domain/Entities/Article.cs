@@ -32,10 +32,8 @@ public class Article : RootEntity {
 
     public long VisitCount { get; set; }
 
-    [SugarColumn(IsOnlyIgnoreInsert = false, IsOnlyIgnoreUpdate = true)]
     public DateTime CreateTime { get; set; }
 
-    [SugarColumn(IsOnlyIgnoreInsert = true, IsOnlyIgnoreUpdate = false)]
     public DateTime UpdateTime { get; set; }
 
     public long IsDeleted { get; set; }

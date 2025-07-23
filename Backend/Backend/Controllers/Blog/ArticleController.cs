@@ -126,31 +126,23 @@ public class ArticleController(IArticleService articleService) : ControllerBase 
     [Authorize(Policy = "blog:publish:article")]
     [AccessLimit(60, 30)]
     [SwaggerOperation(Summary = "发布文章", Description = "发布文章")]
-    public Task<ResponseResult<object>> Publish([FromBody, Required] ArticleDto articleDto) {
-        // await articleService.Publish(articleDto);
-        // return NoContent();
-        throw new NotImplementedException();
-    }
+    public async Task<ResponseResult<object>> Publish([FromBody, Required] ArticleDto articleDto) => new(await articleService.Publish(articleDto));
 
 
     [HttpGet("delete/articleCover")]
     [Authorize(Policy = "blog:publish:article")]
     [AccessLimit(60, 30)]
     [SwaggerOperation(Summary = "删除文章封面", Description = "删除文章封面")]
-    public Task<ResponseResult<object>> DeleteArticleCover([FromQuery, Required] [SwaggerParameter("文章封面", Required = true)] string articleCoverUrl) {
-        // await articleService.DeleteArticleCover(articleCoverUrl);
-        // return NoContent();
-        throw new NotImplementedException();
-    }
+    public async Task<ResponseResult<object>> DeleteArticleCover([FromQuery, Required] [SwaggerParameter("文章封面", Required = true)] string articleCoverUrl) =>
+        new(await articleService.DeleteArticleCover(articleCoverUrl));
 
     [Authorize(Policy = "blog:publish:article")]
     [HttpPost("upload/articleImage")]
     [AccessLimit(60, 30)]
     [SwaggerOperation(Summary = "上传文章图片", Description = "上传文章图片")]
-    public Task<ActionResult<string>> UploadArticleImage(IFormFile articleImage) {
-        // var url = await articleService.UploadArticleImage(articleImage);
-        // return Ok(url);
-        throw new NotImplementedException();
+    public async Task<ResponseResult<string>> UploadArticleImage(IFormFile articleImage) {
+        var url = await articleService.UploadArticleImage(articleImage);
+        return new ResponseResult<string>(!string.IsNullOrEmpty(url), url);
     }
 
     [HttpGet("back/list")]
@@ -166,44 +158,36 @@ public class ArticleController(IArticleService articleService) : ControllerBase 
     [Authorize(Policy = "blog:article:search")]
     [AccessLimit(60, 30)]
     [SwaggerOperation(Summary = "搜索文章列表", Description = "搜索文章列表")]
-    public Task<ResponseResult<List<ArticleListVO>>> SearchArticle([FromBody, Required] SearchArticleDTO dto) {
-        // var list = await articleService.SearchArticle(dto);
-        // return Ok(list);
-        throw new NotImplementedException();
+    public async Task<ResponseResult<List<ArticleListVO>>> SearchArticle([FromBody, Required] SearchArticleDTO dto) {
+        var result = await articleService.SearchArticle(dto);
+        return new ResponseResult<List<ArticleListVO>>(result.Count > 0, result);
     }
 
     [HttpPost("back/update/status")]
     [Authorize(Policy = "blog:article:update")]
     [AccessLimit(60, 30)]
     [SwaggerOperation(Summary = "修改文章状态", Description = "修改文章状态")]
-    public Task<ResponseResult<object>> UpdateArticleStatus([FromQuery, Required] [SwaggerParameter("文章id", Required = true)] long id,
-                                                            [FromQuery, Required] [SwaggerParameter("状态", Required = true)]
-                                                            int status) {
-        // await articleService.UpdateStatus(id, status);
-        // return NoContent();
-        throw new NotImplementedException();
-    }
+    public async Task<ResponseResult<object>> UpdateArticleStatus([FromQuery, Required] [SwaggerParameter("文章id", Required = true)] long id,
+                                                                  [FromQuery, Required] [SwaggerParameter("状态", Required = true)]
+                                                                  int status) =>
+        new(await articleService.UpdateStatus(id, status));
 
     [HttpPost("back/update/isTop")]
     [Authorize(Policy = "blog:article:update")]
     [AccessLimit(60, 30)]
     [SwaggerOperation(Summary = "修改文章是否顶置", Description = "修改文章是否顶置")]
-    public Task<ResponseResult<object>> UpdateArticleIsTop([FromQuery, Required] [SwaggerParameter("文章id", Required = true)] long id,
-                                                           [FromQuery, Required] [SwaggerParameter("是否顶置", Required = true)]
-                                                           bool isTop) {
-        // await articleService.UpdateIsTop(id, isTop);
-        // return NoContent();
-        throw new NotImplementedException();
-    }
+    public async Task<ResponseResult<object>> UpdateArticleIsTop([FromQuery, Required] [SwaggerParameter("文章id", Required = true)] long id,
+                                                                 [FromQuery, Required] [SwaggerParameter("是否顶置", Required = true)]
+                                                                 int isTop) =>
+        new(await articleService.UpdateIsTop(id, isTop));
 
     [HttpGet("back/echo/{id}")]
     [Authorize(Policy = "blog:article:echo")]
     [AccessLimit(60, 30)]
     [SwaggerOperation(Summary = "回显文章数据", Description = "回显文章数据")]
-    public Task<ResponseResult<ArticleDto>> GetArticleEcho([FromRoute] long id) {
-        // var dto = await articleService.GetArticleDto(id);
-        // return Ok(dto);
-        throw new NotImplementedException();
+    public async Task<ResponseResult<ArticleDto>> GetArticleEcho([FromRoute] long id) {
+        var dto = await articleService.GetArticleDto(id);
+        return new ResponseResult<ArticleDto>(dto != null, dto);
     }
 
 

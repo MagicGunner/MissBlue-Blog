@@ -9,7 +9,7 @@ public class SearchArticleDTO {
     /// <summary>
     /// 文章标题
     /// </summary>
-    public string ArticleTitle { get; set; }
+    public string? ArticleTitle { get; set; }
 
     /// <summary>
     /// 文章状态 (1公开 2私密 3草稿)

@@ -14,6 +14,8 @@ public class MinIOService : IMinIOService {
     private readonly IMinioClient _minio;
     private readonly MinioOptions _options;
 
+    public string BucketName => _options.BucketName;
+
     public MinIOService(IOptions<MinioOptions> options) {
         _options = options.Value;
         _minio = new MinioClient()

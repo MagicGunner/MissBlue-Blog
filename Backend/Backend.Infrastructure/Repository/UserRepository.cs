@@ -51,4 +51,6 @@ public class UserRepository(IUnitOfWorkManage unitOfWorkManage) : BaseRepositori
 
         return await query.Select(user => user.Id).ToListAsync();
     }
+
+    public async Task<Dictionary<long, string>> GetNameDicByIds(List<long> userIds) => (await Db.Queryable<User>().In(u => u.Id, userIds).ToListAsync()).ToDictionary(u => u.Id, u => u.Username);
 }

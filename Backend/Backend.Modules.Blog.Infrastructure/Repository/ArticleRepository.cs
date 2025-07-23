@@ -84,12 +84,43 @@ public class ArticleRepository(IUnitOfWorkManage unitOfWorkManage, ICategoryRepo
         }
     }
 
+    public async Task<List<Article>> SearchArticle(string? articleTitle, long? categoryId, int? status, int? isTop) {
+        return await Db.Queryable<Article>()
+                       .WhereIF(!string.IsNullOrWhiteSpace(articleTitle), a => a.ArticleTitle.Contains(articleTitle!))
+                       .WhereIF(categoryId.HasValue, a => a.CategoryId == categoryId)
+                       .WhereIF(status.HasValue, a => a.Status == status)
+                       .WhereIF(isTop.HasValue, a => a.IsTop == isTop)
+                       .ToListAsync();
+    }
+
+    public async Task<bool> UpdateStatus(long id, int status) {
+        return await Db.Updateable<Article>().SetColumns(a => a.Status == status).Where(a => a.Id == id).ExecuteCommandAsync() > 0;
+    }
+
+    public async Task<bool> UpdateIsTop(long id, int isTop) {
+        return await Db.Updateable<Article>().SetColumns(a => a.IsTop == isTop).Where(a => a.Id == id).ExecuteCommandAsync() > 0;
+    }
+
     #region 后台接口
 
     public async Task<List<Article>> ListAll() => await Db.Queryable<Article>().OrderByDescending(article => article.CreateTime).ToListAsync();
 
-    public Task<bool> InsertOrUpdate(Article article) {
-        throw new NotImplementedException();
+    public async Task<bool> Publish(Article article, List<long> tagIds) {
+        var articleId = article.Id;
+        if (await Db.Queryable<Article>().AnyAsync(a => a.Id == articleId)) return false;
+        return (await Db.Ado.UseTranAsync(async () => {
+                                              await Add(article);
+                                              // 2. 删除旧标签关系
+                                              await Db.Deleteable<ArticleTag>().Where(at => at.ArticleId == article.Id).ExecuteCommandAsync();
+                                              // 4. 插入新标签关系
+                                              var tags = tagIds.Select(tagId => new ArticleTag {
+                                                                                                   ArticleId = article.Id,
+                                                                                                   TagId = tagId
+                                                                                               })
+                                                               .ToList();
+
+                                              await Db.Insertable(tags).ExecuteCommandAsync();
+                                          })).IsSuccess;
     }
 
     #endregion
