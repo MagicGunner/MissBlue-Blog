@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Backend.Common.Attributes;
 using Backend.Common.Results;
+using Backend.Modules.Blog.Contracts.DTO;
 using Backend.Modules.Blog.Contracts.IService;
+using Backend.Modules.Blog.Contracts.VO;
 using Backend.Modules.Blog.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,31 +23,32 @@ public class BannersController(IBannersService bannersService) : ControllerBase 
     [AccessLimit(60, 60)]
     [Authorize(Policy = "blog:banner:list")]
     [SwaggerOperation(Summary = "后台获取所有前台首页Banner图片", Description = "后台获取所有前台首页Banner图片")]
-    public Task<ResponseResult<List<Banners>>> BackGetBanners() {
-        throw new NotImplementedException();
+    public async Task<ResponseResult<List<BannersVO>>> BackGetBanners() {
+        var result = await bannersService.BackGetBanners();
+        return new ResponseResult<List<BannersVO>>(result.Count > 0, result);
     }
 
     [HttpDelete("{id}")]
     [AccessLimit(60, 30)]
     [Authorize(Policy = "blog:banner:delete")]
     [SwaggerOperation(Summary = "删除前台首页Banner图片", Description = "删除前台首页Banner图片")]
-    public Task<ResponseResult<string>> Delete([FromRoute] [Required] long id) {
-        throw new NotImplementedException();
-    }
+    public async Task<ResponseResult<object>> Delete([FromRoute] [Required] long id) => new(await bannersService.RemoveBannerById(id));
 
     [HttpPost("upload/banner")]
     [AccessLimit(60, 30)]
     [Authorize(Policy = "blog:banner:add")]
     [SwaggerOperation(Summary = "添加前台首页Banner图片", Description = "添加前台首页Banner图片")]
-    public Task<ResponseResult<Banners>> UploadArticleImage([Required] IFormFile bannerImage) {
-        throw new NotImplementedException();
+    public async Task<ResponseResult<BannersVO?>> UploadArticleImage([Required] IFormFile bannerImage) {
+        var result = await bannersService.UploadBannerImage(bannerImage);
+        return new ResponseResult<BannersVO?>(result.bannersVo != null, result.bannersVo, msg: result.msg);
     }
 
     [HttpPut("update/sort/order")]
     [AccessLimit(60, 30)]
     [Authorize(Policy = "blog:banner:update")]
     [SwaggerOperation(Summary = "更新前台首页Banner图片顺序", Description = "更新前台首页Banner图片顺序")]
-    public Task<ResponseResult<string>> UpdateSortOrder([Required] List<Banners> banners) {
-        throw new NotImplementedException();
+    public async Task<ResponseResult<string>> UpdateSortOrder([Required] List<BannersDTO> banners) {
+        var result = await bannersService.UpdateSortOrder(banners);
+        return new ResponseResult<string>(result.success, msg: result.msg);
     }
 }

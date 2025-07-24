@@ -2,6 +2,7 @@
 using Backend.Common.Attributes;
 using Backend.Common.Results;
 using Backend.Modules.Blog.Contracts.DTO;
+using Backend.Modules.Blog.Contracts.IService;
 using Backend.Modules.Blog.Contracts.VO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +13,7 @@ namespace Backend.Controllers.Blog;
 [ApiController]
 [Route("api/blackList")]
 [SwaggerTag("黑名单相关接口")]
-public class BlackListController : ControllerBase {
+public class BlackListController(IBlackListService blackListService) : ControllerBase {
     [HttpPost("add")]
     [AccessLimit(60, 30)]
     [Authorize(Policy = "blog:black:add")]

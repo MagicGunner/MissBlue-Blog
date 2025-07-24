@@ -16,14 +16,14 @@ public class ResponseResult<T> {
     /// <summary>返回数据</summary>
     public T? Data { get; set; }
 
-    public ResponseResult(bool result, T? data = default, RespEnum errorType = RespEnum.Success, string? msg = null) {
+    public ResponseResult(bool result, T? data = default, RespCode errorType = RespCode.Success, string? msg = null) {
         if (result) {
-            Code = (int)RespEnum.Success;
+            Code = (int)RespCode.Success;
         } else {
             Code = int.Max((int)errorType, 500);
         }
 
         Data = data;
-        Message = msg ?? ((RespEnum)Code).GetDescription();
+        Message = msg ?? ((RespCode)Code).GetDescription();
     }
 }

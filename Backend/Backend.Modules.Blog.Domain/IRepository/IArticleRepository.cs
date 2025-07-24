@@ -42,6 +42,7 @@ public interface IArticleRepository : IBaseRepositories<Article> {
     Task<bool> UpdateStatus(long id, int status);
     Task<bool> UpdateIsTop(long  id, int isTop);
 
+
     #region 后台接口
 
     Task<List<Article>> ListAll();

@@ -2,7 +2,7 @@
 
 namespace Backend.Common.Enums;
 
-public enum RespEnum {
+public enum RespCode {
     [Description("操作成功")]
     Success = 200,
 

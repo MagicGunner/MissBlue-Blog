@@ -195,9 +195,5 @@ public class ArticleController(IArticleService articleService) : ControllerBase 
     [Authorize(Policy = "blog:article:delete")]
     [AccessLimit(60, 30)]
     [SwaggerOperation(Summary = "删除文章", Description = "删除文章")]
-    public Task<ResponseResult<object>> DeleteArticle([FromBody, Required] List<long> ids) {
-        // await articleService.DeleteArticle(ids);
-        // return NoContent();
-        throw new NotImplementedException();
-    }
+    public async Task<ResponseResult<object>> DeleteArticle([FromBody, Required] List<long> ids) => new(await articleService.DeleteArticle(ids));
 }

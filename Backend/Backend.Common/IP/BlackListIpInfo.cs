@@ -4,7 +4,7 @@ public class BlackListIpInfo {
     /// <summary>
     /// 黑名单的 IP 地址
     /// </summary>
-    public string CreateIp { get; set; }
+    public string? CreateIp { get; set; }
 
     /// <summary>
     /// IP 详情（子对象）

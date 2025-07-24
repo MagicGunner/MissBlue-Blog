@@ -6,7 +6,7 @@ namespace Backend.Modules.Blog.Domain.Entities;
 
 [SugarTable("t_black_list")]
 public class BlackList : RootEntity {
-    public long UserId { get; set; }
+    public long? UserId { get; set; }
 
     public string Reason { get; set; }
 

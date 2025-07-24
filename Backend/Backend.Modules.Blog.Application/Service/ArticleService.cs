@@ -245,8 +245,31 @@ public class ArticleService(IMapper                    mapper,
         return articleDto;
     }
 
-    public Task DeleteArticle(List<long> ids) {
-        throw new NotImplementedException();
+    public async Task<bool> DeleteArticle(List<long> ids) {
+        return (await Db.Ado.UseTranAsync(async () => {
+                                              var success = await articleRepository.DeleteByIds(ids);
+                                              if (!success) throw new Exception("删除文章失败");
+
+                                              // 2. 删除文章标签关联
+                                              await Db.Deleteable<ArticleTag>()
+                                                      .Where(at => ids.Contains(at.ArticleId))
+                                                      .ExecuteCommandAsync();
+
+                                              // 3. 删除文章点赞
+                                              await Db.Deleteable<Like>()
+                                                      .Where(l => l.Type == (int)LikeType.Article && ids.Contains(l.TypeId))
+                                                      .ExecuteCommandAsync();
+
+                                              // 4. 删除文章收藏
+                                              await Db.Deleteable<Favorite>()
+                                                      .Where(f => f.Type == (int)FavoriteType.Article && ids.Contains(f.TypeId))
+                                                      .ExecuteCommandAsync();
+
+                                              // 5. 删除文章评论
+                                              await Db.Deleteable<Comment>()
+                                                      .Where(c => c.Type == (int)CommentType.Article && ids.Contains(c.TypeId))
+                                                      .ExecuteCommandAsync();
+                                          })).IsSuccess;
     }
 
     public async Task<List<InitSearchTitleVO>> InitSearchByTitle() {
@@ -332,25 +355,24 @@ public class ArticleService(IMapper                    mapper,
     private async Task SetArticleCountAsync(ArticleVO articleVO, string redisKey, CountType articleField) {
         // todo 完善Redis相关功能
 
-        // var articleId = articleVO.Id.ToString();
-        //
-        // // 获取 Redis 中的字段值（Hash）
-        // var countObj = await _redisClient.HashGetAsync(redisKey, articleId);
-        //
-        // long count = 0;
-        //
-        // if (countObj.HasValue) {
-        //     long.TryParse(countObj.ToString(), out count);
-        // } else {
-        //     // 如果缓存不存在，初始化为 0
-        //     await _redisClient.HashSetAsync(redisKey, articleId, 0);
-        // }
-        //
-        // // 设置到 VO 对象中
-        // switch (articleField) {
-        //     case CountTypeEnum.Favorite: articleVO.FavoriteCount = count; break;
-        //     case CountTypeEnum.Like:     articleVO.LikeCount = count; break;
-        //     case CountTypeEnum.Comment:  articleVO.CommentCount = count; break;
-        // }
+        var articleId = articleVO.Id.ToString();
+        // 获取 Redis 中的字段值（Hash）
+        var countObj = await redisBasketRepository.HashGetAsync(redisKey, articleId);
+
+        long count = 0;
+
+        if (countObj.HasValue) {
+            long.TryParse(countObj.ToString(), out count);
+        } else {
+            // 如果缓存不存在，初始化为 0
+            await redisBasketRepository.HashSetAsync(redisKey, articleId, 0);
+        }
+
+        switch (articleField) {
+            // 设置到 VO 对象中
+            case CountType.Favorite: articleVO.FavoriteCount = count; break;
+            case CountType.Like:     articleVO.LikeCount = count; break;
+            case CountType.Comment:  articleVO.CommentCount = count; break;
+        }
     }
 }

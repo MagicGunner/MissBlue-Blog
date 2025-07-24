@@ -23,7 +23,7 @@ public interface IArticleService {
     Task<bool>                           UpdateStatus(long              id, int status);
     Task<bool>                           UpdateIsTop(long               id, int isTop);
     Task<ArticleDto?>                    GetArticleDto(long             id);
-    Task                                 DeleteArticle(List<long>       ids);
+    Task<bool>                           DeleteArticle(List<long>       ids);
     Task<List<InitSearchTitleVO>>        InitSearchByTitle();
     Task<List<HotArticleVO>>             ListHotArticle();
     Task<List<SearchArticleByContentVO>> SearchArticleByContent(string keyword);

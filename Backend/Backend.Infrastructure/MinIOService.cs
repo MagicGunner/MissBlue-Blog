@@ -72,5 +72,24 @@ public class MinIOService : IMinIOService {
         }
     }
 
-    private static double ConvertToMB(long sizeInBytes) => Math.Round(sizeInBytes / 1024.0 / 1024.0, 2);
+    public string GetFileName(string path) {
+        return Path.GetFileName(path);
+    }
+
+    public double ConvertToMB(long sizeInBytes) {
+        return Math.Round(sizeInBytes / 1024.0 / 1024.0, 2);
+    }
+
+    public double ConvertToKB(long sizeInBytes) {
+        return Math.Round(sizeInBytes / 1024.0, 2);
+    }
+
+    public bool IsFormatValid(string fileName, List<string> allowedExtensions) {
+        var ext = Path.GetExtension(fileName)?.ToLower();
+        return allowedExtensions.Any(f => f.ToLower() == ext);
+    }
+
+    public bool IsFileTooLarge(long fileSize, double limitMB) {
+        return ConvertToMB(fileSize) > limitMB;
+    }
 }

@@ -17,6 +17,10 @@ public interface IRedisBasketRepository {
     //保存
     Task Set(string key, object value, TimeSpan cacheTime);
 
+    Task<RedisValue> HashGetAsync(string key, string field);
+    Task<bool>       HashSetAsync(string key, string field, object value);
+
+
     //判断是否存在
     Task<bool> Exist(string key);
 

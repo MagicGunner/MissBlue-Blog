@@ -65,5 +65,8 @@ public class BlogMapperProfile : Profile {
         CreateMap<Like, LikeVo>();
 
         CreateMap<Favorite, FavoriteListVO>();
+
+        CreateMap<Banners, BannersVO>();
+        CreateMap<BannersDTO, Banners>();
     }
 }

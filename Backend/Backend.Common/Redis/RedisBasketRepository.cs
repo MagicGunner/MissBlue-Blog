@@ -62,6 +62,7 @@ namespace Backend.Common.Redis {
             }
         }
 
+
         public async Task<TEntity> Get<TEntity>(string key) {
             var value = await _database.StringGetAsync(key);
             if (value.HasValue) {
@@ -70,6 +71,13 @@ namespace Backend.Common.Redis {
             } else {
                 return default;
             }
+        }
+
+        public async Task<RedisValue> HashGetAsync(string key, string field) => await _database.HashGetAsync(key, field);
+
+        public async Task<bool> HashSetAsync(string key, string field, object value) {
+            RedisValue redisValue = value is string strVal ? strVal : SerializeHelper.Serialize(value);
+            return await _database.HashSetAsync(key, field, redisValue);
         }
 
 
