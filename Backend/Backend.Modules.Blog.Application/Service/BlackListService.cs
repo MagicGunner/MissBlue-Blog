@@ -17,6 +17,7 @@ public class BlackListService(IMapper mapper, IBaseRepositories<BlackList> baseR
     private readonly IMapper _mapper = mapper;
 
     public Task<bool> AddBlackList(AddBlackListDTO addBlackListDto) {
+        throw new NotImplementedException();
     }
 
     private async Task<bool> SaveBlackList(AddBlackListDTO addBlackListDto, int index) {
@@ -36,5 +37,18 @@ public class BlackListService(IMapper mapper, IBaseRepositories<BlackList> baseR
                 blackList.Id = existingId.Value;
             }
         }
+
+        var result = await blackListRepository.InsertOrUpdate(blackList);
+
+        // if (result) {
+        //     if (blackList.Type == BlackListConst.BlackListTypeBot) {
+        //         await ipService.RefreshIpDetailAsyncByBid(blackList.Id!.Value);
+        //     }
+        //
+        //     await UpdateBlackListCacheAsync(blackList);
+        //     return true;
+        // }
+
+        return false;
     }
 }

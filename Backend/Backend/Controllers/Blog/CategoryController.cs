@@ -33,8 +33,9 @@ public class CategoryController(ICategoryService categoryService) : ControllerBa
     [Authorize(Policy = "blog:category:list")]
     [AccessLimit(60, 30)]
     [SwaggerOperation(Summary = "获取分类列表", Description = "获取分类列表")]
-    public Task<ResponseResult<List<CategoryVO>>> ListArticle() {
-        throw new NotImplementedException();
+    public async Task<ResponseResult<List<CategoryVO>>> ListArticleCategory() {
+        var list = await categoryService.ListAll();
+        return new ResponseResult<List<CategoryVO>>(list.Count > 0, list);
     }
 
     [HttpPost("back/search")]

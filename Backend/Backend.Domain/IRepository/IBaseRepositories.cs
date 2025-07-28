@@ -6,7 +6,7 @@ namespace Backend.Domain.IRepository;
 public interface IBaseRepositories<TEntity> where TEntity : class {
     ISqlSugarClient Db { get; }
 
-    Task<int> InsertOrUpdate(TEntity entity);
+    Task<bool> InsertOrUpdate(TEntity entity);
 
     #region 查询（Query）
 

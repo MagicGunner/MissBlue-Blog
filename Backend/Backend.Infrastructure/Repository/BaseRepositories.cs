@@ -131,9 +131,7 @@ public class BaseRepositories<TEntity> : IBaseRepositories<TEntity> where TEntit
 
     #region 查(Query)
 
-    public Task<int> InsertOrUpdate(TEntity entity) {
-        throw new NotImplementedException();
-    }
+    public async Task<bool> InsertOrUpdate(TEntity entity) => await Db.Storageable(entity).ExecuteCommandAsync() > 0;
 
     public async Task<List<TEntity>> Query(Expression<Func<TEntity, bool>>? expression = null) {
         // await Console.Out.WriteLineAsync(Db.GetHashCode().ToString());
