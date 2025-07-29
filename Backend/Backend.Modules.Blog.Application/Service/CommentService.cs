@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Backend.Application.Interface;
 using Backend.Application.Service;
 using Backend.Contracts;
 using Backend.Contracts.IService;
@@ -8,13 +9,20 @@ using Backend.Modules.Blog.Contracts.DTO;
 using Backend.Modules.Blog.Contracts.IService;
 using Backend.Modules.Blog.Contracts.VO;
 using Backend.Modules.Blog.Domain.Entities;
+using Backend.Modules.Blog.Domain.IRepository;
 using SqlSugar;
 
 namespace Backend.Modules.Blog.Application.Service;
 
-public class CommentService(IMapper mapper, IBaseRepositories<Comment> baseRepositories) : BaseServices<Comment>(mapper, baseRepositories), ICommentService {
-    public Task<long> Add(UserCommentDTO userCommentDto) {
-        throw new NotImplementedException();
+public class CommentService(IMapper mapper, IBaseRepositories<Comment> baseRepositories, ICommentRepository commentRepository, ICurrentUser currentUser)
+    : BaseServices<Comment>(mapper, baseRepositories), ICommentService {
+    private readonly IMapper _mapper = mapper;
+
+    public async Task<(bool IsSuccess, string? Msg)> AddComment(UserCommentDTO userCommentDto) {
+        var comment = _mapper.Map<Comment>(userCommentDto);
+        if (currentUser.UserId != null) comment.CommentUserId = currentUser.UserId.Value;
+        //todo 判断用是否为第三方登录没有邮箱
+        return (await commentRepository.AddComment(comment), string.Empty);
     }
 
     public Task<bool> DeleteByIds(List<long> ids) {
@@ -58,5 +66,14 @@ public class CommentService(IMapper mapper, IBaseRepositories<Comment> baseRepos
 
     public Task<List<CommentListVO>> Search(SearchCommentDTO searchCommentDto) {
         throw new NotImplementedException();
+    }
+
+    public async Task<List<CommentListVO>> GetBackList(SearchCommentDTO dto) {
+        var comments = await commentRepository.GetBackList(dto.CommentUserName, dto.CommentContent, dto.Type, dto.IsCheck);
+        return comments.Select(c => {
+                                   var vo = _mapper.Map<CommentListVO>(c);
+                                   return vo;
+                               })
+                       .ToList();
     }
 }

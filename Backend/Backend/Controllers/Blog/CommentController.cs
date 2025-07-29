@@ -14,6 +14,23 @@ namespace Backend.Controllers.Blog;
 [Route("api/comment")]
 [SwaggerTag("评论相关接口")]
 public class CommentController(ICommentService commentService) : ControllerBase {
+    [HttpPost("auth/add/comment")]
+    [AllowAnonymous] // 需要 CheckBlacklist 替代方案时移除
+    [AccessLimit(60, 10)]
+    [SwaggerOperation(Summary = "用户添加评论", Description = "用户添加评论")]
+    public async Task<ResponseResult<string>> AddComment([FromBody] [Required] UserCommentDTO userCommentDto) {
+        var result = await commentService.AddComment(userCommentDto);
+        return new ResponseResult<string>(result.IsSuccess, msg: result.Msg);
+    }
+
+    [HttpGet("back/list")]
+    [Authorize(Policy = "blog:comment:list")]
+    [AccessLimit(60, 30)]
+    [SwaggerOperation(Summary = "后台评论列表", Description = "后台评论列表")]
+    public Task<ResponseResult<List<CommentListVO>>> BackList() {
+        throw new NotImplementedException();
+    }
+
     [HttpGet("getComment")]
     [AllowAnonymous]
     [AccessLimit(60, 60)]
@@ -29,21 +46,6 @@ public class CommentController(ICommentService commentService) : ControllerBase 
         return new ResponseResult<PageVO<List<ArticleCommentVO>>>(result.Total > 0, result);
     }
 
-    [HttpPost("auth/add/comment")]
-    [AllowAnonymous] // 需要 CheckBlacklist 替代方案时移除
-    [AccessLimit(60, 10)]
-    [SwaggerOperation(Summary = "用户添加评论", Description = "用户添加评论")]
-    public Task<ResponseResult<string>> AddComment([FromBody] [Required] UserCommentDTO userCommentDto) {
-        throw new NotImplementedException();
-    }
-
-    [HttpGet("back/list")]
-    [Authorize(Policy = "blog:comment:list")]
-    [AccessLimit(60, 30)]
-    [SwaggerOperation(Summary = "后台评论列表", Description = "后台评论列表")]
-    public Task<ResponseResult<List<CommentListVO>>> BackList() {
-        throw new NotImplementedException();
-    }
 
     [HttpPost("back/search")]
     [Authorize(Policy = "blog:comment:search")]

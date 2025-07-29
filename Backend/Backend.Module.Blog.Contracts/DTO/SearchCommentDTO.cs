@@ -4,12 +4,12 @@ public class SearchCommentDTO {
     /// <summary>
     /// 评论用户的名称
     /// </summary>
-    public string CommentUserName { get; set; }
+    public string? CommentUserName { get; set; }
 
     /// <summary>
     /// 评论的内容
     /// </summary>
-    public string CommentContent { get; set; }
+    public string? CommentContent { get; set; }
 
     /// <summary>
     /// 评论类型 (1文章 2留言板)

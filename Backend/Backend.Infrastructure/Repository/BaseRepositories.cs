@@ -10,9 +10,10 @@ using MultiTenantAttribute = Backend.Infrastructure.Attributes.MultiTenantAttrib
 
 namespace Backend.Infrastructure.Repository;
 
-public class BaseRepositories<TEntity> : IBaseRepositories<TEntity> where TEntity : class, new() {
-    private readonly SqlSugarScope     _dbBase;
-    private readonly IUnitOfWorkManage _unitOfWorkManage;
+public class BaseRepositories<TEntity>(IUnitOfWorkManage unitOfWorkManage) : IBaseRepositories<TEntity>
+    where TEntity : class, new() {
+    private readonly SqlSugarScope     _dbBase           = unitOfWorkManage.GetDbClient();
+    private readonly IUnitOfWorkManage _unitOfWorkManage = unitOfWorkManage;
     public           ISqlSugarClient   Db => _db;
 
     private ISqlSugarClient _db {
@@ -50,11 +51,6 @@ public class BaseRepositories<TEntity> : IBaseRepositories<TEntity> where TEntit
         }
     }
 
-
-    public BaseRepositories(IUnitOfWorkManage unitOfWorkManage) {
-        _unitOfWorkManage = unitOfWorkManage;
-        _dbBase = unitOfWorkManage.GetDbClient();
-    }
 
     #region 增(Add)
 

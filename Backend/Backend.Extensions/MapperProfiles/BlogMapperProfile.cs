@@ -13,6 +13,9 @@ public class BlogMapperProfile : Profile {
         CreateMap<Category, CategoryVO>();
         CreateMap<CategoryDto, Category>();
 
+        CreateMap<UserCommentDTO, Comment>();
+        CreateMap<Comment, CommentListVO>();
+
         CreateMap<LeaveWord, LeaveWordVO>();
 
         CreateMap<Tag, TagVO>();

@@ -28,18 +28,15 @@ public class CategoryService(IMapper mapper, IBaseRepositories<Category> baseRep
                           .ToList();
     }
 
-    public async Task<long>        Add(CategoryDto    categoryDto) => await Add(_mapper.Map<Category>(categoryDto));
-    public async Task<bool>        Update(CategoryDto categoryDto) => await Update(_mapper.Map<Category>(categoryDto));
+    public async Task<bool>        Add(CategoryDto    categoryDto) => await categoryRepository.InsertOrUpdate(_mapper.Map<Category>(categoryDto));
+    public async Task<bool>        Update(CategoryDto categoryDto) => await categoryRepository.InsertOrUpdate(_mapper.Map<Category>(categoryDto));
     public async Task<CategoryVO?> GetById(long       id)          => (await Query<CategoryVO>(i => i.Id == id)).FirstOrDefault();
 
     public async Task<List<CategoryVO>> SearchCategory(SearchCategoryDTO searchCategoryDto) {
         var categories = await categoryRepository.SearchCategory(searchCategoryDto.CategoryName, searchCategoryDto.StartTime, searchCategoryDto.EndTime);
 
-        // 4. 批量查文章数量（避免 N+1 查询）
-
         var countDic = await categoryRepository.GetCountOfCategoryDic(categories.Select(c => c.Id).ToList());
 
-        // 5. 映射为 VO（可用 AutoMapper 简化）
         return categories.Select(c => {
                                      var vo = _mapper.Map<CategoryVO>(c);
                                      if (countDic.TryGetValue(c.Id, out var count)) vo.ArticleCount = count;

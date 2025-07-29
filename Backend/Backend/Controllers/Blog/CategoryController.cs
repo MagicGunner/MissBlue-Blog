@@ -26,7 +26,7 @@ public class CategoryController(ICategoryService categoryService) : ControllerBa
     [Authorize(Policy = "blog:category:add")]
     [AccessLimit(60, 30)]
     [SwaggerOperation(Summary = "新增分类-文章列表", Description = "新增分类-文章列表")]
-    public async Task<ResponseResult<object>> AddCategory([FromBody] [Required] CategoryDto categoryDto) => new(await categoryService.Add(categoryDto) > 0);
+    public async Task<ResponseResult<object>> AddCategory([FromBody] [Required] CategoryDto categoryDto) => new(await categoryService.Add(categoryDto));
 
 
     [HttpGet("back/list")]

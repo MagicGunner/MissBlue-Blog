@@ -6,7 +6,7 @@ namespace Backend.Modules.Blog.Contracts.IService;
 
 public interface ICategoryService {
     Task<List<CategoryVO>> ListAll();
-    Task<long>             Add(CategoryDto                  categoryDto);
+    Task<bool>             Add(CategoryDto                  categoryDto);
     Task<bool>             DeleteByIds(List<long>           ids);
     Task<bool>             Update(CategoryDto               categoryDto);
     Task<CategoryVO?>      GetById(long                     id);
