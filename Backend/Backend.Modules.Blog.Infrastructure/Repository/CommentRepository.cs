@@ -42,4 +42,12 @@ public class CommentRepository(IUnitOfWorkManage unitOfWorkManage) : BaseReposit
         if (isCheck != null) query = query.Where(c => c.IsCheck == isCheck.Value);
         return await query.OrderByDescending(c => c.CreateTime).ToListAsync();
     }
+
+    public async Task<bool> IsChecked(long commentId) {
+        // 1. 构造更新语句（同时更新自身和子评论）
+        var updateCount = await Db.Updateable<Comment>()
+                                  .SetColumns(c => new Comment { IsCheck = isCheckDto.IsCheck })
+                                  .Where(c => c.Id == commentId || c.ParentId == commentId)
+                                  .ExecuteCommandAsync();
+    }
 }

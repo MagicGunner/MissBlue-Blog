@@ -4,6 +4,7 @@ using Backend.Application.Service;
 using Backend.Contracts;
 using Backend.Contracts.IService;
 using Backend.Domain;
+using Backend.Domain.Entity;
 using Backend.Domain.IRepository;
 using Backend.Modules.Blog.Contracts.DTO;
 using Backend.Modules.Blog.Contracts.IService;
@@ -16,7 +17,8 @@ namespace Backend.Modules.Blog.Application.Service;
 
 public class CommentService(IMapper mapper, IBaseRepositories<Comment> baseRepositories, ICommentRepository commentRepository, ICurrentUser currentUser)
     : BaseServices<Comment>(mapper, baseRepositories), ICommentService {
-    private readonly IMapper _mapper = mapper;
+    private readonly IMapper                    _mapper           = mapper;
+    private readonly IBaseRepositories<Comment> _baseRepositories = baseRepositories;
 
     public async Task<(bool IsSuccess, string? Msg)> AddComment(UserCommentDTO userCommentDto) {
         var comment = _mapper.Map<Comment>(userCommentDto);
@@ -68,12 +70,17 @@ public class CommentService(IMapper mapper, IBaseRepositories<Comment> baseRepos
         throw new NotImplementedException();
     }
 
-    public async Task<List<CommentListVO>> GetBackList(SearchCommentDTO dto) {
-        var comments = await commentRepository.GetBackList(dto.CommentUserName, dto.CommentContent, dto.Type, dto.IsCheck);
+    public async Task<List<CommentListVO>> GetBackList(SearchCommentDTO? dto) {
+        var comments = await commentRepository.GetBackList(dto?.CommentUserName, dto?.CommentContent, dto?.Type, dto?.IsCheck);
+        var userDic = (await _baseRepositories.GetEntityDic<User>(comments.Select(c => c.CommentUserId).ToList()));
         return comments.Select(c => {
                                    var vo = _mapper.Map<CommentListVO>(c);
+                                   if (userDic.TryGetValue(c.CommentUserId, out var user)) vo.CommentUserName = user.Username;
                                    return vo;
                                })
                        .ToList();
+    }
+
+    public async Task<bool> IsChecked(CommentIsCheckDTO isCheckDto) {
     }
 }

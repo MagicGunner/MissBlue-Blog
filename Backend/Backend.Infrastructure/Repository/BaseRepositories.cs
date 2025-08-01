@@ -11,7 +11,7 @@ using MultiTenantAttribute = Backend.Infrastructure.Attributes.MultiTenantAttrib
 namespace Backend.Infrastructure.Repository;
 
 public class BaseRepositories<TEntity>(IUnitOfWorkManage unitOfWorkManage) : IBaseRepositories<TEntity>
-    where TEntity : class, new() {
+    where TEntity : RootEntity, new() {
     private readonly SqlSugarScope     _dbBase           = unitOfWorkManage.GetDbClient();
     private readonly IUnitOfWorkManage _unitOfWorkManage = unitOfWorkManage;
     public           ISqlSugarClient   Db => _db;
@@ -171,6 +171,9 @@ public class BaseRepositories<TEntity>(IUnitOfWorkManage unitOfWorkManage) : IBa
 
         return await _db.Queryable(joinExpression).Where(whereLambda).Select(selectExpression).ToListAsync();
     }
+
+    public async Task<Dictionary<long, TResult>> GetEntityDic<TResult>(List<long> entityIds) where TResult : RootEntity =>
+        (await _db.Queryable<TResult>().In(entity => entity.Id, entityIds).ToListAsync()).ToDictionary(entity => entity.Id, entity => entity);
 
     #endregion
 }

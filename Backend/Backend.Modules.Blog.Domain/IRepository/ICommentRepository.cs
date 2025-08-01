@@ -11,4 +11,5 @@ public interface ICommentRepository : IBaseRepositories<Comment> {
     Task<long>                   GetCount(CommentType    type, long       typeId);
 
     Task<List<Comment>> GetBackList(string? userName, string? content, int? type, int? isCheck);
+    Task<bool>          IsChecked(long      commentId);
 }

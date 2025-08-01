@@ -27,7 +27,25 @@ public class CommentController(ICommentService commentService) : ControllerBase 
     [Authorize(Policy = "blog:comment:list")]
     [AccessLimit(60, 30)]
     [SwaggerOperation(Summary = "后台评论列表", Description = "后台评论列表")]
-    public Task<ResponseResult<List<CommentListVO>>> BackList() {
+    public async Task<ResponseResult<List<CommentListVO>>> BackList() {
+        var result = await commentService.GetBackList(null);
+        return new ResponseResult<List<CommentListVO>>(result.Count > 0, result);
+    }
+
+    [HttpPost("back/search")]
+    [Authorize(Policy = "blog:comment:search")]
+    [AccessLimit(60, 30)]
+    [SwaggerOperation(Summary = "搜索后台评论列表", Description = "搜索后台评论列表")]
+    public async Task<ResponseResult<List<CommentListVO>>> BackSearch([FromBody] SearchCommentDTO searchCommentDto) {
+        var result = await commentService.GetBackList(searchCommentDto);
+        return new ResponseResult<List<CommentListVO>>(result.Count > 0, result);
+    }
+
+    [HttpPost("back/isCheck")]
+    [Authorize(Policy = "blog:comment:isCheck")]
+    [AccessLimit(60, 30)]
+    [SwaggerOperation(Summary = "修改评论是否通过", Description = "修改评论是否通过")]
+    public Task<ResponseResult<object>> IsCheck([FromBody] [Required] CommentIsCheckDTO commentIsCheckDto) {
         throw new NotImplementedException();
     }
 
@@ -46,22 +64,6 @@ public class CommentController(ICommentService commentService) : ControllerBase 
         return new ResponseResult<PageVO<List<ArticleCommentVO>>>(result.Total > 0, result);
     }
 
-
-    [HttpPost("back/search")]
-    [Authorize(Policy = "blog:comment:search")]
-    [AccessLimit(60, 30)]
-    [SwaggerOperation(Summary = "搜索后台评论列表", Description = "搜索后台评论列表")]
-    public Task<ResponseResult<List<CommentListVO>>> BackSearch([FromBody] SearchCommentDTO searchCommentDto) {
-        throw new NotImplementedException();
-    }
-
-    [HttpPost("back/isCheck")]
-    [Authorize(Policy = "blog:comment:isCheck")]
-    [AccessLimit(60, 30)]
-    [SwaggerOperation(Summary = "修改评论是否通过", Description = "修改评论是否通过")]
-    public Task<ResponseResult<object>> IsCheck([FromBody] [Required] CommentIsCheckDTO commentIsCheckDto) {
-        throw new NotImplementedException();
-    }
 
     [HttpDelete("back/delete/{id}")]
     [Authorize(Policy = "blog:comment:delete")]

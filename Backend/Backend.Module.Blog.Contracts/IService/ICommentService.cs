@@ -8,8 +8,9 @@ public interface ICommentService {
     Task<bool>                           DeleteByIds(List<long>    ids);
     Task<bool>                           Update(UserCommentDTO     userCommentDto);
     Task<List<ArticleCommentVO>>         ListAll();
-    Task<PageVO<List<ArticleCommentVO>>> GetComment(int          type, int typeId, int pageNum, int pageSize);
-    Task<List<CommentListVO>>            Search(SearchCommentDTO searchCommentDto);
+    Task<PageVO<List<ArticleCommentVO>>> GetComment(int                type, int typeId, int pageNum, int pageSize);
+    Task<List<CommentListVO>>            Search(SearchCommentDTO       searchCommentDto);
+    Task<List<CommentListVO>>            GetBackList(SearchCommentDTO? dto);
 
-    Task<List<CommentListVO>> GetBackList(SearchCommentDTO dto);
+    Task<bool> IsChecked(CommentIsCheckDTO isCheckDto);
 }

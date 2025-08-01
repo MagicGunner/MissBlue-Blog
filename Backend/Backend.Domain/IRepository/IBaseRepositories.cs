@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using Backend.Domain.Entity;
 using SqlSugar;
 
 namespace Backend.Domain.IRepository;
@@ -19,6 +20,8 @@ public interface IBaseRepositories<TEntity> where TEntity : class {
                                                       Expression<Func<T, T2, T3, TResult>>  selectExpression,
                                                       Expression<Func<T, T2, T3, bool>>?    whereLambda = null)
         where T : class, new();
+
+    Task<Dictionary<long, TResult>> GetEntityDic<TResult>(List<long> entityIds) where TResult : RootEntity;
 
     #endregion
 
