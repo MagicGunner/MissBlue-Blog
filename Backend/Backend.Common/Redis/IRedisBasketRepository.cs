@@ -32,7 +32,7 @@ public interface IRedisBasketRepository {
 
     Task         AddOrUpdateSortedSetAsync(string    key, double score,  string member);
     Task<double> IncrementSortedSetScoreAsync(string key, string member, double increment = 1);
-
+    Task<long>   HashIncrementAsync(string           key, string field,  long   value     = 1);
 
     Task<RedisValue[]>        ListRangeAsync(string       redisKey);
     Task<long>                ListLeftPushAsync(string    redisKey, string              redisValue, int db = -1);

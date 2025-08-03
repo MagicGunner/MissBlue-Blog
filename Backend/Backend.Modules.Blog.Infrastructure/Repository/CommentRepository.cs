@@ -1,4 +1,6 @@
 ﻿using Backend.Common;
+using Backend.Common.Const;
+using Backend.Common.Enums;
 using Backend.Domain.Entity;
 using Backend.Infrastructure.Repository;
 using Backend.Infrastructure.UnitOfWorks;
@@ -43,11 +45,15 @@ public class CommentRepository(IUnitOfWorkManage unitOfWorkManage) : BaseReposit
         return await query.OrderByDescending(c => c.CreateTime).ToListAsync();
     }
 
-    public async Task<bool> IsChecked(long commentId) {
+    public async Task<Comment?> SetChecked(long commentId, int isChecked) {
         // 1. 构造更新语句（同时更新自身和子评论）
         var updateCount = await Db.Updateable<Comment>()
-                                  .SetColumns(c => new Comment { IsCheck = isCheckDto.IsCheck })
+                                  .SetColumns(c => new Comment { IsCheck = isChecked })
                                   .Where(c => c.Id == commentId || c.ParentId == commentId)
                                   .ExecuteCommandAsync();
+
+        return updateCount > 0
+                   ? await Db.Queryable<Comment>().Where(c => c.Id == commentId && c.Type == (int)CommentType.Article).FirstAsync()
+                   : null;
     }
 }

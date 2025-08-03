@@ -26,14 +26,14 @@ public class LeaveWordService(IMapper                      mapper,
     : BaseServices<LeaveWord>(mapper, baseRepositories), ILeaveWordService {
     private readonly IMapper _mapper = mapper;
 
-    public Task<long> AddLeaveWordAsync(string content) {
+    public Task<bool> AddLeaveWord(string content) {
         throw new NotImplementedException();
     }
 
     public async Task<List<LeaveWordListVO>> GetBackList(SearchLeaveWordDTO? searchLeaveWordDto = null) {
         var leaveWords = searchLeaveWordDto == null
                              ? await leaveWordRepository.Query()
-                             : await leaveWordRepository.GetBackList(searchLeaveWordDto.UserName, searchLeaveWordDto.isCheck, searchLeaveWordDto.startTime, searchLeaveWordDto.endTime);
+                             : await leaveWordRepository.GetBackList(searchLeaveWordDto.UserName, searchLeaveWordDto.IsCheck, searchLeaveWordDto.StartTime, searchLeaveWordDto.EndTime);
 
         var userDic = await userRepository.GetUserDic(leaveWords.Select(lw => lw.UserId).ToList());
         return leaveWords.Select(lw => {
@@ -67,5 +67,16 @@ public class LeaveWordService(IMapper                      mapper,
                                      return vo;
                                  })
                          .ToList();
+    }
+
+    public async Task<bool> SetIsCheck(LeaveWordIsCheckDTO leaveWordIsCheckDto) => await leaveWordRepository.SetIsChecked(leaveWordIsCheckDto.Id, leaveWordIsCheckDto.IsCheck);
+
+    public async Task<bool> Delete(List<long> leaveWordIds) {
+        if (!await DeleteByIds(leaveWordIds)) return false;
+        // 删除该留言下的点赞，收藏和评论
+        await likeRepository.Delete(l => l.Type == (int)LikeType.LeaveWord && leaveWordIds.Contains(l.TypeId));
+        await favoriteRepository.Delete(l => l.Type == (int)FavoriteType.LeaveWord && leaveWordIds.Contains(l.TypeId));
+        await commentRepository.Delete(l => l.Type == (int)CommentType.LeaveWord && leaveWordIds.Contains(l.TypeId));
+        return false;
     }
 }

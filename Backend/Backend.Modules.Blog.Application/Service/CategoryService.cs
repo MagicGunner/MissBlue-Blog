@@ -22,7 +22,7 @@ public class CategoryService(IMapper mapper, IBaseRepositories<Category> baseRep
         var categoryVos = await Query<CategoryVO>();
         var dic = await categoryRepository.GetCountOfCategoryDic(categoryVos.Select(c => c.Id).ToList());
         return categoryVos.Select(c => {
-                                      c.ArticleCount = dic[c.Id];
+                                      if (dic.TryGetValue(c.Id, out var articleCount)) c.ArticleCount = articleCount;
                                       return c;
                                   })
                           .ToList();

@@ -37,6 +37,10 @@ namespace Backend.Common.Redis {
         public async Task<double> IncrementSortedSetScoreAsync(string key, string member, double increment = 1) {
             return await _database.SortedSetIncrementAsync(key, member, increment);
         }
+        
+        public async Task<long> HashIncrementAsync(string key, string field, long value = 1) {
+            return await _database.HashIncrementAsync(key, field, value);
+        }
 
         public async Task<bool> Exist(string key) {
             return await _database.KeyExistsAsync(key);

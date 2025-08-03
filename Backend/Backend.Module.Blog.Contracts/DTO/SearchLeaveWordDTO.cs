@@ -1,8 +1,8 @@
 ﻿namespace Backend.Modules.Blog.Contracts.DTO;
 
 public class SearchLeaveWordDTO {
-    public string UserName  { get; set; }
-    public int    isCheck   { get; set; }
-    public string startTime { get; set; }
-    public string endTime   { get; set; }
+    public string? UserName  { get; set; }
+    public int?    IsCheck   { get; set; }
+    public string? StartTime { get; set; }
+    public string? EndTime   { get; set; }
 }

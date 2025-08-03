@@ -1,14 +1,10 @@
 ﻿using Confluent.Kafka;
-using System;
 
-
-namespace Blog.Core.EventBus
-{
+namespace Backend.Common.EventBus.EventBusKafka {
     /// <summary>
     /// Kafka连接池
     /// </summary>
-   public interface IKafkaConnectionPool:IDisposable
-    {
+    public interface IKafkaConnectionPool : IDisposable {
         /// <summary>
         /// 取对象
         /// </summary>

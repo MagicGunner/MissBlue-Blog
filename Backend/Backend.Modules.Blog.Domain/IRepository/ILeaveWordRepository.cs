@@ -4,6 +4,8 @@ using Backend.Modules.Blog.Domain.Entities;
 namespace Backend.Modules.Blog.Domain.IRepository;
 
 public interface ILeaveWordRepository : IBaseRepositories<LeaveWord> {
+    Task<List<LeaveWord>> GetList(string? id);
+
     /// <summary>
     /// 
     /// </summary>
@@ -12,9 +14,8 @@ public interface ILeaveWordRepository : IBaseRepositories<LeaveWord> {
     /// <param name="startTime"></param>
     /// <param name="endTime"></param>
     /// <returns></returns>
-    Task<List<LeaveWord>> GetBackList(string userName, int isCheck = 1, string? startTime = null, string? endTime = null);
-
-    Task<List<LeaveWord>> GetList(string? id);
+    Task<List<LeaveWord>> GetBackList(string? userName, int? isCheck, string? startTime, string? endTime);
 
     Task<Dictionary<long, string>> GetContentDic(List<long> userIds);
+    Task<bool>                     SetIsChecked(long        leaveWordId, int isChecked);
 }

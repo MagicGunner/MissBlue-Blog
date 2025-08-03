@@ -1,11 +1,9 @@
-﻿namespace Blog.Core.EventBus
-{
+﻿namespace Backend.Common.EventBus.Eventbus {
     /// <summary>
     /// 事件总线
     /// 接口
     /// </summary>
-    public interface IEventBus
-    {
+    public interface IEventBus {
         /// <summary>
         /// 发布
         /// </summary>

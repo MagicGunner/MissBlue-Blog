@@ -1,4 +1,5 @@
-﻿using Backend.Common.Enums;
+﻿using System.Collections;
+using Backend.Common.Enums;
 using Backend.Common.Extensions;
 
 namespace Backend.Common.Results;
@@ -23,6 +24,22 @@ public class ResponseResult<T> {
             Code = int.Max((int)errorType, 500);
         }
 
+        Data = data;
+        Message = msg ?? ((RespCode)Code).GetDescription();
+    }
+
+    /// <summary>
+    /// 只传入数据，自动判断是否成功
+    /// </summary>
+    public ResponseResult(T? data, RespCode errorType = RespCode.Success, string? msg = null) {
+        var isSuccess = data switch {
+                            null                   => false,
+                            string str             => !string.IsNullOrWhiteSpace(str),
+                            ICollection collection => collection.Count > 0,
+                            IEnumerable enumerable => enumerable.Cast<object>().Any(), // 泛型枚举
+                            _                      => true                             // 其他对象类型只要非 null 就认为成功
+                        };
+        Code = isSuccess ? (int)RespCode.Success : int.Max((int)errorType, 500);
         Data = data;
         Message = msg ?? ((RespCode)Code).GetDescription();
     }

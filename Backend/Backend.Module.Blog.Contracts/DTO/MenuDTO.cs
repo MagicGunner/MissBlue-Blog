@@ -15,7 +15,7 @@ public class MenuDTO {
 
     public int? RouterType { get; set; }
 
-    public string Component { get; set; }
+    public string? Component { get; set; }
 
     public string Redirect { get; set; }
 

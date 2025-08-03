@@ -14,6 +14,21 @@ namespace Backend.Controllers.Blog;
 [Route("api/comment")]
 [SwaggerTag("评论相关接口")]
 public class CommentController(ICommentService commentService) : ControllerBase {
+    [HttpGet("getComment")]
+    [AllowAnonymous]
+    [AccessLimit(60, 60)]
+    [SwaggerOperation(Summary = "获取评论", Description = "获取评论")]
+    public async Task<ResponseResult<PageVO<List<ArticleCommentVO>>>> GetComment([FromQuery, Required(ErrorMessage = "Type必填")] int type,
+                                                                                 [FromQuery, Required(ErrorMessage = "TypeId必填")]
+                                                                                 int typeId,
+                                                                                 [FromQuery, Required(ErrorMessage = "PageNum必填"), Range(1, int.MaxValue, ErrorMessage = "页码必须大于0")]
+                                                                                 int pageNum,
+                                                                                 [FromQuery, Required(ErrorMessage = "PageSize必填"), Range(1, 100, ErrorMessage = "每页数量必须在1-100之间")]
+                                                                                 int pageSize) {
+        var result = await commentService.GetComment(type, typeId, pageNum, pageSize);
+        return new ResponseResult<PageVO<List<ArticleCommentVO>>>(result.Total > 0, result);
+    }
+
     [HttpPost("auth/add/comment")]
     [AllowAnonymous] // 需要 CheckBlacklist 替代方案时移除
     [AccessLimit(60, 10)]
@@ -45,31 +60,15 @@ public class CommentController(ICommentService commentService) : ControllerBase 
     [Authorize(Policy = "blog:comment:isCheck")]
     [AccessLimit(60, 30)]
     [SwaggerOperation(Summary = "修改评论是否通过", Description = "修改评论是否通过")]
-    public Task<ResponseResult<object>> IsCheck([FromBody] [Required] CommentIsCheckDTO commentIsCheckDto) {
-        throw new NotImplementedException();
-    }
-
-    [HttpGet("getComment")]
-    [AllowAnonymous]
-    [AccessLimit(60, 60)]
-    [SwaggerOperation(Summary = "获取评论", Description = "获取评论")]
-    public async Task<ResponseResult<PageVO<List<ArticleCommentVO>>>> GetComment([FromQuery, Required(ErrorMessage = "Type必填")] int type,
-                                                                                 [FromQuery, Required(ErrorMessage = "TypeId必填")]
-                                                                                 int typeId,
-                                                                                 [FromQuery, Required(ErrorMessage = "PageNum必填"), Range(1, int.MaxValue, ErrorMessage = "页码必须大于0")]
-                                                                                 int pageNum,
-                                                                                 [FromQuery, Required(ErrorMessage = "PageSize必填"), Range(1, 100, ErrorMessage = "每页数量必须在1-100之间")]
-                                                                                 int pageSize) {
-        var result = await commentService.GetComment(type, typeId, pageNum, pageSize);
-        return new ResponseResult<PageVO<List<ArticleCommentVO>>>(result.Total > 0, result);
-    }
+    public async Task<ResponseResult<object>> IsCheck([FromBody] [Required] CommentIsCheckDTO commentIsCheckDto) => new(await commentService.IsChecked(commentIsCheckDto));
 
 
     [HttpDelete("back/delete/{id}")]
     [Authorize(Policy = "blog:comment:delete")]
     [AccessLimit(60, 30)]
     [SwaggerOperation(Summary = "删除评论", Description = "删除评论")]
-    public Task<ResponseResult<object>> Delete([FromRoute] [Required] long id) {
-        throw new NotImplementedException();
+    public async Task<ResponseResult<object>> Delete([FromRoute] [Required] long id) {
+        var result = await commentService.Delete(id);
+        return new ResponseResult<object>(result.isSuccess, result.msg);
     }
 }

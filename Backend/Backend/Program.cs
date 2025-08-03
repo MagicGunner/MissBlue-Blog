@@ -103,6 +103,11 @@ builder.Services.AddSingleton<IMinIOService, MinIOService>();
 // ORM
 builder.Services.AddSqlSugarSetup();
 
+// 消息队列
+builder.Services.AddRabbitMQSetup();
+builder.Services.AddKafkaSetup(builder.Configuration);
+builder.Services.AddEventBusSetup();
+
 
 var app = builder.Build();
 app.ConfigureApplication();

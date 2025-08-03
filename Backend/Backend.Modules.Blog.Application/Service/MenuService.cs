@@ -3,51 +3,21 @@ using Backend.Application.Interface;
 using Backend.Application.Service;
 using Backend.Domain.Entity;
 using Backend.Domain.IRepository;
+using Backend.Modules.Blog.Contracts.DTO;
 using Backend.Modules.Blog.Contracts.IService;
 using Backend.Modules.Blog.Contracts.VO;
 using Backend.Modules.Blog.Domain.Entities;
+using Backend.Modules.Blog.Domain.IRepository;
 
 namespace Backend.Modules.Blog.Application.Service;
 
-public class MenuService(IMapper mapper, IBaseRepositories<Menu> baseRepositories, ICurrentUser currentUser) : BaseServices<Menu>(mapper, baseRepositories), IMenuService {
+public class MenuService(IMapper mapper, IBaseRepositories<Menu> baseRepositories, IMenuRepository menuRepository, ICurrentUser currentUser)
+    : BaseServices<Menu>(mapper, baseRepositories), IMenuService {
     private readonly IMapper _mapper = mapper;
 
-    public async Task<List<MenuVO>> GetMenuList(int typeId, string? userName = null, int status = 0) {
-        var query = Db.Queryable<Menu>().OrderBy(m => m.OrderNum);
-
-        if (typeId == 0) {
-            var userId = currentUser.UserId;
-
-            var roleIds = await Db.Queryable<UserRole>()
-                                  .Where(ur => ur.UserId == userId)
-                                  .Select(ur => ur.RoleId)
-                                  .ToListAsync();
-
-            var menuIds = await Db.Queryable<RoleMenu>()
-                                  .Where(rm => roleIds.Contains(rm.RoleId))
-                                  .Select(rm => rm.MenuId)
-                                  .ToListAsync();
-
-            var roleMenuAllIds = await Db.Queryable<RoleMenu>().Select(rm => rm.MenuId).ToListAsync();
-            var menuAllIds = await Db.Queryable<Menu>().Select(m => m.Id).ToListAsync();
-
-            var noRoleMenuIds = menuAllIds.Except(roleMenuAllIds).ToList();
-            menuIds.AddRange(noRoleMenuIds);
-
-            if (menuIds.Count > 0)
-                query = query.Where(m => menuIds.Contains(m.Id));
-
-            query = query.Where(m => m.IsDisable == 0);
-        } else if (typeId == 1 && (!string.IsNullOrWhiteSpace(userName) || status != 0)) {
-            if (status is 0 or 1)
-                query = query.Where(m => m.IsDisable == status);
-
-            if (!string.IsNullOrWhiteSpace(userName))
-                query = query.Where(m => m.Title.Contains(userName));
-        }
-
-        var menus = await query.ToListAsync();
-
+    public async Task<List<MenuVO>> GetMenuList(int typeId, string? userName, int? status) {
+        var userId = currentUser.UserId;
+        var menus = await menuRepository.GetMenuList(userId, typeId, userName, status);
         return menus.Select(menu => {
                                 var menuVo = _mapper.Map<MenuVO>(menu);
                                 menuVo.Affix = menu.Affix == 1;
@@ -57,5 +27,22 @@ public class MenuService(IMapper mapper, IBaseRepositories<Menu> baseRepositorie
                                 return menuVo;
                             })
                     .ToList();
+    }
+
+    public async Task<bool> Add(MenuDTO menuDto) {
+        menuDto.RouterType ??= 0;
+        switch (menuDto.RouterType) {
+            case 0:
+                if (menuDto.Component == "") menuDto.Component = "RouteView";
+                break;
+            case 1: menuDto.Component = "Iframe"; break;
+            case 2: menuDto.Component = null; break;
+        }
+
+        return await Add(_mapper.Map<Menu>(menuDto)) > 0;
+    }
+
+    public Task<MenuByIdVO> GetById(long id) {
+        throw new NotImplementedException();
     }
 }
