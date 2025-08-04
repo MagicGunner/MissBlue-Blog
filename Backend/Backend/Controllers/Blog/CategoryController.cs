@@ -19,14 +19,14 @@ public class CategoryController(ICategoryService categoryService) : ControllerBa
     [SwaggerOperation(Summary = "获取所有分类", Description = "获取所有分类")]
     public async Task<ResponseResult<List<CategoryVO>>> ListAll() {
         var list = await categoryService.ListAll();
-        return new ResponseResult<List<CategoryVO>>(list.Count > 0, list);
+        return ResponseHandler<List<CategoryVO>>.Create(list);
     }
 
     [HttpPut]
     [Authorize(Policy = "blog:category:add")]
     [AccessLimit(60, 30)]
     [SwaggerOperation(Summary = "新增分类-文章列表", Description = "新增分类-文章列表")]
-    public async Task<ResponseResult<object>> AddCategory([FromBody] [Required] CategoryDto categoryDto) => new(await categoryService.Add(categoryDto));
+    public async Task<ResponseResult<object>> AddCategory([FromBody] [Required] CategoryDto categoryDto) => ResponseHandler<object>.Create(await categoryService.Add(categoryDto));
 
 
     [HttpGet("back/list")]
@@ -35,7 +35,7 @@ public class CategoryController(ICategoryService categoryService) : ControllerBa
     [SwaggerOperation(Summary = "获取分类列表", Description = "获取分类列表")]
     public async Task<ResponseResult<List<CategoryVO>>> ListArticleCategory() {
         var list = await categoryService.ListAll();
-        return new ResponseResult<List<CategoryVO>>(list.Count > 0, list);
+        return ResponseHandler<List<CategoryVO>>.Create(list);
     }
 
     [HttpPost("back/search")]
@@ -44,7 +44,7 @@ public class CategoryController(ICategoryService categoryService) : ControllerBa
     [SwaggerOperation(Summary = "搜索分类列表", Description = "搜索分类列表")]
     public async Task<ResponseResult<List<CategoryVO>>> SearchCategory([FromBody] SearchCategoryDTO searchCategoryDto) {
         var list = await categoryService.SearchCategory(searchCategoryDto);
-        return new ResponseResult<List<CategoryVO>>(list.Count > 0, list);
+        return ResponseHandler<List<CategoryVO>>.Create(list);
     }
 
     [HttpGet("back/get/{id}")]
@@ -53,7 +53,7 @@ public class CategoryController(ICategoryService categoryService) : ControllerBa
     [SwaggerOperation(Summary = "根据id查询分类", Description = "根据id查询分类")]
     public async Task<ResponseResult<CategoryVO?>> GetCategoryById([FromRoute] long id) {
         var categoryVo = await categoryService.GetById(id);
-        return new ResponseResult<CategoryVO?>(categoryVo != null, categoryVo);
+        return ResponseHandler<CategoryVO?>.Create(categoryVo);
     }
 
     [HttpPut("back/add")]
@@ -69,11 +69,11 @@ public class CategoryController(ICategoryService categoryService) : ControllerBa
     [Authorize(Policy = "blog:category:update")]
     [AccessLimit(60, 30)]
     [SwaggerOperation(Summary = "修改分类", Description = "修改分类")]
-    public async Task<ResponseResult<object>> UpdateCategory([FromBody] CategoryDto categoryDto) => new(await categoryService.Update(categoryDto));
+    public async Task<ResponseResult<object>> UpdateCategory([FromBody] CategoryDto categoryDto) => ResponseHandler<object>.Create(await categoryService.Update(categoryDto));
 
     [HttpDelete("back/delete")]
     [Authorize(Policy = "blog:category:delete")]
     [AccessLimit(60, 30)]
     [SwaggerOperation(Summary = "删除分类", Description = "删除分类")]
-    public async Task<ResponseResult<object>> DeleteCategory([FromBody] List<long> ids) => new(await categoryService.DeleteByIds(ids));
+    public async Task<ResponseResult<object>> DeleteCategory([FromBody] List<long> ids) => ResponseHandler<object>.Create(await categoryService.DeleteByIds(ids));
 }

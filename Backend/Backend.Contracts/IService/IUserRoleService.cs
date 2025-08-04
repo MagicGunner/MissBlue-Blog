@@ -4,5 +4,5 @@ using Backend.Contracts.DTO;
 namespace Backend.Contracts.IService;
 
 public interface IUserRoleService {
-    Task<ResponseResult<object>> Add(UserRoleDTO userRoleDto);
+    Task<(bool isSuccess, string? msg)> Add(UserRoleDTO userRoleDto);
 }

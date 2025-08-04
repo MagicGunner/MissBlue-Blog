@@ -25,14 +25,14 @@ public class BannersController(IBannersService bannersService) : ControllerBase 
     [SwaggerOperation(Summary = "后台获取所有前台首页Banner图片", Description = "后台获取所有前台首页Banner图片")]
     public async Task<ResponseResult<List<BannersVO>>> BackGetBanners() {
         var result = await bannersService.BackGetBanners();
-        return new ResponseResult<List<BannersVO>>(result.Count > 0, result);
+        return ResponseHandler<List<BannersVO>>.Create(result);
     }
 
     [HttpDelete("{id}")]
     [AccessLimit(60, 30)]
     [Authorize(Policy = "blog:banner:delete")]
     [SwaggerOperation(Summary = "删除前台首页Banner图片", Description = "删除前台首页Banner图片")]
-    public async Task<ResponseResult<object>> Delete([FromRoute] [Required] long id) => new(await bannersService.RemoveBannerById(id));
+    public async Task<ResponseResult<object>> Delete([FromRoute] [Required] long id) => ResponseHandler<object>.Create(await bannersService.RemoveBannerById(id));
 
     [HttpPost("upload/banner")]
     [AccessLimit(60, 30)]
@@ -40,7 +40,7 @@ public class BannersController(IBannersService bannersService) : ControllerBase 
     [SwaggerOperation(Summary = "添加前台首页Banner图片", Description = "添加前台首页Banner图片")]
     public async Task<ResponseResult<BannersVO?>> UploadArticleImage([Required] IFormFile bannerImage) {
         var result = await bannersService.UploadBannerImage(bannerImage);
-        return new ResponseResult<BannersVO?>(result.bannersVo != null, result.bannersVo, msg: result.msg);
+        return ResponseHandler<BannersVO?>.Create(result.bannersVo, msg: result.msg);
     }
 
     [HttpPut("update/sort/order")]
@@ -49,6 +49,6 @@ public class BannersController(IBannersService bannersService) : ControllerBase 
     [SwaggerOperation(Summary = "更新前台首页Banner图片顺序", Description = "更新前台首页Banner图片顺序")]
     public async Task<ResponseResult<string>> UpdateSortOrder([Required] List<BannersDTO> banners) {
         var result = await bannersService.UpdateSortOrder(banners);
-        return new ResponseResult<string>(result.success, msg: result.msg);
+        return ResponseHandler<string>.Create(result);
     }
 }

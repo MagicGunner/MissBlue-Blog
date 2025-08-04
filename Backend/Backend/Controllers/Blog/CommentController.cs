@@ -26,7 +26,7 @@ public class CommentController(ICommentService commentService) : ControllerBase 
                                                                                  [FromQuery, Required(ErrorMessage = "PageSize必填"), Range(1, 100, ErrorMessage = "每页数量必须在1-100之间")]
                                                                                  int pageSize) {
         var result = await commentService.GetComment(type, typeId, pageNum, pageSize);
-        return new ResponseResult<PageVO<List<ArticleCommentVO>>>(result.Total > 0, result);
+        return ResponseHandler<PageVO<List<ArticleCommentVO>>>.Create(result);
     }
 
     [HttpPost("auth/add/comment")]
@@ -35,7 +35,7 @@ public class CommentController(ICommentService commentService) : ControllerBase 
     [SwaggerOperation(Summary = "用户添加评论", Description = "用户添加评论")]
     public async Task<ResponseResult<string>> AddComment([FromBody] [Required] UserCommentDTO userCommentDto) {
         var result = await commentService.AddComment(userCommentDto);
-        return new ResponseResult<string>(result.IsSuccess, msg: result.Msg);
+        return ResponseHandler<string>.Create(result);
     }
 
     [HttpGet("back/list")]
@@ -44,7 +44,7 @@ public class CommentController(ICommentService commentService) : ControllerBase 
     [SwaggerOperation(Summary = "后台评论列表", Description = "后台评论列表")]
     public async Task<ResponseResult<List<CommentListVO>>> BackList() {
         var result = await commentService.GetBackList(null);
-        return new ResponseResult<List<CommentListVO>>(result.Count > 0, result);
+        return ResponseHandler<List<CommentListVO>>.Create(result);
     }
 
     [HttpPost("back/search")]
@@ -53,14 +53,14 @@ public class CommentController(ICommentService commentService) : ControllerBase 
     [SwaggerOperation(Summary = "搜索后台评论列表", Description = "搜索后台评论列表")]
     public async Task<ResponseResult<List<CommentListVO>>> BackSearch([FromBody] SearchCommentDTO searchCommentDto) {
         var result = await commentService.GetBackList(searchCommentDto);
-        return new ResponseResult<List<CommentListVO>>(result.Count > 0, result);
+        return ResponseHandler<List<CommentListVO>>.Create(result);
     }
 
     [HttpPost("back/isCheck")]
     [Authorize(Policy = "blog:comment:isCheck")]
     [AccessLimit(60, 30)]
     [SwaggerOperation(Summary = "修改评论是否通过", Description = "修改评论是否通过")]
-    public async Task<ResponseResult<object>> IsCheck([FromBody] [Required] CommentIsCheckDTO commentIsCheckDto) => new(await commentService.IsChecked(commentIsCheckDto));
+    public async Task<ResponseResult<object>> IsCheck([FromBody] [Required] CommentIsCheckDTO commentIsCheckDto) => ResponseHandler<object>.Create(await commentService.IsChecked(commentIsCheckDto));
 
 
     [HttpDelete("back/delete/{id}")]
@@ -69,6 +69,6 @@ public class CommentController(ICommentService commentService) : ControllerBase 
     [SwaggerOperation(Summary = "删除评论", Description = "删除评论")]
     public async Task<ResponseResult<object>> Delete([FromRoute] [Required] long id) {
         var result = await commentService.Delete(id);
-        return new ResponseResult<object>(result.isSuccess, result.msg);
+        return ResponseHandler<object>.Create(result);
     }
 }

@@ -21,7 +21,7 @@ public class MenuController(IMenuService menuService, IRoleService roleService) 
     [SwaggerOperation(Summary = "获取管理菜单列表", Description = "获取管理菜单列表")]
     public async Task<ResponseResult<List<MenuVO>>> List([FromRoute] int typeId) {
         var list = await menuService.GetMenuList(typeId, null, null);
-        return new ResponseResult<List<MenuVO>>(list.Count > 0, list);
+        return ResponseHandler<List<MenuVO>>.Create(list);
     }
 
     [HttpGet("search/list/{typeId}")]
@@ -30,7 +30,7 @@ public class MenuController(IMenuService menuService, IRoleService roleService) 
     [SwaggerOperation(Summary = "搜索管理菜单列表", Description = "搜索管理菜单列表")]
     public async Task<ResponseResult<List<MenuVO>>> SearchMenu([FromRoute] int typeId, [FromQuery] string username, [FromQuery] int? status) {
         var list = await menuService.GetMenuList(typeId, username, status);
-        return new ResponseResult<List<MenuVO>>(list.Count > 0, list);
+        return ResponseHandler<List<MenuVO>>.Create(list);
     }
 
     [HttpGet("role/list")]
@@ -39,7 +39,7 @@ public class MenuController(IMenuService menuService, IRoleService roleService) 
     [SwaggerOperation(Summary = "获取修改菜单角色列表", Description = "获取修改菜单角色列表")]
     public async Task<ResponseResult<List<RoleVO>>> SelectAll() {
         var result = await roleService.SelectAll();
-        return new ResponseResult<List<RoleVO>>(result.Count > 0, result);
+        return ResponseHandler<List<RoleVO>>.Create(result);
     }
 
     [HttpGet("router/list/{typeId}")]
@@ -47,14 +47,14 @@ public class MenuController(IMenuService menuService, IRoleService roleService) 
     [SwaggerOperation(Summary = "获取路由菜单列表", Description = "获取路由菜单列表")]
     public async Task<ResponseResult<List<MenuVO>>> RouterList([FromRoute] int typeId) {
         var list = await menuService.GetMenuList(typeId, null, null);
-        return new ResponseResult<List<MenuVO>>(list.Count > 0, list);
+        return ResponseHandler<List<MenuVO>>.Create(list);
     }
 
     [HttpPost]
     [AccessLimit(60, 30)]
     [Authorize(Policy = "system:menu:add")]
     [SwaggerOperation(Summary = "添加菜单", Description = "添加菜单")]
-    public async Task<ResponseResult<object>> Add([FromBody] [Required] MenuDTO menuDto) => new(await menuService.Add(menuDto));
+    public async Task<ResponseResult<object>> Add([FromBody] [Required] MenuDTO menuDto) => ResponseHandler<object>.Create(await menuService.Add(menuDto));
 
     [HttpGet("{id}")]
     [AccessLimit(60, 30)]
@@ -62,7 +62,7 @@ public class MenuController(IMenuService menuService, IRoleService roleService) 
     [SwaggerOperation(Summary = "根据id查询菜单信息", Description = "根据id查询菜单信息")]
     public async Task<ResponseResult<MenuByIdVO>> GetById([FromRoute] [Required] long id) {
         var result = await menuService.GetById(id);
-        return new ResponseResult<MenuByIdVO>(true, result);
+        return ResponseHandler<MenuByIdVO>.Create(result);
     }
 
     [HttpPut]

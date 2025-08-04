@@ -20,7 +20,7 @@ public class FavoriteController(IFavoriteService favoriteService) : ControllerBa
     [SwaggerOperation(Summary = "收藏", Description = "收藏")]
     public async Task<ResponseResult<object>> SetFavorited([FromQuery] [Required] int  type,
                                                            [FromQuery] [Required] long typeId) =>
-        new(await favoriteService.SetFavorited(type, typeId));
+        ResponseHandler<object>.Create(await favoriteService.SetFavorited(type, typeId));
 
     [HttpDelete("auth/favorite")]
     [AccessLimit(60, 10)]
@@ -28,14 +28,14 @@ public class FavoriteController(IFavoriteService favoriteService) : ControllerBa
     [SwaggerOperation(Summary = "取消收藏", Description = "取消收藏")]
     public async Task<ResponseResult<object>> UnSetFavorited([FromQuery] [Required] int type,
                                                              [FromQuery] [Required] int typeId) =>
-        new(await favoriteService.UnSetFavorited(type, typeId));
+        ResponseHandler<object>.Create(await favoriteService.UnSetFavorited(type, typeId));
 
     [HttpGet("whether/favorite")]
     [AccessLimit(60, 60)]
     [SwaggerOperation(Summary = "是否已经收藏", Description = "是否已经收藏")]
     public async Task<ResponseResult<bool>> IsFavorite([FromQuery] [Required] int type,
                                                        [FromQuery] [Required] int typeId) =>
-        new(await favoriteService.IsFavorited(type, typeId));
+        ResponseHandler<bool>.Create(await favoriteService.IsFavorited(type, typeId));
 
     [HttpGet("back/list")]
     [AccessLimit(60, 30)]
@@ -43,7 +43,7 @@ public class FavoriteController(IFavoriteService favoriteService) : ControllerBa
     [SwaggerOperation(Summary = "后台收藏列表", Description = "后台收藏列表")]
     public async Task<ResponseResult<List<FavoriteListVO>>> BackList() {
         var result = await favoriteService.GetBackList(null);
-        return new ResponseResult<List<FavoriteListVO>>(result.Count > 0, result);
+        return ResponseHandler<List<FavoriteListVO>>.Create(result);
     }
 
     [HttpPost("back/search")]
@@ -52,18 +52,19 @@ public class FavoriteController(IFavoriteService favoriteService) : ControllerBa
     [SwaggerOperation(Summary = "搜索后台收藏列表", Description = "搜索后台收藏列表")]
     public async Task<ResponseResult<List<FavoriteListVO>>> BackList([FromBody] SearchFavoriteDTO searchDTO) {
         var result = await favoriteService.GetBackList(searchDTO);
-        return new ResponseResult<List<FavoriteListVO>>(result.Count > 0, result);
+        return ResponseHandler<List<FavoriteListVO>>.Create(result);
     }
 
     [HttpPost("back/isCheck")]
     [AccessLimit(60, 30)]
     [Authorize(Policy = "blog:favorite:isCheck")]
     [SwaggerOperation(Summary = "修改收藏是否通过", Description = "修改收藏是否通过")]
-    public async Task<ResponseResult<object>> SetChecked([FromBody] [Required] FavoriteIsCheckDTO favoriteIsCheckDto) => new(await favoriteService.SetChecked(favoriteIsCheckDto));
+    public async Task<ResponseResult<object>> SetChecked([FromBody] [Required] FavoriteIsCheckDTO favoriteIsCheckDto) =>
+        ResponseHandler<object>.Create(await favoriteService.SetChecked(favoriteIsCheckDto));
 
     [HttpDelete("back/delete")]
     [AccessLimit(60, 30)]
     [Authorize(Policy = "blog:favorite:delete")]
     [SwaggerOperation(Summary = "删除收藏", Description = "删除收藏")]
-    public async Task<ResponseResult<object>> Delete([FromBody] [Required] List<long> ids) => new(await favoriteService.Delete(ids));
+    public async Task<ResponseResult<object>> Delete([FromBody] [Required] List<long> ids) => ResponseHandler<object>.Create(await favoriteService.Delete(ids));
 }

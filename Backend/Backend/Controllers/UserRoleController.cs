@@ -40,7 +40,7 @@ public class UserRoleController(IUserRoleService userRoleService) : ControllerBa
     [AccessLimit(60, 30)] // 👈 限流参数
     [Authorize(Policy = "system:user:role:add")]
     [SwaggerOperation(Summary = "添加用户角色关系", Description = "添加用户角色关系")]
-    public async Task<ResponseResult<object>> AddUserRole([FromBody] UserRoleDTO userRoleDto) => await userRoleService.Add(userRoleDto);
+    public async Task<ResponseResult<object>> AddUserRole([FromBody] UserRoleDTO userRoleDto) => ResponseHandler<object>.Create(await userRoleService.Add(userRoleDto));
 
     [HttpDelete("delete")]
     [AccessLimit(60, 30)] // 👈 限流参数

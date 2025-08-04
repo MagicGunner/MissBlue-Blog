@@ -20,14 +20,14 @@ public class TagController(ITagService tagService) : ControllerBase {
     [SwaggerOperation(Summary = "获取标签列表", Description = "获取标签列表")]
     public async Task<ResponseResult<List<TagVO>>> List() {
         var list = await tagService.ListAllAsync();
-        return new ResponseResult<List<TagVO>>(list.Count > 0, list);
+        return ResponseHandler<List<TagVO>>.Create(list);
     }
 
     [HttpPut]
     [Authorize(Policy = "blog:tag:add")]
     [AccessLimit(60, 30)]
     [SwaggerOperation(Summary = "新增标签-文章列表", Description = "新增标签-文章列表")]
-    public async Task<ResponseResult<object>> AddTag([FromBody] [Required] TagDTO tagDto) => new(await tagService.AddAsync(tagDto) > 0);
+    public async Task<ResponseResult<object>> AddTag([FromBody] [Required] TagDTO tagDto) => ResponseHandler<object>.Create(await tagService.AddAsync(tagDto) > 0);
 
     [HttpGet("back/list")]
     [Authorize(Policy = "blog:tag:list")]
@@ -35,7 +35,7 @@ public class TagController(ITagService tagService) : ControllerBase {
     [SwaggerOperation(Summary = "获取标签列表", Description = "获取标签列表")]
     public async Task<ResponseResult<List<TagVO>>> ListArticleTag() {
         var list = await tagService.ListAllAsync();
-        return new ResponseResult<List<TagVO>>(list.Count > 0, list);
+        return ResponseHandler<List<TagVO>>.Create(list);
     }
 
     [HttpPost("back/search")]
@@ -44,7 +44,7 @@ public class TagController(ITagService tagService) : ControllerBase {
     [SwaggerOperation(Summary = "搜索标签列表", Description = "搜索标签列表")]
     public async Task<ResponseResult<List<TagVO>>> SearchTag([FromBody] SearchTagDTO searchTagDTO) {
         var list = await tagService.SearchTagAsync(searchTagDTO);
-        return new ResponseResult<List<TagVO>>(list.Count > 0, list);
+        return ResponseHandler<List<TagVO>>.Create(list);
     }
 
     [HttpGet("back/get/{id}")]
@@ -53,7 +53,7 @@ public class TagController(ITagService tagService) : ControllerBase {
     [SwaggerOperation(Summary = "根据id查询标签", Description = "根据id查询标签")]
     public async Task<ResponseResult<TagVO?>> GetTagById([FromRoute] long id) {
         var tagVo = await tagService.GetByIdAsync(id);
-        return new ResponseResult<TagVO?>(tagVo != null, tagVo);
+        return ResponseHandler<TagVO?>.Create(tagVo);
     }
 
     [HttpPut("back/add")]
@@ -69,11 +69,11 @@ public class TagController(ITagService tagService) : ControllerBase {
     [Authorize(Policy = "blog:tag:update")]
     [AccessLimit(60, 30)]
     [SwaggerOperation(Summary = "修改标签", Description = "修改标签")]
-    public async Task<ResponseResult<object>> UpdateTag([FromBody] TagDTO tagDto) => new(await tagService.UpdateAsync(tagDto));
+    public async Task<ResponseResult<object>> UpdateTag([FromBody] TagDTO tagDto) => ResponseHandler<object>.Create(await tagService.UpdateAsync(tagDto));
 
     [HttpDelete("back/delete")]
     [Authorize(Policy = "blog:tag:delete")]
     [AccessLimit(60, 30)]
     [SwaggerOperation(Summary = "删除标签", Description = "删除标签")]
-    public async Task<ResponseResult<object>> DeleteTag([FromBody] List<long> ids) => new(await tagService.DeleteByIdsAsync(ids));
+    public async Task<ResponseResult<object>> DeleteTag([FromBody] List<long> ids) => ResponseHandler<object>.Create(await tagService.DeleteByIdsAsync(ids));
 }

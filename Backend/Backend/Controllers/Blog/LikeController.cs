@@ -19,7 +19,7 @@ public class LikeController(ILikeService likeService) : ControllerBase {
     [SwaggerOperation(Summary = "点赞", Description = "点赞")]
     public async Task<ResponseResult<object>> SetLiked([FromQuery] [Required] int type,
                                                        [FromQuery] [Required] int typeId) =>
-        new(await likeService.SetLiked(type, typeId));
+        ResponseHandler<object>.Create(await likeService.SetLiked(type, typeId));
         
 
     [HttpDelete("auth/like")]
@@ -28,7 +28,7 @@ public class LikeController(ILikeService likeService) : ControllerBase {
     [SwaggerOperation(Summary = "取消点赞", Description = "取消点赞")]
     public async Task<ResponseResult<object>> UnSetLiked([FromQuery] [Required] int type,
                                                          [FromQuery] [Required] int typeId) =>
-        new(await likeService.UnSetLiked(type, typeId));
+        ResponseHandler<object>.Create(await likeService.UnSetLiked(type, typeId));
 
     [HttpGet("whether/like")]
     [AccessLimit(60, 60)]
@@ -36,6 +36,6 @@ public class LikeController(ILikeService likeService) : ControllerBase {
     public async Task<ResponseResult<List<LikeVo>>> IsLike([FromQuery] [Required] int   type,
                                                            [FromQuery]            long? typeId) {
         var result = await likeService.IsLike(type, typeId);
-        return new ResponseResult<List<LikeVo>>(result.Count > 0, result);
+        return ResponseHandler<List<LikeVo>>.Create(result);
     }
 }

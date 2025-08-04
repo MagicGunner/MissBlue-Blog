@@ -45,7 +45,7 @@ public class WebsiteInfoController(IWebsiteInfoService websiteInfoService) : Con
     [HttpGet("front")]
     [AccessLimit(60, 30)]
     [SwaggerOperation(Summary = "查看网站信息-前端", Description = "查看网站信息-前端")]
-    public async Task<ResponseResult<WebsiteInfoVO>> GetWebsiteInfoFront() => new(true, await websiteInfoService.GetWebsiteInfo());
+    public async Task<ResponseResult<WebsiteInfoVO>> GetWebsiteInfoFront() => ResponseHandler<WebsiteInfoVO>.Create(await websiteInfoService.GetWebsiteInfo());
 
     [HttpPost("stationmaster")]
     [SwaggerOperation(Summary = "修改或创建站长信息", Description = "修改或创建站长信息")]

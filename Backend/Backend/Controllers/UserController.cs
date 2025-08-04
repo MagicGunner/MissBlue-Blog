@@ -26,7 +26,7 @@ public class UserController(IUserService userService, IConfiguration configurati
     public async Task<ResponseResult<TokenInfoVO>> Login([FromBody] LoginRequestDto loginRequestDto) {
         var userId = await userService.ValidateUser(loginRequestDto.UserName, loginRequestDto.Password);
         if (userId < 0) {
-            return new ResponseResult<TokenInfoVO>(false, msg: "账号密码错误");
+            return ResponseHandler<TokenInfoVO>.Create(data: false, msg: "账号密码错误");
         }
 
         var permissions = await userService.GetUserPermissions(loginRequestDto.UserName);
@@ -47,21 +47,21 @@ public class UserController(IUserService userService, IConfiguration configurati
                                          signingCredentials: creds);
 
         var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-        return new ResponseResult<TokenInfoVO>(true, new TokenInfoVO {
-                                                                         Token = jwt
-                                                                     });
+        return ResponseHandler<TokenInfoVO>.Create(new TokenInfoVO {
+                                                                       Token = jwt
+                                                                   });
     }
 
     #endregion
 
     [HttpGet("auth/info")]
     [SwaggerOperation(Summary = "获取用户信息", Description = "通过用户ID获取详细的用户信息")]
-    public async Task<ResponseResult<UserAccountVO?>> GetInfo() => new(true, await userService.GetAccountById());
+    public async Task<ResponseResult<UserAccountVO?>> GetInfo() => ResponseHandler<UserAccountVO?>.Create(await userService.GetAccountById());
 
     [HttpPost("auth/update")]
     [AccessLimit(60, 30)] // 👈 限流参数
     [SwaggerOperation(Summary = "修改用户信息", Description = "修改用户信息")]
-    public async Task<ResponseResult<object>> UpdateUser([FromBody] UserUpdateDTO userUpdateDto) => new(await userService.UpdateUser(userUpdateDto));
+    public async Task<ResponseResult<object>> UpdateUser([FromBody] UserUpdateDTO userUpdateDto) => ResponseHandler<object>.Create(await userService.UpdateUser(userUpdateDto));
 
     [HttpPost("auth/upload/avatar")]
     [AccessLimit(60, 3)] // 👈 限流参数
@@ -89,7 +89,7 @@ public class UserController(IUserService userService, IConfiguration configurati
     [SwaggerOperation(Summary = "前台注册", Description = "前台注册")]
     public async Task<ResponseResult<object>> Register([FromBody] UserRegisterDTO userRegisterDto) {
         var result = await userService.Register(userRegisterDto, HttpContext);
-        return new ResponseResult<object>(result);
+        return ResponseHandler<object>.Create(result);
     }
 
     [HttpPost("reset-confirm")]
@@ -112,7 +112,7 @@ public class UserController(IUserService userService, IConfiguration configurati
     [SwaggerOperation(Summary = "搜索用户列表", Description = "搜索用户列表，需要权限")]
     public async Task<ResponseResult<List<UserListVO>>> ListAll() {
         var list = await userService.ListAllAsync();
-        return new ResponseResult<List<UserListVO>>(list.Count > 0, list);
+        return ResponseHandler<List<UserListVO>>.Create(list);
     }
 
     [HttpPost("update/status")]
