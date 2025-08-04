@@ -10,7 +10,7 @@ public interface ILeaveWordService {
     /// </summary>
     /// <param name="content">留言内容</param>
     /// <returns></returns>
-    Task<bool> AddLeaveWord(string content);
+    Task<(bool isSuccess, string? msg)> AddLeaveWord(string content);
 
     Task<List<LeaveWordListVO>> GetBackList(SearchLeaveWordDTO? searchLeaveWordDto = null);
     Task<List<LeaveWordVO>>     GetList(string?                 id);

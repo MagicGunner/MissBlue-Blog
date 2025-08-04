@@ -26,7 +26,7 @@ public class UserController(IUserService userService, IConfiguration configurati
     public async Task<ResponseResult<TokenInfoVO>> Login([FromBody] LoginRequestDto loginRequestDto) {
         var userId = await userService.ValidateUser(loginRequestDto.UserName, loginRequestDto.Password);
         if (userId < 0) {
-            return ResponseHandler<TokenInfoVO>.Create(data: false, msg: "账号密码错误");
+            return ResponseHandler<TokenInfoVO>.Create((false, "账号密码错误"));
         }
 
         var permissions = await userService.GetUserPermissions(loginRequestDto.UserName);

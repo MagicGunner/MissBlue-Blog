@@ -108,6 +108,8 @@ builder.Services.AddRabbitMQSetup();
 builder.Services.AddKafkaSetup(builder.Configuration);
 builder.Services.AddEventBusSetup();
 
+// 邮件
+builder.Services.Configure<MailOptions>(builder.Configuration.GetSection("MailSettings"));
 
 var app = builder.Build();
 app.ConfigureApplication();

@@ -4,6 +4,7 @@ using Backend.Modules.Blog.Domain.Entities;
 namespace Backend.Modules.Blog.Domain.IRepository;
 
 public interface ILeaveWordRepository : IBaseRepositories<LeaveWord> {
+    
     Task<List<LeaveWord>> GetList(string? id);
 
     /// <summary>

@@ -71,5 +71,8 @@ public class BlogMapperProfile : Profile {
 
         CreateMap<Banners, BannersVO>();
         CreateMap<BannersDTO, Banners>();
+
+        CreateMap<LinkDTO, Link>();
+        CreateMap<Link, LinkVO>();
     }
 }

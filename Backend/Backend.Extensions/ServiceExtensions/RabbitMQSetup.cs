@@ -1,5 +1,7 @@
-﻿using Backend.Common;
+﻿using Backend.Common.Core;
 using Backend.Common.EventBus.RabbitMQPersistent;
+using Backend.Common.Option;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
@@ -12,35 +14,31 @@ namespace Backend.Extensions.ServiceExtensions {
         public static void AddRabbitMQSetup(this IServiceCollection services) {
             if (services == null) throw new ArgumentNullException(nameof(services));
 
-            if (AppSettings.App("RabbitMQ", "Enabled").ObjToBool()) {
-                services.AddSingleton<IRabbitMQPersistentConnection>(sp => {
-                                                                         var logger = sp.GetRequiredService<ILogger<RabbitMQPersistentConnection>>();
+            var section = App.Configuration.GetSection("RabbitMQ");
+            services.Configure<RabbitMQOptions>(section);
 
-                                                                         var factory = new ConnectionFactory() {
-                                                                                                                   HostName = AppSettings.App(new string[] { "RabbitMQ", "Connection" }),
-                                                                                                                   DispatchConsumersAsync = true
-                                                                                                               };
+            var options = section.Get<RabbitMQOptions>();
+            if (options is not { Enabled: true }) return;
 
-                                                                         if (!string.IsNullOrEmpty(AppSettings.App(new string[] { "RabbitMQ", "UserName" }))) {
-                                                                             factory.UserName = AppSettings.App(new string[] { "RabbitMQ", "UserName" });
-                                                                         }
+            services.AddSingleton<IRabbitMQPersistentConnection>(sp => {
+                                                                     var logger = sp.GetRequiredService<ILogger<RabbitMQPersistentConnection>>();
+                                                                     var factory = new ConnectionFactory {
+                                                                                                             HostName = options.Connection,
+                                                                                                             DispatchConsumersAsync = true
+                                                                                                         };
 
-                                                                         if (!string.IsNullOrEmpty(AppSettings.App(new string[] { "RabbitMQ", "Password" }))) {
-                                                                             factory.Password = AppSettings.App(new string[] { "RabbitMQ", "Password" });
-                                                                         }
+                                                                     if (!string.IsNullOrEmpty(options.UserName))
+                                                                         factory.UserName = options.UserName;
 
-                                                                         if (!string.IsNullOrEmpty(AppSettings.App(new string[] { "RabbitMQ", "Port" }))) {
-                                                                             factory.Port = AppSettings.App(new string[] { "RabbitMQ", "Port" }).ObjToInt();
-                                                                         }
+                                                                     if (!string.IsNullOrEmpty(options.Password))
+                                                                         factory.Password = options.Password;
 
-                                                                         var retryCount = 5;
-                                                                         if (!string.IsNullOrEmpty(AppSettings.App(new string[] { "RabbitMQ", "RetryCount" }))) {
-                                                                             retryCount = AppSettings.App(new string[] { "RabbitMQ", "RetryCount" }).ObjToInt();
-                                                                         }
+                                                                     if (options.Port > 0)
+                                                                         factory.Port = options.Port;
 
-                                                                         return new RabbitMQPersistentConnection(factory, logger, retryCount);
-                                                                     });
+                                                                     return new RabbitMQPersistentConnection(factory, logger, options.RetryCount);
+                                                                 });
             }
         }
-    }
+    
 }

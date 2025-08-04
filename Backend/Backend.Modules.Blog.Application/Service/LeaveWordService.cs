@@ -1,9 +1,8 @@
 ﻿using AutoMapper;
+using Backend.Application.Interface;
 using Backend.Application.Service;
+using Backend.Common.Const;
 using Backend.Common.Results;
-using Backend.Contracts;
-using Backend.Contracts.IService;
-using Backend.Domain;
 using Backend.Domain.Entity;
 using Backend.Domain.IRepository;
 using Backend.Modules.Blog.Contracts.DTO;
@@ -12,7 +11,8 @@ using Backend.Modules.Blog.Contracts.VO;
 using Backend.Modules.Blog.Domain.Entities;
 using Backend.Modules.Blog.Domain.Enums;
 using Backend.Modules.Blog.Domain.IRepository;
-using SqlSugar;
+using Newtonsoft.Json;
+
 
 namespace Backend.Modules.Blog.Application.Service;
 
@@ -22,12 +22,51 @@ public class LeaveWordService(IMapper                      mapper,
                               IUserRepository              userRepository,
                               ICommentRepository           commentRepository,
                               IFavoriteRepository          favoriteRepository,
-                              ILikeRepository              likeRepository)
+                              ILikeRepository              likeRepository,
+                              ICurrentUser                 currentUser
+)
     : BaseServices<LeaveWord>(mapper, baseRepositories), ILeaveWordService {
     private readonly IMapper _mapper = mapper;
 
-    public Task<bool> AddLeaveWord(string content) {
-        throw new NotImplementedException();
+    public async Task<(bool isSuccess, string? msg)> AddLeaveWord(string content) {
+        // 1. 解析 JSON 字符串
+        // 2. 校验长度
+        if (string.IsNullOrWhiteSpace(content) || content.Length > FunctionConst.LEAVE_WORD_CONTENT_LENGTH) {
+            return (false, "留言内容为空或过长");
+        }
+
+        // 5. 查询当前用户信息
+        var userId = currentUser.UserId;
+        if (userId == null) {
+            return (false, "请先登录后再留言");
+        }
+
+        // 3. 构建留言实体
+        var leaveWord = new LeaveWord {
+                                          Content = content,
+                                          UserId = userId.Value,
+                                          CreateTime = DateTime.Now // 假设你有这个字段
+                                      };
+
+        // 4. 保存留言
+        var result = await leaveWordRepository.Add(leaveWord);
+        return result <= 0 ? (false, "留言保存失败") : (true, "操作成功");
+
+
+        // // 6. 判断是否为站长本人留言 或禁用提醒
+        // if (user.Email == _siteSettings.AdminEmail || !_siteSettings.MessageNewNotice)
+        //     return ResponseResult.Success();
+        //
+        // // 7. 发送邮箱提醒
+        // var mailData = new Dictionary<string, object> {
+        //                                                   ["messageId"] = leaveWord.Id
+        //                                               };
+        //
+        // await _publicService.SendEmailAsync(MailboxAlertsEnum.MESSAGE_NOTIFICATION_EMAIL.CodeStr,
+        //                                     _siteSettings.AdminEmail,
+        //                                     mailData);
+        //
+        // return ResponseResult.Success();
     }
 
     public async Task<List<LeaveWordListVO>> GetBackList(SearchLeaveWordDTO? searchLeaveWordDto = null) {
