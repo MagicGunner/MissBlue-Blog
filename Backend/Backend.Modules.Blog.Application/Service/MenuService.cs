@@ -42,7 +42,11 @@ public class MenuService(IMapper mapper, IBaseRepositories<Menu> baseRepositorie
         return await Add(_mapper.Map<Menu>(menuDto)) > 0;
     }
 
-    public Task<MenuByIdVO> GetById(long id) {
-        throw new NotImplementedException();
+    public async Task<MenuByIdVO?> GetById(long id) {
+        var menu = await menuRepository.GetById(id);
+        if (menu == null) {
+            return null;
+        }
+        
     }
 }

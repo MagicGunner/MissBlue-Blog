@@ -40,4 +40,8 @@ public class MenuRepository(IUnitOfWorkManage unitOfWorkManage) : BaseRepositori
 
         return await query.ToListAsync();
     }
+
+    public async Task<Menu?> GetById(long id) {
+        return await Db.Queryable<Menu>().InSingleAsync(id);
+    }
 }

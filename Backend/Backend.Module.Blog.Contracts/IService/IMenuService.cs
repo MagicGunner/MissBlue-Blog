@@ -7,5 +7,5 @@ public interface IMenuService {
     Task<List<MenuVO>> GetMenuList(int typeId, string? userName, int? status);
     Task<bool>         Add(MenuDTO     menuDto);
 
-    Task<MenuByIdVO> GetById(long id);
+    Task<MenuByIdVO?> GetById(long id);
 }
