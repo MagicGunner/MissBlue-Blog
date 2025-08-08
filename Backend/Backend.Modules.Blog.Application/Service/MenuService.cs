@@ -11,7 +11,12 @@ using Backend.Modules.Blog.Domain.IRepository;
 
 namespace Backend.Modules.Blog.Application.Service;
 
-public class MenuService(IMapper mapper, IBaseRepositories<Menu> baseRepositories, IMenuRepository menuRepository, ICurrentUser currentUser)
+public class MenuService(IMapper                 mapper,
+                         IBaseRepositories<Menu> baseRepositories,
+                         IMenuRepository         menuRepository,
+                         IRoleRepository         roleRepository,
+                         IRoleMenuRepository     roleMenuRepository,
+                         ICurrentUser            currentUser)
     : BaseServices<Menu>(mapper, baseRepositories), IMenuService {
     private readonly IMapper _mapper = mapper;
 
@@ -47,6 +52,70 @@ public class MenuService(IMapper mapper, IBaseRepositories<Menu> baseRepositorie
         if (menu == null) {
             return null;
         }
-        
+
+        var roleMenus = await menuRepository.GetRoleMenuByMenuIds(menu.Id);
+        var roles = await roleRepository.GetByIds(roleMenus.Select(rm => rm.RoleId).ToList());
+        var vo = _mapper.Map<MenuByIdVO>(menu);
+        vo.RoleId = roles.Select(r => r.Id).ToList();
+        vo.RouterType = string.IsNullOrWhiteSpace(vo.Component)
+                            ? 2L
+                            : vo.Component == "Iframe"
+                                ? 1L
+                                : 0L;
+        return vo;
+    }
+
+    public async Task<bool> Update(MenuDTO menuDto) {
+        // switch (menuDto.RouterType) {
+        //     case 3: menuDto.Component = "RouteView"; break;
+        //     case 0: menuDto.Redirect = null; break;
+        // }
+        //
+        // switch (menuDto.RouterType) {
+        //     case 0 or 3: menuDto.Url = null; break;
+        //     case 1:
+        //         menuDto.Component = "Iframe";
+        //         menuDto.Target = null;
+        //         break;
+        //     case 2:
+        //         menuDto.Component = null;
+        //         menuDto.Redirect = null;
+        //         break;
+        // }
+
+        switch (menuDto.RouterType) {
+            case 0:
+                menuDto.Redirect = null;
+                menuDto.Url = null;
+                break;
+            case 1:
+                menuDto.Component = "Iframe";
+                menuDto.Target = null;
+                break;
+            case 2:
+                menuDto.Component = null;
+                menuDto.Redirect = null;
+                break;
+            case 3:
+                menuDto.Component = "RouteView";
+                menuDto.Url = null;
+                break;
+        }
+
+        menuDto.ParentId ??= null;
+        var menu = _mapper.Map<Menu>(menuDto);
+        var result = Db.Ado.UseTranAsync(async () => {
+                                             // 删除原有角色关联
+                                             await roleMenuRepository.Delete(rm => rm.MenuId == menu.Id);
+                                             // 添加新的角色关联
+                                             if (menuDto.RoleId != null && menuDto.RoleId.Count != 0) {
+                                                 var roleMenus = menuDto.RoleId.Select(roleId => new RoleMenu {
+                                                                                                                  RoleId = roleId,
+                                                                                                                  MenuId = menu.Id
+                                                                                                              })
+                                                                        .ToList();
+                                                 var insertCount = await roleMenuRepository.Add(roleMenus);
+                                             }
+                                         });
     }
 }

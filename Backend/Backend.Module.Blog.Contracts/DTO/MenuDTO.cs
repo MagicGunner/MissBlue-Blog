@@ -7,7 +7,7 @@ public class MenuDTO {
 
     public string Title { get; set; }
 
-    public List<long> RoleId { get; set; }
+    public List<long>? RoleId { get; set; }
 
     public int? OrderNum { get; set; }
 
@@ -17,13 +17,13 @@ public class MenuDTO {
 
     public string? Component { get; set; }
 
-    public string Redirect { get; set; }
+    public string? Redirect { get; set; }
 
-    public string Path { get; set; }
+    public string? Path { get; set; }
 
-    public string Url { get; set; }
+    public string? Url { get; set; }
 
-    public string Target { get; set; }
+    public string? Target { get; set; }
 
     public int? Affix { get; set; }
 

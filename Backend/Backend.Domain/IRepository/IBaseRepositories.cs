@@ -4,7 +4,7 @@ using SqlSugar;
 
 namespace Backend.Domain.IRepository;
 
-public interface IBaseRepositories<TEntity> where TEntity : class {
+public interface IBaseRepositories<TEntity> where TEntity : RootEntity {
     ISqlSugarClient Db { get; }
 
     Task<bool> InsertOrUpdate(TEntity entity);
@@ -23,11 +23,21 @@ public interface IBaseRepositories<TEntity> where TEntity : class {
 
     Task<Dictionary<long, TResult>> GetEntityDic<TResult>(List<long> entityIds) where TResult : RootEntity;
 
+    Task<List<TEntity>> GetByIds(List<long> ids);
+
     #endregion
 
     #region 新增（Add）
 
-    Task<long>       Add(TEntity      entity);
+    Task<long> Add(TEntity entity);
+
+    /// <summary>
+    /// 返回插入了几条数据
+    /// </summary>
+    /// <param name="entities"></param>
+    /// <returns></returns>
+    Task<int> Add(List<TEntity> entities);
+
     Task<List<long>> AddSplit(TEntity entity);
 
     #endregion

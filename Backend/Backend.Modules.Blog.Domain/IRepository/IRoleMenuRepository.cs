@@ -3,6 +3,5 @@ using Backend.Domain.IRepository;
 
 namespace Backend.Modules.Blog.Domain.IRepository;
 
-public interface IRoleRepository : IBaseRepositories<Role> {
-    Task<List<Role>> SelectAll();
+public interface IRoleMenuRepository : IBaseRepositories<RoleMenu> {
 }

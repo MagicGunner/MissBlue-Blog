@@ -54,6 +54,10 @@ public class BaseRepositories<TEntity>(IUnitOfWorkManage unitOfWorkManage) : IBa
 
     #region 增(Add)
 
+    public async Task<List<TEntity>> GetByIds(List<long> ids) {
+        return await Db.Queryable<TEntity>().In(entity => entity.Id, ids).ToListAsync();
+    }
+
     /// <summary>
     /// 写入实体数据
     /// </summary>
@@ -62,6 +66,10 @@ public class BaseRepositories<TEntity>(IUnitOfWorkManage unitOfWorkManage) : IBa
     public async Task<long> Add(TEntity entity) {
         var insert = _db.Insertable(entity);
         return await insert.ExecuteReturnBigIdentityAsync();
+    }
+
+    public Task<int> Add(List<TEntity> entities) {
+        return _db.Insertable(entities).ExecuteCommandAsync();
     }
 
     /// <summary>
