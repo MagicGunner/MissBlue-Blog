@@ -69,15 +69,15 @@ public class MenuController(IMenuService menuService, IRoleService roleService) 
     [AccessLimit(60, 30)]
     [Authorize(Policy = "system:menu:update")]
     [SwaggerOperation(Summary = "修改菜单", Description = "修改菜单")]
-    public Task<ResponseResult<object>> Update([FromBody] [Required] MenuDTO menuDTO) {
-        throw new NotImplementedException();
+    public async Task<ResponseResult<object>> Update([FromBody] [Required] MenuDTO menuDto) {
+        return ResponseHandler<object>.Create(await menuService.Update(menuDto));
     }
 
     [HttpDelete("{id}")]
     [AccessLimit(60, 30)]
     [Authorize(Policy = "system:menu:delete")]
     [SwaggerOperation(Summary = "根据id删除菜单", Description = "根据id删除菜单")]
-    public Task<ResponseResult<string>> Delete([FromRoute] [Required] long id) {
-        throw new NotImplementedException();
+    public async Task<ResponseResult<string>> Delete([FromRoute] [Required] long id) {
+        return ResponseHandler<string>.Create(await menuService.Delete(id));
     }
 }

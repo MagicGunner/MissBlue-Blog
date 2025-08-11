@@ -2,13 +2,14 @@
 using AutoMapper;
 using Backend.Contracts.IService;
 using Backend.Domain;
+using Backend.Domain.Entity;
 using Backend.Domain.IRepository;
 using SqlSugar;
 
 namespace Backend.Application.Service;
 
 public class BaseServices<TEntity>(IMapper mapper, IBaseRepositories<TEntity> baseRepositories) : IBaseServices<TEntity>
-    where TEntity : class, new() {
+    where TEntity : RootEntity, new() {
     public ISqlSugarClient Db => baseRepositories.Db;
 
     public async Task<long> Add(TEntity entity) {

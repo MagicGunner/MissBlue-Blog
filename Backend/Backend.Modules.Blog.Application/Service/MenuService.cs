@@ -65,24 +65,7 @@ public class MenuService(IMapper                 mapper,
         return vo;
     }
 
-    public async Task<bool> Update(MenuDTO menuDto) {
-        // switch (menuDto.RouterType) {
-        //     case 3: menuDto.Component = "RouteView"; break;
-        //     case 0: menuDto.Redirect = null; break;
-        // }
-        //
-        // switch (menuDto.RouterType) {
-        //     case 0 or 3: menuDto.Url = null; break;
-        //     case 1:
-        //         menuDto.Component = "Iframe";
-        //         menuDto.Target = null;
-        //         break;
-        //     case 2:
-        //         menuDto.Component = null;
-        //         menuDto.Redirect = null;
-        //         break;
-        // }
-
+    public Task<bool> Update(MenuDTO menuDto) {
         switch (menuDto.RouterType) {
             case 0:
                 menuDto.Redirect = null;
@@ -116,6 +99,14 @@ public class MenuService(IMapper                 mapper,
                                                                         .ToList();
                                                  var insertCount = await roleMenuRepository.Add(roleMenus);
                                              }
+
+                                             // 更新菜单信息
+                                             return await menuRepository.Update(menu);
                                          });
+        return Task.FromResult(result.IsCompletedSuccessfully);
+    }
+
+    public async Task<(bool isSuccess, string? msg)> Delete(long id) {
+        return await menuRepository.Delete(id);
     }
 }
