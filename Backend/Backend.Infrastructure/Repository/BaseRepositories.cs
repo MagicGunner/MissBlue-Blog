@@ -58,6 +58,10 @@ public class BaseRepositories<TEntity>(IUnitOfWorkManage unitOfWorkManage) : IBa
         return await Db.Queryable<TEntity>().In(entity => entity.Id, ids).ToListAsync();
     }
 
+    public async Task<TEntity> GetById(long id) {
+        return await Db.Queryable<TEntity>().Where(t => t.Id == id).SingleAsync();
+    }
+
     /// <summary>
     /// 写入实体数据
     /// </summary>

@@ -24,6 +24,7 @@ public interface IBaseRepositories<TEntity> where TEntity : RootEntity {
     Task<Dictionary<long, TResult>> GetEntityDic<TResult>(List<long> entityIds) where TResult : RootEntity;
 
     Task<List<TEntity>> GetByIds(List<long> ids);
+    Task<TEntity>       GetById(long        id);
 
     #endregion
 

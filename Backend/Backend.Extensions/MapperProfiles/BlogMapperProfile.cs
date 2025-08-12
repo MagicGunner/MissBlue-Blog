@@ -38,8 +38,11 @@ public class BlogMapperProfile : Profile {
         CreateMap<WebsiteInfoDTO, WebsiteInfo>();
 
         CreateMap<Permission, PermissionVO>();
-
-        // CreateMap<UserRoleDTO, UserRole>();
+        CreateMap<Permission, PermissionMenuVO>();
+        CreateMap<PermissionDTO, Permission>()
+           .ForMember(dest => dest.MenuId, opt => opt.MapFrom(src => src.PermissionMenuId))
+           .ReverseMap()
+           .ForMember(dest => dest.PermissionMenuId, opt => opt.MapFrom(src => src.MenuId));
 
         CreateMap<Article, ArticleDetailVO>();
         CreateMap<Article, ArticleVO>()

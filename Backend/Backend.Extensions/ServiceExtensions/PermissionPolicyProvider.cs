@@ -15,7 +15,7 @@ public class PermissionPolicyProvider(IOptions<AuthorizationOptions> options,
         }
 
         // 查询数据库权限
-        var permissions = await permissionRepository.GetAllPermissions();
+        var permissions = await permissionRepository.GetAll();
         var exists = permissions.Any(p => p.PermissionKey == policyName);
 
         if (!exists) {

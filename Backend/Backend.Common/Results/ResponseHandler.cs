@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using Backend.Common.Enums;
 using Backend.Common.Extensions;
+using Backend.Common.Record;
 
 namespace Backend.Common.Results;
 
@@ -25,5 +26,9 @@ public static class ResponseHandler<T> {
 
     public static ResponseResult<T> Create((bool isSuccess, string? msg) result) {
         return new ResponseResult<T>(result.isSuccess, msg: result.msg);
+    }
+
+    public static ResponseResult<T> Create(BoolResult result) {
+        return new ResponseResult<T>(result.IsSuccess, msg: result.Message);
     }
 }
