@@ -79,5 +79,8 @@ public class BlogMapperProfile : Profile {
 
         CreateMap<LinkDTO, Link>();
         CreateMap<Link, LinkVO>();
+
+        CreateMap<TreeHole, TreeHoleVO>();
+        CreateMap<TreeHole, TreeHoleListVO>();
     }
 }

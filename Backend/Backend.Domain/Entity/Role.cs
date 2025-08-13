@@ -12,7 +12,7 @@ public class Role : RootEntity {
     /// <summary>
     /// 角色标识（如“admin”、“editor”）
     /// </summary>
-    public string RoleKey { get; set; }
+    public string? RoleKey { get; set; }
 
     /// <summary>
     /// 是否删除（0：未删除，1：已删除）

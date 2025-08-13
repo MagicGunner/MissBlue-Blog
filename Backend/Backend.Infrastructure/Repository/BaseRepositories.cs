@@ -54,13 +54,7 @@ public class BaseRepositories<TEntity>(IUnitOfWorkManage unitOfWorkManage) : IBa
 
     #region 增(Add)
 
-    public async Task<List<TEntity>> GetByIds(List<long> ids) {
-        return await Db.Queryable<TEntity>().In(entity => entity.Id, ids).ToListAsync();
-    }
-
-    public async Task<TEntity> GetById(long id) {
-        return await Db.Queryable<TEntity>().Where(t => t.Id == id).SingleAsync();
-    }
+    public async Task<bool> InsertOrUpdate(TEntity entity) => await Db.Storageable(entity).ExecuteCommandAsync() > 0;
 
     /// <summary>
     /// 写入实体数据
@@ -92,10 +86,10 @@ public class BaseRepositories<TEntity>(IUnitOfWorkManage unitOfWorkManage) : IBa
     #region 删(Delete)
 
     /// <summary>
-    /// 根据主键ID删除
+    /// 根据主键ID删除，默认不开启事务，如果需要开启事务，请在各自仓储中重写
     /// </summary>
     /// <returns></returns>
-    public async Task<bool> DeleteByIds(List<long> ids) => await _db.Deleteable<TEntity>().In(ids).ExecuteCommandAsync() > 0;
+    public virtual async Task<bool> DeleteByIds(List<long> ids) => await _db.Deleteable<TEntity>().In(ids).ExecuteCommandAsync() > 0;
 
     /// <summary>
     /// 根据实体删除（根据主键）
@@ -139,7 +133,13 @@ public class BaseRepositories<TEntity>(IUnitOfWorkManage unitOfWorkManage) : IBa
 
     #region 查(Query)
 
-    public async Task<bool> InsertOrUpdate(TEntity entity) => await Db.Storageable(entity).ExecuteCommandAsync() > 0;
+    public async Task<List<TEntity>> GetByIds(List<long> ids) {
+        return await Db.Queryable<TEntity>().In(entity => entity.Id, ids).ToListAsync();
+    }
+
+    public async Task<TEntity?> GetById(long id) {
+        return await Db.Queryable<TEntity>().Where(t => t.Id == id).SingleAsync();
+    }
 
     public async Task<List<TEntity>> Query(Expression<Func<TEntity, bool>>? expression = null) {
         // await Console.Out.WriteLineAsync(Db.GetHashCode().ToString());

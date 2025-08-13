@@ -65,8 +65,6 @@ public class ArticleRepository(IUnitOfWorkManage unitOfWorkManage, ICategoryRepo
                 .OrderBy(a => a.VisitCount, OrderByType.Desc)
                 .Take(SQLConst.HotArticleCount)
                 .ToListAsync();
-
-    public async Task<Article?> GetById(long    id)        => await Db.Queryable<Article>().Where(at => at.Id == id && at.Status == SQLConst.PUBLIC_ARTICLE).SingleAsync();
     public async Task<Article?> FindPre(long    currentId) => await Db.Queryable<Article>().Where(a => a.Id < currentId).OrderBy(a => a.Id, OrderByType.Desc).FirstAsync();
     public async Task<Article?> FindNext(long   currentId) => await Db.Queryable<Article>().Where(a => a.Id > currentId).OrderBy(a => a.Id, OrderByType.Asc).FirstAsync();
     public async Task<long>     CountByTag(long tagId)     => await Db.Queryable<ArticleTag>().Where(at => at.TagId == tagId).CountAsync();
