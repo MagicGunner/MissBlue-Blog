@@ -25,4 +25,9 @@ public class RoleService(IMapper                 mapper,
         var roleVOs = _mapper.Map<List<RoleVO>>(roles);
         return roleVOs;
     }
+
+    public async Task<List<RoleAllVO>> Get(RoleSearchDTO dto) {
+        var roles = await roleRepository.Get(dto.RoleName, dto.RoleKey, dto.Status, dto.CreateTimeStart, dto.CreateTimeEnd);
+        return _mapper.Map<List<RoleAllVO>>(roles);
+    }
 }

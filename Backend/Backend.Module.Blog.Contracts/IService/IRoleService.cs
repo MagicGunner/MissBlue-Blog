@@ -8,4 +8,6 @@ namespace Backend.Modules.Blog.Contracts.IService;
 
 public interface IRoleService {
     Task<List<RoleVO>> SelectAll();
+
+    Task<List<RoleAllVO>> Get(RoleSearchDTO dto);
 }
