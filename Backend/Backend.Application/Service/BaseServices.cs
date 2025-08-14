@@ -16,9 +16,9 @@ public class BaseServices<TEntity>(IMapper mapper, IBaseRepositories<TEntity> ba
         return await baseRepositories.Add(entity);
     }
 
-    public async Task<bool> Delete(TEntity         entity) => await baseRepositories.Delete(entity);
-    public async Task<bool> DeleteByIds(List<long> ids)    => await baseRepositories.DeleteByIds(ids);
-    public async Task<bool> Update(TEntity         entity) => await baseRepositories.Update(entity);
+    public async         Task<bool> Delete(TEntity         entity) => await baseRepositories.Delete(entity);
+    public async         Task<bool> DeleteByIds(List<long> ids)    => await baseRepositories.DeleteByIds(ids);
+    public virtual async Task<bool> Update(TEntity         entity) => await baseRepositories.Update(entity);
 
     public async Task<bool> Update(Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, TEntity>> updateExpression) =>
         await baseRepositories.Update(whereExpression, updateExpression);

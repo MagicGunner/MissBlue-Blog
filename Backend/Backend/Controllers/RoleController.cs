@@ -2,9 +2,8 @@
 using Backend.Common.Attributes;
 using Backend.Common.Results;
 using Backend.Contracts.DTO;
+using Backend.Contracts.IService;
 using Backend.Contracts.VO;
-using Backend.Modules.Blog.Contracts.DTO;
-using Backend.Modules.Blog.Contracts.IService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -64,7 +63,7 @@ public class RoleController(IRoleService roleService) : ControllerBase {
     public async Task<ResponseResult<object>> DeleteRole([FromBody] RoleDeleteDTO roleDeleteDto) {
         return ResponseHandler<object>.Create(await roleService.Delete(roleDeleteDto));
     }
-    
+
 
     [HttpPost("search")]
     [AccessLimit(60, 30)] // 👈 限流参数

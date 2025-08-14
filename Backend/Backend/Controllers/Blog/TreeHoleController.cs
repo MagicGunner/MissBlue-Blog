@@ -1,7 +1,7 @@
 ﻿using Backend.Common.Attributes;
 using Backend.Common.Results;
-using Backend.Modules.Blog.Contracts.DTO;
-using Backend.Modules.Blog.Contracts.IService;
+using Backend.Contracts.DTO;
+using Backend.Contracts.IService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -15,9 +15,9 @@ public class TreeHoleController(ITreeHoleService treeHoleService) : ControllerBa
     [HttpPost("auth/addTreeHole")]
     [AccessLimit(60, 60)]
     [SwaggerOperation(Summary = "添加树洞")]
-    [ServiceFilter(typeof(CheckBlacklistAttribute))] // 需要自定义实现 CheckBlacklistAttribute
-    public async Task<ResponseResult<object>> AddTreeHole([FromBody] string content) {
-        return ResponseHandler<object>.Create(await treeHoleService.Add(content));
+    // [ServiceFilter(typeof(CheckBlacklistAttribute))] // 需要自定义实现 CheckBlacklistAttribute  黑名单拦截
+    public async Task<ResponseResult<object>> AddTreeHole([FromBody] AddTreeHoleDto dto) {
+        return ResponseHandler<object>.Create(await treeHoleService.Add(dto));
     }
 
     [HttpGet("getTreeHoleList")]
@@ -41,7 +41,6 @@ public class TreeHoleController(ITreeHoleService treeHoleService) : ControllerBa
     [SwaggerOperation(Summary = "搜索后台树洞列表")]
     public async Task<ResponseResult<object>> SearchBackList([FromBody] SearchTreeHoleDTO searchDto) {
         return ResponseHandler<object>.Create(await treeHoleService.GetBackList(searchDto));
-
     }
 
     [HttpPost("back/isCheck")]

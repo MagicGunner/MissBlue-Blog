@@ -2,7 +2,7 @@
 
 public class UserSearchDTO {
     // 用户名
-    public string Username { get; set; }
+    public string UserName { get; set; }
 
     // 用户邮箱
     public string Email { get; set; }

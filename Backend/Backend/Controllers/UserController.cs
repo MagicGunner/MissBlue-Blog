@@ -2,12 +2,12 @@
 using System.Security.Claims;
 using System.Text;
 using Backend.Common.Attributes;
+using Backend.Common.Enums;
 using Backend.Common.Results;
 using Backend.Contracts.DTO;
 using Backend.Contracts.IService;
 using Backend.Contracts.VO;
 using Backend.Extensions.ServiceExtensions;
-using Backend.Modules.Blog.Contracts.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -18,7 +18,7 @@ namespace Backend.Controllers;
 [ApiController]
 [Route("api/user")]
 [SwaggerTag("用户相关接口")]
-public class UserController(IUserService userService, IConfiguration configuration) : ControllerBase {
+public class UserController(IUserService userService, IMinIOService minIoService, IConfiguration configuration) : ControllerBase {
     #region 登入登出相关
 
     [HttpPost("login")]
@@ -47,9 +47,7 @@ public class UserController(IUserService userService, IConfiguration configurati
                                          signingCredentials: creds);
 
         var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-        return ResponseHandler<TokenInfoVO>.Create(new TokenInfoVO {
-                                                                       Token = jwt
-                                                                   });
+        return ResponseHandler<TokenInfoVO>.Create(new TokenInfoVO { Token = jwt });
     }
 
     #endregion
@@ -61,27 +59,28 @@ public class UserController(IUserService userService, IConfiguration configurati
     [HttpPost("auth/update")]
     [AccessLimit(60, 30)] // 👈 限流参数
     [SwaggerOperation(Summary = "修改用户信息", Description = "修改用户信息")]
-    public async Task<ResponseResult<object>> UpdateUser([FromBody] UserUpdateDTO userUpdateDto) => ResponseHandler<object>.Create(await userService.UpdateUser(userUpdateDto));
+    public async Task<ResponseResult<object>> UpdateUser([FromBody] UserUpdateDTO userUpdateDto) => ResponseHandler<object>.Create(await userService.Update(userUpdateDto));
 
     [HttpPost("auth/upload/avatar")]
     [AccessLimit(60, 3)] // 👈 限流参数
     [SwaggerOperation(Summary = "用户头像上传", Description = "用户头像上传")]
-    public Task<ResponseResult<string>> UpdateAvatar(IFormFile avatarFile) {
-        throw new NotImplementedException();
+    public async Task<ResponseResult<string>> UpdateAvatar(IFormFile avatarFile) {
+        var result = await minIoService.UploadAsync(UploadEnum.UserAvatar, avatarFile);
+        return ResponseHandler<string>.Create(result);
     }
 
     [HttpPost("auth/update/email")]
     [AccessLimit(60, 30)] // 👈 限流参数
     [SwaggerOperation(Summary = "修改用户绑定邮箱", Description = "修改用户绑定邮箱")]
-    public Task<ResponseResult<object>> UpdateEmail([FromBody] UpdateEmailDTO updateEmailDto) {
-        throw new NotImplementedException();
+    public async Task<ResponseResult<object>> UpdateEmailAndVerify([FromBody] UpdateEmailDTO updateEmailDto) {
+        return ResponseHandler<object>.Create(await userService.UpdateEmailAndVerify(updateEmailDto));
     }
 
     [HttpPost("auth/third/update/email")]
     [AccessLimit(60, 30)] // 👈 限流参数
     [SwaggerOperation(Summary = "第三方登录用户绑定邮箱", Description = "第三方登录用户绑定邮箱")]
-    public Task<ResponseResult<object>> ThirdUpdateEmail([FromBody] UpdateEmailDTO updateEmailDto) {
-        throw new NotImplementedException();
+    public async Task<ResponseResult<object>> ThirdUpdateEmail([FromBody] UpdateEmailDTO updateEmailDto) {
+        return ResponseHandler<object>.Create(await userService.ThirdUpdateEmail(updateEmailDto));
     }
 
     [HttpPost("register")]
@@ -95,23 +94,32 @@ public class UserController(IUserService userService, IConfiguration configurati
     [HttpPost("reset-confirm")]
     [AccessLimit(60, 30)] // 👈 限流参数
     [SwaggerOperation(Summary = "重置密码-确认邮件", Description = "重置密码-确认邮件")]
-    public Task<ResponseResult<object>> ResetConfirm([FromBody] UserResetConfirmDTO userResetConfirmDto) {
-        throw new NotImplementedException();
+    public async Task<ResponseResult<object>> ResetConfirm([FromBody] UserResetConfirmDTO userResetConfirmDto) {
+        return ResponseHandler<object>.Create(await userService.ResetConfirm(userResetConfirmDto));
     }
 
     [HttpPost("reset-password")]
     [AccessLimit(60, 30)] // 👈 限流参数
     [SwaggerOperation(Summary = "重置密码-确认邮件", Description = "重置密码-确认邮件")]
-    public Task<ResponseResult<object>> ResetPassword([FromBody] UserResetPasswordDTO userResetPassword) {
-        throw new NotImplementedException();
+    public async Task<ResponseResult<object>> ResetPassword([FromBody] UserResetPasswordDTO userResetPassword) {
+        return ResponseHandler<object>.Create(await userService.ResetPassword(userResetPassword));
     }
-    
+
     [HttpGet("list")]
     [AccessLimit(60, 30)] // 👈 限流参数
     [Authorize(Policy = "system:user:list")]
     [SwaggerOperation(Summary = "搜索用户列表", Description = "搜索用户列表，需要权限")]
     public async Task<ResponseResult<List<UserListVO>>> ListAll() {
-        var list = await userService.ListAllAsync();
+        var list = await userService.GetOrSearch(null);
+        return ResponseHandler<List<UserListVO>>.Create(list);
+    }
+
+    [HttpPost("search")]
+    [AccessLimit(60, 30)] // 👈 限流参数
+    [Authorize(Policy = "system:user:search")]
+    [SwaggerOperation(Summary = "搜索用户列表", Description = "搜索用户列表，需要权限")]
+    public async Task<ResponseResult<List<UserListVO>>> SearchUserList([FromBody] UserSearchDTO dto) {
+        var list = await userService.GetOrSearch(dto);
         return ResponseHandler<List<UserListVO>>.Create(list);
     }
 
@@ -119,23 +127,23 @@ public class UserController(IUserService userService, IConfiguration configurati
     [AccessLimit(60, 30)] // 👈 限流参数
     [Authorize(Policy = "system:user:status:update")]
     [SwaggerOperation(Summary = "更新用户状态", Description = "更新用户状态")]
-    public Task<ResponseResult<object>> UpdateStatus([FromBody] UpdateRoleStatusDTO updateRoleStatusDto) {
-        throw new NotImplementedException();
+    public async Task<ResponseResult<object>> UpdateStatus([FromBody] UpdateRoleStatusDTO updateRoleStatusDto) {
+        return ResponseHandler<object>.Create(await userService.UpdateStatus(updateRoleStatusDto));
     }
 
     [HttpGet("details/{id}")]
     [AccessLimit(60, 30)] // 👈 限流参数
     [Authorize(Policy = "system:user:details")]
     [SwaggerOperation(Summary = "获取用户详细信息", Description = "获取用户详细信息")]
-    public Task<ResponseResult<UserDetailsVO>> GetUserDetails([FromRoute] long id) {
-        throw new NotImplementedException();
+    public async Task<ResponseResult<UserDetailsVO>> GetUserDetails([FromRoute] long id) {
+        return ResponseHandler<UserDetailsVO>.Create(await userService.GetUserDetails(id));
     }
 
     [HttpDelete("delete")]
     [AccessLimit(60, 30)] // 👈 限流参数
     [Authorize(Policy = "system:user:delete")]
     [SwaggerOperation(Summary = "删除用户", Description = "删除用户")]
-    public Task<ResponseResult<UserDetailsVO>> DeleteUser([FromBody] UserDeleteDTO userDeleteDto) {
-        throw new NotImplementedException();
+    public async Task<ResponseResult<object>> DeleteUser([FromBody] UserDeleteDTO userDeleteDto) {
+        return ResponseHandler<object>.Create(await userService.Delete(userDeleteDto));
     }
 }

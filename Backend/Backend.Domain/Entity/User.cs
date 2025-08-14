@@ -37,7 +37,7 @@ public class User : RootEntity {
     /// <summary>
     /// 用户邮箱
     /// </summary>
-    public string Email { get; set; }
+    public string? Email { get; set; }
 
     /// <summary>
     /// 注册方式（0：邮箱/用户名，1：Gitee，2：GitHub）

@@ -7,7 +7,7 @@ public class Role : RootEntity {
     /// <summary>
     /// 角色名称（如“管理员”、“编辑”）
     /// </summary>
-    public string RoleName { get; set; }
+    public string? RoleName { get; set; }
 
     /// <summary>
     /// 角色标识（如“admin”、“editor”）

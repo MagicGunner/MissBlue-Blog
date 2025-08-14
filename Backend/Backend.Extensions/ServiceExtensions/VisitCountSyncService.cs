@@ -1,5 +1,5 @@
 ﻿using Backend.Common.Redis;
-using Backend.Modules.Blog.Domain.Entities;
+using Backend.Domain.Entity;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SqlSugar;

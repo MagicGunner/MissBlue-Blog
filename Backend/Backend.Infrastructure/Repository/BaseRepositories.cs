@@ -114,7 +114,7 @@ public class BaseRepositories<TEntity>(IUnitOfWorkManage unitOfWorkManage) : IBa
     /// </summary>
     /// <param name="entity"></param>
     /// <returns></returns>
-    public async Task<bool> Update(TEntity entity) => await _db.Updateable(entity).ExecuteCommandAsync() > 0;
+    public virtual async Task<bool> Update(TEntity entity) => await _db.Updateable(entity).ExecuteCommandAsync() > 0;
 
     /// <summary>
     /// 

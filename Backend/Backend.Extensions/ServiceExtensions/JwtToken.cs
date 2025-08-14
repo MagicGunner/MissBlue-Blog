@@ -1,7 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Backend.Modules.Blog.Contracts.VO;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Backend.Extensions.ServiceExtensions {

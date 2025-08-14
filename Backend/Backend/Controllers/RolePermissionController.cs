@@ -2,7 +2,7 @@
 using Backend.Common.Attributes;
 using Backend.Common.Results;
 using Backend.Contracts.DTO;
-using Backend.Modules.Blog.Contracts.IService;
+using Backend.Contracts.IService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;

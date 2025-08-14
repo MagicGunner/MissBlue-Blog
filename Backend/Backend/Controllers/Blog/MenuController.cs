@@ -1,10 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Backend.Common.Attributes;
 using Backend.Common.Results;
+using Backend.Contracts.DTO;
+using Backend.Contracts.IService;
 using Backend.Contracts.VO;
-using Backend.Modules.Blog.Contracts.DTO;
-using Backend.Modules.Blog.Contracts.IService;
-using Backend.Modules.Blog.Contracts.VO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;

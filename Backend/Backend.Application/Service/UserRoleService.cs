@@ -1,48 +1,39 @@
 ﻿using AutoMapper;
+using Backend.Common.Record;
 using Backend.Common.Results;
 using Backend.Contracts.DTO;
 using Backend.Contracts.IService;
+using Backend.Contracts.VO;
 using Backend.Domain.Entity;
 using Backend.Domain.IRepository;
 
 namespace Backend.Application.Service;
 
-public class UserRoleService(IMapper mapper, IBaseRepositories<UserRole> baseRepositories) : BaseServices<UserRole>(mapper, baseRepositories), IUserRoleService {
+public class UserRoleService(IMapper mapper, IBaseRepositories<UserRole> baseRepositories, IUserRoleRepository userRoleRepository)
+    : BaseServices<UserRole>(mapper, baseRepositories), IUserRoleService {
     private IMapper _mapper = mapper;
 
-    public async Task<(bool isSuccess, string? msg)> Add(UserRoleDTO userRoleDto) {
-        var userIds = userRoleDto.UserIds;
-        var roleId = userRoleDto.RoleId;
-        // 事务开始
-        var transResult = await Db.Ado.UseTranAsync<(bool, string)>(async () => {
-                                                                        // 1. 查询已有的用户角色
-                                                                        var existUserRoles = await Db.Queryable<UserRole>()
-                                                                                                     .Where(userRole => userRole.RoleId == roleId && userIds.Contains(userRole.UserId))
-                                                                                                     .ToListAsync();
+    public async Task<BoolResult> AddUserRole(UserRoleDTO dto) {
+        return await userRoleRepository.AddUserRole(dto.RoleId, dto.UserIds);
+    }
 
-                                                                        var existUserIds = existUserRoles.Select(ur => ur.UserId).ToList();
+    public async Task<BoolResult> AddRoleUser(RoleUserDTO dto) {
+        return await userRoleRepository.AddRoleUser(dto.RoleId, dto.UserId);
+    }
 
-                                                                        // 2. 过滤出未分配的用户
-                                                                        var notExistUserIds = userIds.Where(id => !existUserIds.Contains(id)).ToList();
+    public async Task<List<RoleUserVO>> GetUserByRoleId(long roleId, string? username, string? email, int type) {
+        return _mapper.Map<List<RoleUserVO>>(await userRoleRepository.GetUserByRoleId(roleId, username, email, type));
+    }
 
-                                                                        if (notExistUserIds.Count == 0) {
-                                                                            return (true, "全部用户已经拥有该角色，无需再次分配");
-                                                                        }
+    public async Task<List<RoleAllVO>> GetRoleByUserId(long userId, string? roleName, string? roleKey, int type) {
+        return _mapper.Map<List<RoleAllVO>>(await userRoleRepository.GetRoleByUserId(userId, roleName, roleKey, type));
+    }
 
-                                                                        // 3. 构建新的UserRole对象
-                                                                        var newUserRoles = notExistUserIds.Select(id => new UserRole {
-                                                                                                                            UserId = id,
-                                                                                                                            RoleId = roleId
-                                                                                                                        })
-                                                                                                          .ToList();
+    public async Task<BoolResult> DeleteByUserRole(UserRoleDTO dto) {
+        return await userRoleRepository.DeleteByUserRole(dto.RoleId, dto.UserIds);
+    }
 
-                                                                        // 4. 批量插入
-                                                                        var result = await Db.Insertable(newUserRoles).ExecuteCommandAsync();
-
-                                                                        return result > 0
-                                                                                   ? (false, "分配成功")
-                                                                                   : (true, "分配失败");
-                                                                    });
-        return transResult.IsSuccess ? transResult.Data : (false, "数据事务失败:" + transResult.ErrorException.Message);
+    public async Task<BoolResult> DeleteByRoleUser(RoleUserDTO dto) {
+        return await userRoleRepository.DeleteByRoleUser(dto.RoleId, dto.UserId);
     }
 }

@@ -1,9 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Backend.Common.Attributes;
 using Backend.Common.Results;
-using Backend.Modules.Blog.Contracts.IService;
-using Backend.Modules.Blog.Contracts.VO;
-using Backend.Modules.Blog.Domain.Entities;
+using Backend.Contracts.IService;
+using Backend.Contracts.VO;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -20,7 +19,7 @@ public class LikeController(ILikeService likeService) : ControllerBase {
     public async Task<ResponseResult<object>> SetLiked([FromQuery] [Required] int type,
                                                        [FromQuery] [Required] int typeId) =>
         ResponseHandler<object>.Create(await likeService.SetLiked(type, typeId));
-        
+
 
     [HttpDelete("auth/like")]
     [AccessLimit(60, 10)]

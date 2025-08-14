@@ -2,9 +2,6 @@
 using Backend.Contracts.DTO;
 using Backend.Contracts.VO;
 using Backend.Domain.Entity;
-using Backend.Modules.Blog.Contracts.DTO;
-using Backend.Modules.Blog.Contracts.VO;
-using Backend.Modules.Blog.Domain.Entities;
 
 namespace Backend.Extensions.MapperProfiles;
 
@@ -25,6 +22,7 @@ public class BlogMapperProfile : Profile {
         CreateMap<User, UserAccountVO>();
         CreateMap<User, UserDetailsVO>();
         CreateMap<UserUpdateDTO, User>();
+        CreateMap<User, RoleUserVO>();
 
         CreateMap<Role, RoleVO>();
         CreateMap<Role, RoleAllVO>();

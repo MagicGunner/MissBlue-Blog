@@ -17,7 +17,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Backend.Extensions\Backend.Extensions.csproj"/>
-        <ProjectReference Include="..\Backend.Modules.Blog.Application\Backend.Modules.Blog.Application.csproj"/>
     </ItemGroup>
 
 </Project>
